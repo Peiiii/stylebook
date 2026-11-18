@@ -266,6 +266,14 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await expect(row).toContainText("计划中");
   await selectTheme(page, "Ant Design");
   await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", "ant");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+  await expect(app.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
   await expect(app.getByRole("columnheader", { name: "状态" })).toHaveCSS(
     "background-color",
     "rgb(250, 250, 250)",

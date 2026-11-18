@@ -82,7 +82,7 @@
   --atlas-control-radius: 6px;
   --atlas-surface-radius: 8px;
   --atlas-popup-shadow: 0 6px 16px rgb(0 0 0 / 8%), 0 3px 6px rgb(0 0 0 / 8%);
-  --background: #f5f5f5;
+  --background: #fff;
   --foreground: #1f1f1f;
   --card: #fff;
   --popover: #fff;

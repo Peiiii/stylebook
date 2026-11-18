@@ -81,4 +81,4 @@ Material 使用蓝色强调与接近白色的中性表面，按钮采用 full sh
 
 ### Ant Design 风格
 
-为中文管理后台加入 Ant Design 风格（`ant`）。参考 [Ant Design 设计变量](https://github.com/ant-design/ant-design/blob/master/DESIGN.md) 及 [Table 尺寸](https://ant.design/components/table/)，在现有 shadcn 组件上使用浅灰画布、白色数据面板、紧凑控件、浅色表头和小圆角。青禾工作室采用深色侧栏、下划线筛选和有文字标签的状态色。主操作采用更深的蓝色以保证白字对比。切换风格沿用原有路径并保留场景状态。
+为中文管理后台加入 Ant Design 风格（`ant`）。参考 [Ant Design 设计变量](https://github.com/ant-design/ant-design/blob/master/DESIGN.md) 及 [Table 尺寸](https://ant.design/components/table/)，在现有 shadcn 组件上使用白色画布、紧凑控件、浅灰表头和小圆角。Ant Design 的布局底色与常规容器背景是独立角色，浅灰仅用于表头、悬停等局部层级。青禾工作室采用深色侧栏、下划线筛选和有文字标签的状态色。主操作采用更深的蓝色以保证白字对比。切换风格沿用原有路径并保留场景状态。

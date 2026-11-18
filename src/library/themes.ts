@@ -17,7 +17,7 @@ export const themes = [
   {
     id: "ant",
     label: "Ant Design",
-    description: "深色导航、浅灰画布与紧凑的数据界面。",
+    description: "深色导航、白色内容区与紧凑的数据界面。",
   },
   {
     id: "retro",
