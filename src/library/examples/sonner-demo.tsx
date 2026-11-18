@@ -9,16 +9,16 @@ export default function SonnerDemo() {
     <Button
       variant="outline"
       onClick={() =>
-        toast("Event has been created", {
-          description: "Sunday, December 03, 2023 at 9:00 AM",
+        toast("日程已创建", {
+          description: "11 月 20 日（周五）上午 9:00",
           action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
+            label: "撤销",
+            onClick: () => console.log("撤销"),
           },
         })
       }
     >
-      Show Toast
+      显示通知
     </Button>
   )
 }

@@ -66,3 +66,7 @@ Material 使用蓝色强调与接近白色的中性表面，按钮采用 full sh
 #### iOS 参考与纠偏
 
 上一版将 grouped 背景误用到整个总览，控件主要保留默认 shadcn 外观，用户否决。当前按 Apple HIG 的 iOS 26 实际控件图校准：[背景层级](https://developer.apple.com/design/human-interface-guidelines/color#Platform-considerations)、[工具栏参考](https://developer.apple.com/tutorials/images/com.apple.HIG/colors-liquid-glass-usage-correct@2x.png)、[开关参考](https://developer.apple.com/tutorials/images/com.apple.HIG/toggles-ios-default-color@2x.png)。总览采用白色 system 内容画布，去除每个样本的矩形外框；灰色用于字段、分组卡片与分段控件。按钮与导航操作采用胶囊/圆形和轻薄高光，默认开关按参考做绿色轨道、白色滑块，Slider、Tabs、菜单、AlertDialog 分别适配，不再只修改全局颜色。保留全部 shadcn 行为与 39 项覆盖；没有原生同类的组件仅作网页适配。验收覆盖白色总览、开关两态、Tabs 切换、菜单与 AlertDialog 的键盘操作、320px 窄屏和 Blocks，截图与官方图实际对照。最终交付不宣称 UIKit 或光学折射的逐像素复刻。
+
+## 中文演示内容
+
+面向中文用户，组件目录中的 Button、Input 等规范名称保留英文；组件内部与模板中的操作、说明、占位文字、菜单、提示、无障碍名称和通用演示数据使用简体中文。品牌、仓库名、邮箱、网址、快捷键及代码标识保留原文。沿用 JSX 与模板数据，不添加运行时翻译层；日历使用现有 react-day-picker 的 zhCN locale。仪表盘行数据、状态判断与选择项同步中文化，列选择菜单使用中文显示名称。验收覆盖 39 个预览与 3 个 Blocks、表单/浮层/通知、日历与窄屏溢出；本轮按用户要求不新增截图、不使用子代理。其它风格仅提供明确来源的候选，本轮不扩充预设。

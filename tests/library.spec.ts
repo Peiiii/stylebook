@@ -40,9 +40,9 @@ test("official docs structure, component interaction and theme", async ({
   ).toBeVisible();
   await search.getByRole("combobox").fill("dialog");
   await search.getByRole("option", { name: "Dialog", exact: true }).click();
-  const trigger = page.getByRole("button", { name: "Open Dialog" });
+  const trigger = page.getByRole("button", { name: "打开对话框" });
   await trigger.click();
-  await expect(page.getByRole("dialog")).toHaveAccessibleName("Edit profile");
+  await expect(page.getByRole("dialog")).toHaveAccessibleName("编辑个人资料");
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
   await expect(page.locator('[data-slot="preview"]')).toBeVisible();
@@ -109,7 +109,7 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   ).toBeVisible();
   await expect(themeTrigger(page)).toHaveText("Material");
   const block = page.frameLocator("iframe");
-  await block.getByRole("button", { name: "Toggle Sidebar" }).click();
+  await block.getByRole("button", { name: "展开或收起侧栏" }).click();
   await expect(block.getByRole("dialog")).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
@@ -172,18 +172,16 @@ test("showcase renders all components together and keeps one theme", async ({
     .getByRole("switch");
   await toggle.click();
   await expect(toggle).toBeChecked();
-  await page.getByRole("button", { name: "Show Toast" }).click();
-  await expect(
-    page.getByText("Event has been created", { exact: true }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "显示通知" }).click();
+  await expect(page.getByText("日程已创建", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "弹层", exact: true }).click();
   await expect(page.getByRole("region", { name: "弹层" })).toBeFocused();
   const trigger = cards
     .filter({ has: page.getByRole("heading", { name: "Dialog", exact: true }) })
-    .getByRole("button", { name: "Open Dialog" });
+    .getByRole("button", { name: "打开对话框" });
   await trigger.click();
   await expect(
-    page.getByRole("dialog", { name: "Edit profile" }),
+    page.getByRole("dialog", { name: "编辑个人资料" }),
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();

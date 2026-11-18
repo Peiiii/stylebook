@@ -11,26 +11,26 @@ export default function AlertDemo() {
     <div className="grid w-full max-w-xl items-start gap-4">
       <Alert>
         <CheckCircle2Icon />
-        <AlertTitle>Success! Your changes have been saved</AlertTitle>
+        <AlertTitle>修改已保存</AlertTitle>
         <AlertDescription>
-          This is an alert with icon, title and description.
+          你可以继续编辑，或返回列表查看最新内容。
         </AlertDescription>
       </Alert>
       <Alert>
         <PopcornIcon />
         <AlertTitle>
-          This Alert has a title and an icon. No description.
+          设置已更新
         </AlertTitle>
       </Alert>
       <Alert variant="destructive">
         <AlertCircleIcon />
-        <AlertTitle>Unable to process your payment.</AlertTitle>
+        <AlertTitle>付款未完成</AlertTitle>
         <AlertDescription>
-          <p>Please verify your billing information and try again.</p>
+          <p>请核对付款信息后重试。</p>
           <ul className="list-inside list-disc text-sm">
-            <li>Check your card details</li>
-            <li>Ensure sufficient funds</li>
-            <li>Verify billing address</li>
+            <li>核对银行卡信息</li>
+            <li>确认账户余额充足</li>
+            <li>核对账单地址</li>
           </ul>
         </AlertDescription>
       </Alert>

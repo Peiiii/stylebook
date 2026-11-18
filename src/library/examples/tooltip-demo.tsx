@@ -9,10 +9,10 @@ export default function TooltipDemo() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="outline">Hover</Button>
+        <Button variant="outline">查看提示</Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Add to library</p>
+        <p>添加到资料库</p>
       </TooltipContent>
     </Tooltip>
   )

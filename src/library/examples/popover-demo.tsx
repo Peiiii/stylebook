@@ -11,19 +11,19 @@ export default function PopoverDemo() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">Open popover</Button>
+        <Button variant="outline">打开浮层</Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="leading-none font-medium">Dimensions</h4>
+            <h4 className="leading-none font-medium">尺寸设置</h4>
             <p className="text-sm text-muted-foreground">
-              Set the dimensions for the layer.
+              调整内容区域的尺寸。
             </p>
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Width</Label>
+              <Label htmlFor="width">宽度</Label>
               <Input
                 id="width"
                 defaultValue="100%"
@@ -31,7 +31,7 @@ export default function PopoverDemo() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
+              <Label htmlFor="maxWidth">最大宽度</Label>
               <Input
                 id="maxWidth"
                 defaultValue="300px"
@@ -39,7 +39,7 @@ export default function PopoverDemo() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
+              <Label htmlFor="height">高度</Label>
               <Input
                 id="height"
                 defaultValue="25px"
@@ -47,10 +47,10 @@ export default function PopoverDemo() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
+              <Label htmlFor="maxHeight">最大高度</Label>
               <Input
                 id="maxHeight"
-                defaultValue="none"
+                defaultValue="不限"
                 className="col-span-2 h-8"
               />
             </div>

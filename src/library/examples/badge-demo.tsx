@@ -6,10 +6,10 @@ export default function BadgeDemo() {
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="flex w-full flex-wrap gap-2">
-        <Badge>Badge</Badge>
-        <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="destructive">Destructive</Badge>
-        <Badge variant="outline">Outline</Badge>
+        <Badge>标签</Badge>
+        <Badge variant="secondary">次要</Badge>
+        <Badge variant="destructive">危险</Badge>
+        <Badge variant="outline">描边</Badge>
       </div>
       <div className="flex w-full flex-wrap gap-2">
         <Badge
@@ -17,7 +17,7 @@ export default function BadgeDemo() {
           className="bg-primary text-primary-foreground"
         >
           <BadgeCheckIcon />
-          Verified
+          已认证
         </Badge>
         <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
           8

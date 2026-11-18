@@ -18,16 +18,15 @@ export default function EmptyDemo() {
         <EmptyMedia variant="icon">
           <IconFolderCode />
         </EmptyMedia>
-        <EmptyTitle>No Projects Yet</EmptyTitle>
+        <EmptyTitle>还没有项目</EmptyTitle>
         <EmptyDescription>
-          You haven&apos;t created any projects yet. Get started by creating
-          your first project.
+          创建第一个项目，开始整理你的工作。
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <Button>Create Project</Button>
-          <Button variant="outline">Import Project</Button>
+          <Button>创建项目</Button>
+          <Button variant="outline">导入项目</Button>
         </div>
       </EmptyContent>
       <Button
@@ -37,7 +36,7 @@ export default function EmptyDemo() {
         size="sm"
       >
         <a href="#">
-          Learn More <ArrowUpRightIcon />
+          了解更多 <ArrowUpRightIcon />
         </a>
       </Button>
     </Empty>

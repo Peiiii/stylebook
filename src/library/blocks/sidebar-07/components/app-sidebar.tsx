@@ -29,23 +29,23 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
+    name: "林沐",
     email: "m@example.com",
     avatar: `${import.meta.env.BASE_URL}avatars/shadcn.jpg`,
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "星河科技",
       logo: GalleryVerticalEnd,
       plan: "企业版",
     },
     {
-      name: "Acme Corp.",
+      name: "青禾工作室",
       logo: AudioWaveform,
       plan: "初创版",
     },
     {
-      name: "Evil Corp.",
+      name: "远山团队",
       logo: Command,
       plan: "免费版",
     },
@@ -77,15 +77,15 @@ const data = {
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "基础模型",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "探索模型",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "推理模型",
           url: "#",
         },
       ],

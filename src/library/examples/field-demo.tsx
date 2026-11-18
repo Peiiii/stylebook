@@ -25,24 +25,24 @@ export default function FieldDemo() {
       <form>
         <FieldGroup>
           <FieldSet>
-            <FieldLegend>Payment Method</FieldLegend>
+            <FieldLegend>付款方式</FieldLegend>
             <FieldDescription>
-              All transactions are secure and encrypted
+              付款信息将加密传输。
             </FieldDescription>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="checkout-7j9-card-name-43j">
-                  Name on Card
+                  持卡人姓名
                 </FieldLabel>
                 <Input
                   id="checkout-7j9-card-name-43j"
-                  placeholder="Evil Rabbit"
+                  placeholder="林沐"
                   required
                 />
               </Field>
               <Field>
                 <FieldLabel htmlFor="checkout-7j9-card-number-uw1">
-                  Card Number
+                  银行卡号
                 </FieldLabel>
                 <Input
                   id="checkout-7j9-card-number-uw1"
@@ -50,17 +50,17 @@ export default function FieldDemo() {
                   required
                 />
                 <FieldDescription>
-                  Enter your 16-digit card number
+                  请输入 16 位银行卡号
                 </FieldDescription>
               </Field>
               <div className="grid grid-cols-3 gap-4">
                 <Field>
                   <FieldLabel htmlFor="checkout-exp-month-ts6">
-                    Month
+                    月份
                   </FieldLabel>
                   <Select defaultValue="">
                     <SelectTrigger id="checkout-exp-month-ts6">
-                      <SelectValue placeholder="MM" />
+                      <SelectValue placeholder="月份" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="01">01</SelectItem>
@@ -80,11 +80,11 @@ export default function FieldDemo() {
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="checkout-7j9-exp-year-f59">
-                    Year
+                    年份
                   </FieldLabel>
                   <Select defaultValue="">
                     <SelectTrigger id="checkout-7j9-exp-year-f59">
-                      <SelectValue placeholder="YYYY" />
+                      <SelectValue placeholder="年份" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="2024">2024</SelectItem>
@@ -97,7 +97,7 @@ export default function FieldDemo() {
                   </Select>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="checkout-7j9-cvv">CVV</FieldLabel>
+                  <FieldLabel htmlFor="checkout-7j9-cvv">安全码</FieldLabel>
                   <Input id="checkout-7j9-cvv" placeholder="123" required />
                 </Field>
               </div>
@@ -105,9 +105,9 @@ export default function FieldDemo() {
           </FieldSet>
           <FieldSeparator />
           <FieldSet>
-            <FieldLegend>Billing Address</FieldLegend>
+            <FieldLegend>账单地址</FieldLegend>
             <FieldDescription>
-              The billing address associated with your payment method
+              请填写与付款方式关联的账单地址。
             </FieldDescription>
             <FieldGroup>
               <Field orientation="horizontal">
@@ -119,7 +119,7 @@ export default function FieldDemo() {
                   htmlFor="checkout-7j9-same-as-shipping-wgm"
                   className="font-normal"
                 >
-                  Same as shipping address
+                  与收货地址相同
                 </FieldLabel>
               </Field>
             </FieldGroup>
@@ -128,20 +128,20 @@ export default function FieldDemo() {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="checkout-7j9-optional-comments">
-                  Comments
+                  备注
                 </FieldLabel>
                 <Textarea
                   id="checkout-7j9-optional-comments"
-                  placeholder="Add any additional comments"
+                  placeholder="填写需要补充的说明…"
                   className="resize-none"
                 />
               </Field>
             </FieldGroup>
           </FieldSet>
           <Field orientation="horizontal">
-            <Button type="submit">Submit</Button>
+            <Button type="submit">提交</Button>
             <Button variant="outline" type="button">
-              Cancel
+              取消
             </Button>
           </Field>
         </FieldGroup>

@@ -68,13 +68,13 @@ export default function DrawerDemo() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">Open Drawer</Button>
+        <Button variant="outline">打开抽屉</Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+            <DrawerTitle>运动目标</DrawerTitle>
+            <DrawerDescription>设置每天的活动目标。</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">
@@ -86,14 +86,14 @@ export default function DrawerDemo() {
                 disabled={goal <= 200}
               >
                 <Minus />
-                <span className="sr-only">Decrease</span>
+                <span className="sr-only">减少目标</span>
               </Button>
               <div className="flex-1 text-center">
                 <div className="text-7xl font-bold tracking-tighter">
                   {goal}
                 </div>
                 <div className="text-[0.70rem] text-muted-foreground uppercase">
-                  Calories/day
+                  千卡／天
                 </div>
               </div>
               <Button
@@ -104,7 +104,7 @@ export default function DrawerDemo() {
                 disabled={goal >= 400}
               >
                 <Plus />
-                <span className="sr-only">Increase</span>
+                <span className="sr-only">增加目标</span>
               </Button>
             </div>
             <div className="mt-3 h-[120px]">
@@ -124,9 +124,9 @@ export default function DrawerDemo() {
             </div>
           </div>
           <DrawerFooter>
-            <Button>Submit</Button>
+            <Button>提交</Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">取消</Button>
             </DrawerClose>
           </DrawerFooter>
         </div>

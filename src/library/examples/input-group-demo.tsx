@@ -26,11 +26,11 @@ export default function InputGroupDemo() {
   return (
     <div className="grid w-full max-w-sm gap-6">
       <InputGroup>
-        <InputGroupInput placeholder="Search..." />
+        <InputGroupInput placeholder="搜索…" />
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>
-        <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+        <InputGroupAddon align="inline-end">12 条结果</InputGroupAddon>
       </InputGroup>
       <InputGroup>
         <InputGroupInput placeholder="example.com" className="pl-1!" />
@@ -44,12 +44,12 @@ export default function InputGroupDemo() {
                 <IconInfoCircle />
               </InputGroupButton>
             </TooltipTrigger>
-            <TooltipContent>This is content in a tooltip.</TooltipContent>
+            <TooltipContent>填写网址时不需要重复输入协议前缀。</TooltipContent>
           </Tooltip>
         </InputGroupAddon>
       </InputGroup>
       <InputGroup>
-        <InputGroupTextarea placeholder="Ask, Search or Chat..." />
+        <InputGroupTextarea placeholder="提问、搜索或开始对话…" />
         <InputGroupAddon align="block-end">
           <InputGroupButton
             variant="outline"
@@ -60,19 +60,19 @@ export default function InputGroupDemo() {
           </InputGroupButton>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <InputGroupButton variant="ghost">Auto</InputGroupButton>
+              <InputGroupButton variant="ghost">自动</InputGroupButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               side="top"
               align="start"
               className="[--radius:0.95rem]"
             >
-              <DropdownMenuItem>Auto</DropdownMenuItem>
-              <DropdownMenuItem>Agent</DropdownMenuItem>
-              <DropdownMenuItem>Manual</DropdownMenuItem>
+              <DropdownMenuItem>自动</DropdownMenuItem>
+              <DropdownMenuItem>智能体</DropdownMenuItem>
+              <DropdownMenuItem>手动</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <InputGroupText className="ml-auto">52% used</InputGroupText>
+          <InputGroupText className="ml-auto">已使用 52%</InputGroupText>
           <Separator orientation="vertical" className="h-4!" />
           <InputGroupButton
             variant="default"
@@ -81,7 +81,7 @@ export default function InputGroupDemo() {
             disabled
           >
             <ArrowUpIcon />
-            <span className="sr-only">Send</span>
+            <span className="sr-only">发送</span>
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>

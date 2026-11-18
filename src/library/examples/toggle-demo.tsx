@@ -5,13 +5,13 @@ import { Toggle } from "../ui/toggle"
 export default function ToggleDemo() {
   return (
     <Toggle
-      aria-label="Toggle bookmark"
+      aria-label="切换收藏状态"
       size="sm"
       variant="outline"
       className="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500"
     >
       <BookmarkIcon />
-      Bookmark
+      收藏
     </Toggle>
   )
 }

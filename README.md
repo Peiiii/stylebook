@@ -15,6 +15,8 @@ npm run dev
 
 ## 使用与维护
 
+- 组件名称保留英文，演示内容与模板默认使用简体中文；日历使用内置 zhCN locale，品牌、网址、邮箱和代码标识保留原文。
+
 - 组件、示例、Blocks 和本地依赖关系见 [registry.json](src/library/registry.json)。把所需文件按显示路径保存，React 项目用 Tailwind CSS v4 编译并导入 [theme.css](src/library/theme.css)。第三方依赖的已验证版本见 [package.json](package.json)。
 - 主题应用于 `html[data-atlas-theme]`，预设清单见 [themes.ts](src/library/themes.ts)，风格变量与组件样式见 [themes.css](src/library/themes.css)。新增主题在主题 CSS 中声明语义变量，并在清单中登记。
 - Sidebar 与 Dashboard 的演示头像从 [public/avatars/shadcn.jpg](public/avatars/shadcn.jpg) 读取。迁入其他 Vite 项目时按相同路径保存头像。

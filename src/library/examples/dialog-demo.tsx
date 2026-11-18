@@ -17,31 +17,30 @@ export default function DialogDemo() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button variant="outline">Open Dialog</Button>
+          <Button variant="outline">打开对话框</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>编辑个人资料</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              修改你的个人资料，完成后点击保存。
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+              <Label htmlFor="name-1">姓名</Label>
+              <Input id="name-1" name="name" defaultValue="林沐" />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
+              <Label htmlFor="username-1">用户名</Label>
               <Input id="username-1" name="username" defaultValue="@peduarte" />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">取消</Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit">保存修改</Button>
           </DialogFooter>
         </DialogContent>
       </form>

@@ -35,7 +35,7 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
+    name: "林沐",
     email: "m@example.com",
     avatar: `${import.meta.env.BASE_URL}avatars/shadcn.jpg`,
   },
@@ -162,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">星河科技</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
