@@ -4,13 +4,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { themeGroups, type AtlasTheme } from "../themes";
+import { themes, type AtlasTheme } from "../themes";
 
 export function ThemeSwatch({ id }: { id: string }) {
   return (
@@ -51,33 +50,26 @@ export function ThemePicker({
         align="end"
         sideOffset={8}
         collisionPadding={8}
-        className="z-60 w-64 max-w-[calc(100vw-1rem)] max-h-[min(38rem,var(--radix-dropdown-menu-content-available-height))] overscroll-contain p-1.5"
+        className="z-60 w-72 max-w-[calc(100vw-1rem)] max-h-[min(38rem,var(--radix-dropdown-menu-content-available-height))] overscroll-contain p-1.5"
       >
-        {themeGroups.map((group) => (
-          <DropdownMenuRadioGroup
-            key={group.label}
-            value={theme.id}
-            onValueChange={onTheme}
-            aria-label={group.label}
-          >
-            <DropdownMenuLabel className="px-2 py-1 text-xs font-medium text-muted-foreground">
-              {group.label}
-            </DropdownMenuLabel>
-            <div className="grid grid-cols-2 gap-px">
-              {group.themes.map((entry) => (
-                <DropdownMenuRadioItem
-                  key={entry.id}
-                  value={entry.id}
-                  textValue={entry.label + " " + entry.search}
-                  className="min-h-8 gap-1.5 py-1 pl-6 pr-1 text-xs data-[state=checked]:bg-accent [&>span:first-child]:left-1.5"
-                >
-                  <ThemeSwatch id={entry.id} />
-                  <span className="truncate">{entry.label}</span>
-                </DropdownMenuRadioItem>
-              ))}
-            </div>
-          </DropdownMenuRadioGroup>
-        ))}
+        <DropdownMenuRadioGroup value={theme.id} onValueChange={onTheme}>
+          {themes.map((entry) => (
+            <DropdownMenuRadioItem
+              key={entry.id}
+              value={entry.id}
+              textValue={entry.label}
+              className="min-h-11 cursor-pointer gap-2 py-2 pl-7 pr-2 data-[state=checked]:bg-accent"
+            >
+              <ThemeSwatch id={entry.id} />
+              <span className="min-w-0">
+                <span className="block font-medium">{entry.label}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {entry.description}
+                </span>
+              </span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
           <a href={themesHref}>浏览全部主题</a>

@@ -13,8 +13,9 @@ import { Showcase } from "./docs/Showcase";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
-import { themeGroups, themes } from "./themes";
-import { ThemeSwatch } from "./docs/ThemePicker";
+import { themes } from "./themes";
+import { Badge } from "./ui/badge";
+import { Card, CardContent } from "./ui/card";
 
 const views = [
   { id: "components", label: "组件" },
@@ -77,7 +78,6 @@ export function Library() {
   const selectedTheme =
     themes.find((entry) => entry.id === route.get("theme")) ?? themes[0];
   const theme = selectedTheme.id;
-  const colorMode = theme === "dark" ? "dark" : "light";
   const Block = blocks[block.id];
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
@@ -143,11 +143,7 @@ export function Library() {
   ];
   if (view === "full")
     return (
-      <ThemeProvider
-        forcedTheme={colorMode}
-        attribute="class"
-        enableSystem={false}
-      >
+      <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
         <main
           data-slot="block-preview"
           onSubmit={(event) => event.preventDefault()}
@@ -169,11 +165,7 @@ export function Library() {
   const listing = componentGroups.flatMap((group) => group.pages);
   const index = listing.findIndex((entry) => entry.id === item.id);
   return (
-    <ThemeProvider
-      forcedTheme={colorMode}
-      attribute="class"
-      enableSystem={false}
-    >
+    <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
       <Toaster />
       <SiteHeader
         items={navItems}
@@ -222,30 +214,32 @@ export function Library() {
               description="为同一套 shadcn 组件切换不同视觉风格。"
               sections={[]}
             >
-              {themeGroups.map((group) => (
-                <section key={group.label} className="mb-5">
-                  <h2 className="mb-2 text-sm font-semibold">{group.label}</h2>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {group.themes.map((entry) => (
-                      <Button
-                        key={entry.id}
-                        asChild
-                        variant="outline"
-                        className="h-auto min-w-0 justify-start border-border bg-background px-2.5 py-2 text-foreground"
-                        data-atlas-theme={entry.id}
-                      >
-                        <a
-                          href={choose({ view: "showcase", theme: entry.id })}
-                          aria-label={`查看${entry.label}主题的组件总览`}
-                        >
-                          <ThemeSwatch id={entry.id} />
-                          <span className="truncate">{entry.label}</span>
-                        </a>
-                      </Button>
-                    ))}
-                  </div>
-                </section>
-              ))}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {themes.map((entry) => (
+                  <section
+                    key={entry.id}
+                    data-atlas-theme={entry.id}
+                    className="style-specimen min-w-0 border bg-background p-4 text-foreground"
+                  >
+                    <h2 className="text-base font-semibold">{entry.label}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {entry.description}
+                    </p>
+                    <Card className="mt-3 py-3">
+                      <CardContent className="flex flex-wrap items-center gap-2 px-3">
+                        <Button asChild size="sm">
+                          <a
+                            href={choose({ view: "showcase", theme: entry.id })}
+                          >
+                            查看组件总览
+                          </a>
+                        </Button>
+                        <Badge variant="secondary">预览</Badge>
+                      </CardContent>
+                    </Card>
+                  </section>
+                ))}
+              </div>
             </DocPage>
           ) : (
             <DocPage

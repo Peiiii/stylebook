@@ -14,7 +14,7 @@ export default function BadgeDemo() {
       <div className="flex w-full flex-wrap gap-2">
         <Badge
           variant="secondary"
-          className="bg-blue-500 text-white dark:bg-blue-600"
+          className="bg-primary text-primary-foreground"
         >
           <BadgeCheckIcon />
           Verified

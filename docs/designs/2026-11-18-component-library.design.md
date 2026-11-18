@@ -46,3 +46,7 @@ React/Vite 沿用。复用 shadcn/ui Radix 源码，固定到 968d8cb9dc42ae5d52
 ## 主题切换
 
 顶栏用现有 shadcn Button 和 DropdownMenu RadioGroup，提供分组、色样和当前项，窄屏通过 Radix 定位及滚动。目录和菜单共用主题清单，主题 ID 仍随 URL 跨组件、模板及独立预览传递。主题库收录固定提交的 24 项官方基础色与强调色、经典 Gray 与 Slate、Neutral 暗色及 UI Atlas 自有的蓝图和暖纸，共 29 项。中性色的默认主题保留原有 shadcn ID。官方 token 来源为 `apps/v4/registry/themes.ts` 和 `apps/v4/public/r/themes/`。暗色同时启用 shadcn 的 dark 组件变体。
+
+## 风格体系
+
+29 项配色清单已退场。主题选择只呈现 shadcn 默认基准、Material、玻璃拟态和复古。复用 URL 状态、主题菜单、组件和模板。风格规则覆盖字体、控件及容器圆角、边框、投影和浮层；主题页使用实际 shadcn 组件提供并列样本。Material 参考 Material 的圆角与表面层级，代码和交互继续使用 shadcn。旧配色链接回退到默认基准。

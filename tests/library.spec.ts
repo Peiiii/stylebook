@@ -6,7 +6,9 @@ const themeTrigger = (page: Page) =>
 
 async function selectTheme(page: Page, label: string) {
   await themeTrigger(page).click();
-  await page.getByRole("menuitemradio", { name: label, exact: true }).click();
+  await page
+    .getByRole("menuitemradio", { name: new RegExp(`^${label}(?: |$)`) })
+    .click();
   await expect(themeTrigger(page)).toHaveText(label);
 }
 
@@ -22,10 +24,10 @@ test("official docs structure, component interaction and theme", async ({
     page.locator('[data-slot="sidebar"] a[aria-current="page"]'),
   ).toHaveText("Button");
   await expect(themeTrigger(page)).toHaveText("shadcn 默认");
-  await selectTheme(page, "暖纸");
+  await selectTheme(page, "复古");
   await page.getByRole("link", { name: "Checkbox", exact: true }).click();
   await page.reload();
-  await expect(themeTrigger(page)).toHaveText("暖纸");
+  await expect(themeTrigger(page)).toHaveText("复古");
   const checkbox = page.locator("#terms");
   await checkbox.focus();
   await page.keyboard.press("Space");
@@ -67,7 +69,7 @@ test("all 39 official demos and three Blocks resolve at their entry points", asy
     );
   }
   for (const block of registry.blocks) {
-    await page.goto(`/#view=full&template=${block.id}&theme=paper`);
+    await page.goto(`/#view=full&template=${block.id}&theme=retro`);
     await expect(
       page.locator('[data-slot="block-preview"] > :first-child'),
     ).toBeVisible();
@@ -76,10 +78,10 @@ test("all 39 official demos and three Blocks resolve at their entry points", asy
     ).toHaveCount(0);
     await expect(page.locator("html")).toHaveAttribute(
       "data-atlas-theme",
-      "paper",
+      "retro",
     );
   }
-  await page.goto("/#view=blocks&template=dashboard-01&theme=paper");
+  await page.goto("/#view=blocks&template=dashboard-01&theme=retro");
   await expect(
     page.frameLocator("iframe").getByRole("table").first(),
   ).toBeVisible();
@@ -96,7 +98,7 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#theme=blueprint");
+  await page.goto("/#theme=material");
   await page.getByRole("button", { name: "打开导航", exact: true }).click();
   await page
     .getByRole("dialog")
@@ -105,7 +107,7 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   await expect(
     page.getByRole("heading", { name: "可折叠侧栏", exact: true }),
   ).toBeVisible();
-  await expect(themeTrigger(page)).toHaveText("蓝图");
+  await expect(themeTrigger(page)).toHaveText("Material");
   const block = page.frameLocator("iframe");
   await block.getByRole("button", { name: "Toggle Sidebar" }).click();
   await expect(block.getByRole("dialog")).toBeVisible();
@@ -134,11 +136,31 @@ test("showcase renders all components together and keeps one theme", async ({
     "grid-template-columns",
     /^(\S+ ){3}\S+$/,
   );
-  await selectTheme(page, "暖纸");
-  await expect(page.getByText("暖纸 · 39 个组件")).toBeVisible();
+  const control = cards.locator('[data-slot="button"]').first();
+  const original = await control.evaluate((element) => {
+    const css = getComputedStyle(element);
+    return {
+      radius: css.borderRadius,
+      font: css.fontFamily,
+      shadow: css.boxShadow,
+    };
+  });
+  await selectTheme(page, "复古");
+  await expect(page.getByText("复古 · 39 个组件")).toBeVisible();
+  const retro = await control.evaluate((element) => {
+    const css = getComputedStyle(element);
+    return {
+      radius: css.borderRadius,
+      font: css.fontFamily,
+      shadow: css.boxShadow,
+    };
+  });
+  expect(retro.radius).not.toBe(original.radius);
+  expect(retro.font).not.toBe(original.font);
+  expect(retro.shadow).not.toBe(original.shadow);
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
-    "paper",
+    "retro",
   );
   const dupes = await page.locator("main").evaluate((root) => {
     const ids = [...root.querySelectorAll("[id]")].map((el) => el.id);
@@ -171,7 +193,7 @@ test("showcase renders all components together and keeps one theme", async ({
   await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
     timeout: 15000,
   });
-  await expect(themeTrigger(page)).toHaveText("暖纸");
+  await expect(themeTrigger(page)).toHaveText("复古");
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
@@ -190,7 +212,7 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   await trigger.focus();
   await page.keyboard.press("Enter");
   const menu = page.getByRole("menu", { name: "切换主题" });
-  await expect(menu.getByRole("menuitemradio")).toHaveCount(29);
+  await expect(menu.getByRole("menuitemradio")).toHaveCount(4);
   await expect(
     menu.getByRole("menuitemradio", { name: "shadcn 默认" }),
   ).toHaveAttribute("aria-checked", "true");
@@ -199,19 +221,29 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
-  await selectTheme(page, "暗色");
+  await selectTheme(page, "玻璃拟态");
   const frame = page.frameLocator("iframe");
-  await expect(frame.locator("html")).toHaveClass(/dark/);
-  await selectTheme(page, "翡翠");
   await expect(frame.locator("html")).toHaveAttribute(
     "data-atlas-theme",
-    "emerald",
+    "glass",
   );
-  await expect(frame.locator("html")).not.toHaveClass(/dark/);
+  await expect(frame.locator('[data-slot="card"]').first()).toHaveCSS(
+    "backdrop-filter",
+    /blur/,
+  );
+  await selectTheme(page, "Material");
+  await expect(frame.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "material",
+  );
+  await expect(frame.locator('[data-slot="button"]').first()).toHaveCSS(
+    "border-top-left-radius",
+    "999px",
+  );
   await page.reload();
-  await expect(trigger).toHaveText("翡翠");
+  await expect(trigger).toHaveText("Material");
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
-    "emerald",
+    "material",
   );
 });
