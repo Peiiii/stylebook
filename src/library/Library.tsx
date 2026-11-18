@@ -10,16 +10,17 @@ import { DocPage } from "./docs/DocPage";
 import { BlockViewer } from "./docs/BlockViewer";
 import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
+import { SceneShowcase } from "./docs/SceneShowcase";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
 import { themes } from "./themes";
-import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 
 const views = [
   { id: "components", label: "组件" },
   { id: "showcase", label: "组件总览" },
+  { id: "scene", label: "场景总览" },
   { id: "blocks", label: "页面模板" },
   { id: "themes", label: "主题" },
 ];
@@ -142,6 +143,12 @@ export function Library() {
           href: choose({ view: "showcase" }),
           active: view === "showcase",
         },
+        {
+          id: "scene",
+          name: "场景总览",
+          href: choose({ view: "scene" }),
+          active: view === "scene",
+        },
       ],
     },
   ];
@@ -187,6 +194,8 @@ export function Library() {
           href={choose({ view: "full", template: block.id })}
           links={blockGroup.pages}
         />
+      ) : view === "scene" ? (
+        <SceneShowcase />
       ) : view === "showcase" ? (
         <Showcase
           theme={selectedTheme.label}
@@ -238,7 +247,11 @@ export function Library() {
                             查看组件总览
                           </a>
                         </Button>
-                        <Badge variant="secondary">预览</Badge>
+                        <Button asChild size="sm" variant="outline">
+                          <a href={choose({ view: "scene", theme: entry.id })}>
+                            查看场景总览
+                          </a>
+                        </Button>
                       </CardContent>
                     </Card>
                   </section>

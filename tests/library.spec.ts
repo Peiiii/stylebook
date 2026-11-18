@@ -244,3 +244,28 @@ test("theme menu exposes all presets and updates the block iframe", async ({
     "material",
   );
 });
+
+test("scene showcase keeps workbench state while switching themes", async ({
+  page,
+}) => {
+  await page.goto("/#view=scene");
+  await expect(page.getByRole("heading", { name: "项目工作台" })).toBeVisible();
+  await page.getByRole("button", { name: "新建项目" }).click();
+  await page.getByLabel("项目名称").fill("验收项目");
+  await page.getByRole("button", { name: "创建项目", exact: true }).click();
+  await page.getByRole("radio", { name: "计划中", exact: true }).click();
+  const search = page.getByRole("textbox", { name: "搜索项目" });
+  await search.fill("验收");
+
+  await selectTheme(page, "iOS");
+  await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ios");
+  await expect(search).toHaveValue("验收");
+  const row = page.getByRole("row").filter({ hasText: "验收项目" });
+  await expect(row).toContainText("计划中");
+  await expect(page.getByRole("row")).toHaveCount(2);
+  await row.getByRole("button", { name: "更新验收项目的状态" }).click();
+  await page.getByRole("menuitem", { name: "设为已完成" }).click();
+  await expect(page.getByText("没有匹配的项目")).toBeVisible();
+  await page.getByRole("radio", { name: "已完成", exact: true }).click();
+  await expect(row).toContainText("100%");
+});
