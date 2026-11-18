@@ -90,3 +90,7 @@ ChatGPT 参考 [OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) 的�
 场景总览通过统一清单登记案例。青禾工作室展示高密度项目应用，Bento「设计手记」展示创作者主页中的非等宽卡片、数据与表单。链接以 `scene` 标识案例，旧链接仍默认进入青禾工作室。案例、预览尺寸和主题复用同一个容器。主题或尺寸切换保留当前案例状态，切换案例从目标案例的初始状态开始。
 
 主题选择器使用 16px 品牌标识辅助识别。shadcn/ui、Material Design、Apple 和 Claude 取自 [Simple Icons](https://github.com/simple-icons/simple-icons/tree/develop/icons)，Ant Design 取自 [官方图标包](https://github.com/ant-design/ant-design-icons/blob/master/packages/icons-svg/svg/outlined/ant-design.svg)，ChatGPT 使用 [官网 favicon](https://chatgpt.com/cdn/assets/favicon.6a33781f61.svg)。复古主题使用现有 Lucide BookOpen。品牌标识只用于识别对应主题。
+
+### Windows 11 · Fluent 2
+
+风格 ID 为 `fluent`。参考 [Fluent 2 排版](https://fluent2.microsoft.design/typography) 和 [Windows 导航](https://learn.microsoft.com/en-us/windows/apps/design/controls/navigationview)。使用 Segoe 系系统字体、白色内容底、冷调侧栏与工具栏、选中短条、小圆角控件与底缘聚焦反馈。侧栏的色阶是网页层次表达，应用结构与控件沿用 Stylebook。菜单标识参考 [Windows 11 标志](https://commons.wikimedia.org/wiki/File:Windows_11_logo.svg) 的四格图形。

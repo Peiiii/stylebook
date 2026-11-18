@@ -210,7 +210,7 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   await trigger.focus();
   await page.keyboard.press("Enter");
   const menu = page.getByRole("menu", { name: "切换主题" });
-  await expect(menu.getByRole("menuitemradio")).toHaveCount(7);
+  await expect(menu.getByRole("menuitemradio")).toHaveCount(8);
   await expect(
     menu.getByRole("menuitemradio", { name: "shadcn 默认" }),
   ).toHaveAttribute("aria-checked", "true");
@@ -263,6 +263,16 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", "ios");
   await expect(search).toHaveValue("验收");
   const row = app.getByRole("row").filter({ hasText: "验收项目" });
+  await expect(row).toContainText("计划中");
+  await selectTheme(page, "Windows 11");
+  await expect(app.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "fluent",
+  );
+  await expect(app.getByRole("columnheader", { name: "状态" })).toHaveCSS(
+    "background-color",
+    "rgb(245, 247, 251)",
+  );
   await expect(row).toContainText("计划中");
   await selectTheme(page, "Ant Design");
   await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", "ant");

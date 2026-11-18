@@ -15,6 +15,7 @@ const themeLogos = {
   shadcn: "shadcn",
   material: "material",
   ios: "apple",
+  fluent: "windows",
   ant: "ant",
   chatgpt: "chatgpt",
   claude: "claude",

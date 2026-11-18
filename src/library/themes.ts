@@ -15,6 +15,11 @@ export const themes = [
     description: "白色内容画布、胶囊操作与轻透导航。",
   },
   {
+    id: "fluent",
+    label: "Windows 11",
+    description: "Fluent 2 风格，冷调分层、桌面工具栏与蓝色导航指示条。",
+  },
+  {
     id: "ant",
     label: "Ant Design",
     description: "深色导航、白色内容区与紧凑的数据界面。",

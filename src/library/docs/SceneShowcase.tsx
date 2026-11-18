@@ -310,7 +310,10 @@ export function SceneShowcase() {
         </div>
       </aside>
       <main className="min-w-0 p-3 sm:p-6 lg:p-8">
-        <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <header
+          data-slot="workspace-header"
+          className="mb-6 flex flex-wrap items-end justify-between gap-4"
+        >
           <div>
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {currentPage.label}
