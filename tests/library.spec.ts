@@ -7,16 +7,18 @@ test("navigate the library, persist theme, download actual component source", as
   await expect(
     page.getByRole("heading", { name: "按钮 button" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "保存修改" }).click();
-  await expect(page.getByRole("status")).toHaveText("修改已保存");
+  await expect(page.getByLabel("当前风格")).toHaveValue("shadcn");
+  await expect(
+    page.getByRole("button", { name: "Button", exact: true }),
+  ).toBeVisible();
   await page.getByLabel("当前风格").selectOption("paper");
   await page.getByLabel("搜索组件").fill("dialog");
   await page.getByRole("link", { name: "对话框 dialog" }).click();
   await page.reload();
   await expect(page.getByLabel("当前风格")).toHaveValue("paper");
-  const trigger = page.getByRole("button", { name: "打开对话框" });
+  const trigger = page.getByRole("button", { name: "Open Dialog" });
   await trigger.click();
-  await expect(page.getByRole("dialog")).toHaveAccessibleName("项目设置");
+  await expect(page.getByRole("dialog")).toHaveAccessibleName("Edit profile");
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
   await page.getByRole("link", { name: "源码", exact: true }).click();
@@ -24,6 +26,10 @@ test("navigate the library, persist theme, download actual component source", as
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "下载当前文件" }).click();
   expect((await download).suggestedFilename()).toBe("dialog.tsx");
+  await page
+    .getByLabel("选择源码文件")
+    .selectOption("./examples/dialog-demo.tsx");
+  await expect(page.locator(".lib-code")).toContainText("Open Dialog");
 });
 
 test("templates use the chosen theme and remain usable at 390px", async ({

@@ -1,8 +1,7 @@
-@layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss";
 @import "tw-animate-css";
 @source "./ui";
+@source "./examples";
 @custom-variant dark (&:is(.dark *));
 @theme inline {
   --color-background: var(--kit-bg);
@@ -12,18 +11,19 @@
   --color-primary: var(--kit-primary);
   --color-primary-foreground: var(--kit-on-primary);
   --color-secondary: var(--kit-secondary);
-  --color-secondary-foreground: var(--kit-fg);
+  --color-secondary-foreground: var(--secondary-foreground, var(--kit-fg));
   --color-muted: var(--kit-secondary);
   --color-muted-foreground: var(--kit-muted);
   --color-accent: var(--kit-secondary);
-  --color-accent-foreground: var(--kit-fg);
-  --color-destructive: #b73546;
-  --color-input: var(--kit-border);
+  --color-accent-foreground: var(--accent-foreground, var(--kit-fg));
+  --color-destructive: var(--destructive, #b73546);
+  --color-input: var(--input, var(--kit-border));
   --color-border: var(--kit-border);
-  --color-ring: var(--kit-primary);
-  --radius-md: var(--kit-radius);
-  --radius-lg: calc(var(--kit-radius) + 2px);
-  --radius-xl: calc(var(--kit-radius) + 5px);
+  --color-ring: var(--ring, var(--kit-primary));
+  --radius-sm: calc(var(--radius, var(--kit-radius)) * 0.6);
+  --radius-md: calc(var(--radius, var(--kit-radius)) * 0.8);
+  --radius-lg: var(--radius, calc(var(--kit-radius) + 2px));
+  --radius-xl: calc(var(--radius, var(--kit-radius)) * 1.4);
 }
 [data-atlas-theme] {
   --kit-bg: #f5f7fb;
@@ -52,7 +52,8 @@
   --kit-shadow: 0 7px 23px #6e3e2212;
   --kit-heading: Georgia, "Songti SC", serif;
 }
-[data-atlas-theme] :is([data-slot="card"], [data-slot="dialog-content"]) {
+[data-atlas-theme]:not([data-atlas-theme="shadcn"])
+  :is([data-slot="card"], [data-slot="dialog-content"]) {
   color: var(--kit-fg);
   box-shadow: var(--kit-shadow);
   border: 1px solid var(--kit-border);
@@ -81,13 +82,43 @@
   cursor: pointer;
 }
 
+[data-atlas-theme="shadcn"] {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0% 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0% 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0% 0 0);
+  --primary: oklch(0% 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.97 0.01 17);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  --kit-bg: var(--background);
+  --kit-fg: var(--foreground);
+  --kit-card: var(--card);
+  --kit-primary: var(--primary);
+  --kit-on-primary: var(--primary-foreground);
+  --kit-secondary: var(--secondary);
+  --kit-muted: var(--muted-foreground);
+  --kit-border: var(--border);
+  --kit-radius: var(--radius);
+}
 @layer base {
-  [data-atlas-theme] :is(button, input, [data-slot]) {
-    box-sizing: border-box;
-    border: 0 solid var(--kit-border);
+  [data-atlas-theme] {
+    @apply border-border text-foreground;
   }
-  [data-atlas-theme] :is(button, input) {
-    background-color: transparent;
-    font: inherit;
+  [data-atlas-theme] * {
+    @apply border-border;
   }
 }

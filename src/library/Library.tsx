@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   ArrowDownToLine,
   ArrowUpRight,
@@ -8,28 +8,14 @@ import {
   LayoutTemplate,
   Search,
 } from "lucide-react";
-import { catalog } from "../catalog/store";
+import { route } from "./route";
 import { CopyButton } from "../components/Clipboard";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Switch } from "./ui/switch";
+import ButtonDemo from "./examples/button-demo";
+import InputDemo from "./examples/input-demo";
+import SwitchDemo from "./examples/switch-demo";
+import CardDemo from "./examples/card-demo";
+import BadgeDemo from "./examples/badge-demo";
+import DialogDemo from "./examples/dialog-demo";
 import { Dashboard, Settings } from "./Templates";
 import "./theme.css";
 import "./library.css";
@@ -81,8 +67,13 @@ const components = [
     usage:
       "<Dialog>\n  <DialogTrigger asChild><Button>打开</Button></DialogTrigger>\n  <DialogContent>\n    <DialogTitle>项目设置</DialogTitle>\n    <DialogDescription>更新项目名称与说明。</DialogDescription>\n  </DialogContent>\n</Dialog>",
   },
-];
+] as const;
 const themes = [
+  {
+    id: "shadcn",
+    name: "shadcn 默认",
+    description: "使用 shadcn/ui 文档的默认中性色与圆角。",
+  },
   {
     id: "blueprint",
     name: "蓝图",
@@ -111,6 +102,7 @@ const templates = [
 const files = import.meta.glob(
   [
     "./ui/*.tsx",
+    "./examples/*.tsx",
     "./ui/cn.ts",
     "./ui/LICENSE.md",
     "./theme.css",
@@ -130,8 +122,8 @@ function SourceFiles({ paths, use }: { paths: string[]; use: string }) {
       <h2>源码与使用</h2>
       <p>
         在 React 项目安装依赖，启用 Tailwind CSS v4。按下方路径保存文件并导入
-        theme.css，在根节点设置 <code>data-atlas-theme="blueprint"</code> 或{" "}
-        <code>"paper"</code>。
+        theme.css，在根节点设置 <code>data-atlas-theme</code> 为{" "}
+        <code>shadcn</code>、<code>blueprint</code> 或 <code>paper</code>。
       </p>
       <pre>{deps}</pre>
       {use && <pre>{use}</pre>}
@@ -161,88 +153,32 @@ function SourceFiles({ paths, use }: { paths: string[]; use: string }) {
   );
 }
 
-function Specimen({ id }: { id: string }) {
-  const [on, setOn] = useState(true);
-  const [pressed, setPressed] = useState(false);
-  if (id === "button")
-    return (
-      <div className="specimen-stack">
-        <div className="specimen-buttons">
-          <Button onClick={() => setPressed(true)}>保存修改</Button>
-          <Button variant="outline" onClick={() => setPressed(false)}>
-            还原
-          </Button>
-          <Button disabled>不可用</Button>
-        </div>
-        <p role="status">{pressed ? "修改已保存" : "点击主要按钮查看反馈"}</p>
-      </div>
-    );
-  if (id === "input")
-    return (
-      <label className="kit-label specimen-input">
-        邮箱地址
-        <Input type="email" placeholder="you@example.com" />
-      </label>
-    );
-  if (id === "switch")
-    return (
-      <div className="kit-setting specimen-input">
-        <label htmlFor="preview-switch">
-          项目通知<small>{on ? "已开启通知" : "已暂停通知"}</small>
-        </label>
-        <Switch id="preview-switch" checked={on} onCheckedChange={setOn} />
-      </div>
-    );
-  if (id === "badge")
-    return (
-      <div className="specimen-buttons">
-        <Badge>已完成</Badge>
-        <Badge variant="secondary">进行中</Badge>
-        <Badge variant="outline">待确认</Badge>
-      </div>
-    );
-  if (id === "card")
-    return (
-      <Card className="w-full max-w-xs">
-        <CardHeader>
-          <CardTitle>产品文档</CardTitle>
-          <CardDescription>发布前复核内容与链接。</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Badge variant="secondary">进行中</Badge>
-        </CardContent>
-        <CardFooter>下一次复核 · 周五</CardFooter>
-      </Card>
-    );
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>打开对话框</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>项目设置</DialogTitle>
-        <DialogDescription>更新项目名称与说明。</DialogDescription>
-        <label className="kit-label">
-          项目名称
-          <Input defaultValue="Studio North" />
-        </label>
-        <DialogClose asChild>
-          <Button variant="outline">关闭</Button>
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
-  );
-}
+const demos = {
+  button: ButtonDemo,
+  input: InputDemo,
+  switch: SwitchDemo,
+  card: CardDemo,
+  badge: BadgeDemo,
+  dialog: DialogDemo,
+};
+const demoDependencies: Partial<Record<keyof typeof demos, string[]>> = {
+  switch: ["label"],
+  card: ["button", "input", "label"],
+  dialog: ["button", "input", "label"],
+};
 
 export function Library() {
-  const area = catalog.get("view", "components");
-  const theme = catalog.get("theme") === "paper" ? "paper" : "blueprint";
+  useSyncExternalStore(route.subscribe, route.snapshot);
+
+  const area = route.get("view", "components");
+  const theme = themes.find((t) => t.id === route.get("theme"))?.id ?? "shadcn";
   const picked =
-    components.find((c) => c.id === catalog.get("component")) ?? components[0];
+    components.find((c) => c.id === route.get("component")) ?? components[0];
+  const Demo = demos[picked.id];
   const template =
-    templates.find((t) => t.id === catalog.get("template")) ?? templates[0];
+    templates.find((t) => t.id === route.get("template")) ?? templates[0];
   const [query, setQuery] = useState("");
-  const codeOpen = catalog.get("tab") === "code";
+  const codeOpen = route.get("tab") === "code";
   useEffect(() => {
     document.documentElement.dataset.atlasTheme = theme;
     return () => {
@@ -250,10 +186,11 @@ export function Library() {
     };
   }, [theme]);
   const choose = (values: Record<string, string>) =>
-    catalog.link({ view: area, theme, tab: "", ...values });
+    route.link({ view: area, theme, tab: "", ...values });
   const componentPaths = [
     `./ui/${picked.id}.tsx`,
-    ...(picked.id === "dialog" ? ["./ui/button.tsx"] : []),
+    `./examples/${picked.id}-demo.tsx`,
+    ...(demoDependencies[picked.id] ?? []).map((id) => `./ui/${id}.tsx`),
     "./ui/cn.ts",
     "./theme.css",
     "./ui/LICENSE.md",
@@ -304,7 +241,7 @@ export function Library() {
           <select
             aria-label="当前风格"
             value={theme}
-            onChange={(e) => catalog.patch({ theme: e.target.value })}
+            onChange={(e) => route.patch({ theme: e.target.value })}
           >
             {themes.map((t) => (
               <option key={t.id} value={t.id}>
@@ -328,7 +265,7 @@ export function Library() {
               onChange={(e) => {
                 setQuery(e.target.value);
                 if (area !== "components")
-                  catalog.patch({ view: "components", tab: null });
+                  route.patch({ view: "components", tab: null });
               }}
             />
           </label>
@@ -387,10 +324,7 @@ export function Library() {
             <>
               <div className="lib-heading">
                 <h1>风格体系</h1>
-                <p>
-                  同一套组件
-                  API，两套视觉体系。选择风格后，组件与页面模板同步切换。
-                </p>
+                <p>同一套 shadcn 组件。选择风格后，组件与页面模板同步切换。</p>
               </div>
               <div className="lib-styles">
                 {themes.map((t) => (
@@ -399,8 +333,8 @@ export function Library() {
                       className="atlas-kit lib-style-preview"
                       data-atlas-theme={t.id}
                     >
-                      <Specimen id="card" />
-                      <Specimen id="badge" />
+                      <ButtonDemo />
+                      <BadgeDemo />
                     </div>
                     <div className="lib-style-meta">
                       <h2>{t.name}</h2>
@@ -466,18 +400,36 @@ export function Library() {
               ) : (
                 <>
                   <div
-                    className={`atlas-kit ${area === "templates" ? "kit-template" : "lib-specimen"}`}
+                    data-slot={
+                      area === "templates" ? undefined : "component-preview"
+                    }
+                    className={`atlas-kit ${area === "templates" ? "kit-template" : "group relative flex flex-col overflow-hidden rounded-2xl border bg-background"}`}
                   >
                     {area === "templates" ? (
                       <template.Page key={template.id} />
                     ) : (
-                      <Specimen id={picked.id} key={picked.id} />
+                      <div
+                        data-slot="preview"
+                        data-align="center"
+                        className="preview relative flex min-h-72 w-full justify-center p-6 data-[align=center]:items-center sm:p-10"
+                        key={picked.id}
+                        onSubmit={(event) => event.preventDefault()}
+                        onClick={(event) => {
+                          if (
+                            event.target instanceof Element &&
+                            event.target.closest('a[href="#"]')
+                          )
+                            event.preventDefault();
+                        }}
+                      >
+                        <Demo />
+                      </div>
                     )}
                   </div>
                   {area !== "templates" && (
                     <section className="lib-use">
-                      <h2>使用方法</h2>
-                      <pre>{picked.usage}</pre>
+                      <h2>示例源码</h2>
+                      <pre>{files[`./examples/${picked.id}-demo.tsx`]}</pre>
                     </section>
                   )}
                 </>
