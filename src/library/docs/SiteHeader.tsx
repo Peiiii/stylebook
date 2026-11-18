@@ -13,18 +13,20 @@ import {
 import type { DocGroup } from "./DocsSidebar";
 import { MainNav } from "./MainNav";
 import { CommandMenu } from "./CommandMenu";
+import { ThemePicker } from "./ThemePicker";
+import type { AtlasTheme } from "../themes";
 
 export function SiteHeader({
   items,
   groups,
-  themes,
   theme,
+  themesHref,
   onTheme,
 }: {
   items: React.ComponentProps<typeof MainNav>["items"];
   groups: DocGroup[];
-  themes: { id: string; label: string }[];
-  theme: string;
+  theme: AtlasTheme;
+  themesHref: string;
   onTheme: (value: string) => void;
 }) {
   return (
@@ -80,26 +82,21 @@ export function SiteHeader({
           />
           <div className="ml-auto flex items-center gap-1 sm:gap-2 md:flex-1 md:justify-end">
             <CommandMenu groups={groups} />
-            <label className="sr-only" htmlFor="atlas-theme">
-              主题
-            </label>
-            <select
-              id="atlas-theme"
-              value={theme}
-              onChange={(e) => onTheme(e.target.value)}
-              className="max-w-28 rounded-md sm:max-w-36 border bg-background px-2 py-1 text-sm"
-            >
-              {themes.map((entry) => (
-                <option key={entry.id} value={entry.id}>
-                  {entry.label}
-                </option>
-              ))}
-            </select>
+            <ThemePicker
+              theme={theme}
+              onTheme={onTheme}
+              themesHref={themesHref}
+            />
             <Separator
               orientation="vertical"
               className="mx-1 hidden sm:block"
             />
-            <Button asChild variant="ghost" size="icon-sm">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-sm"
+              className="hidden min-[360px]:inline-flex"
+            >
               <a
                 href="https://github.com/Peiiii/ui-atlas"
                 aria-label="GitHub"

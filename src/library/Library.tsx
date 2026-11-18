@@ -12,12 +12,10 @@ import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
 import "./theme.css";
 import "./docs/styles.css";
+import "./themes.css";
+import { themeGroups, themes } from "./themes";
+import { ThemeSwatch } from "./docs/ThemePicker";
 
-const themes = [
-  { id: "shadcn", label: "shadcn 默认" },
-  { id: "blueprint", label: "蓝图" },
-  { id: "paper", label: "暖纸" },
-];
 const views = [
   { id: "components", label: "组件" },
   { id: "showcase", label: "组件总览" },
@@ -76,8 +74,10 @@ export function Library() {
   const item =
     registry.components.find((entry) => entry.id === route.get("component")) ??
     registry.components[0];
-  const theme =
-    themes.find((entry) => entry.id === route.get("theme"))?.id ?? "shadcn";
+  const selectedTheme =
+    themes.find((entry) => entry.id === route.get("theme")) ?? themes[0];
+  const theme = selectedTheme.id;
+  const colorMode = theme === "dark" ? "dark" : "light";
   const Block = blocks[block.id];
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
@@ -143,7 +143,11 @@ export function Library() {
   ];
   if (view === "full")
     return (
-      <ThemeProvider forcedTheme="light" enableSystem={false}>
+      <ThemeProvider
+        forcedTheme={colorMode}
+        attribute="class"
+        enableSystem={false}
+      >
         <main
           data-slot="block-preview"
           onSubmit={(event) => event.preventDefault()}
@@ -165,13 +169,17 @@ export function Library() {
   const listing = componentGroups.flatMap((group) => group.pages);
   const index = listing.findIndex((entry) => entry.id === item.id);
   return (
-    <ThemeProvider forcedTheme="light" enableSystem={false}>
+    <ThemeProvider
+      forcedTheme={colorMode}
+      attribute="class"
+      enableSystem={false}
+    >
       <Toaster />
       <SiteHeader
         items={navItems}
         groups={groups}
-        themes={themes}
-        theme={theme}
+        theme={selectedTheme}
+        themesHref={choose({ view: "themes" })}
         onTheme={(value) => route.patch({ theme: value })}
       />
       {blockView ? (
@@ -185,7 +193,7 @@ export function Library() {
         />
       ) : view === "showcase" ? (
         <Showcase
-          theme={themes.find((entry) => entry.id === theme)!.label}
+          theme={selectedTheme.label}
           groups={componentGroups.map((group, index) => ({
             id: `showcase-group-${index}`,
             name: group.name,
@@ -214,27 +222,30 @@ export function Library() {
               description="为同一套 shadcn 组件切换不同视觉风格。"
               sections={[]}
             >
-              <div className="grid gap-4 sm:grid-cols-3">
-                {themes.map((entry) => (
-                  <div
-                    key={entry.id}
-                    data-atlas-theme={entry.id}
-                    className="rounded-xl border bg-background p-4 text-foreground"
-                  >
-                    <h2 className="mb-4 text-sm font-semibold">
-                      {entry.label}
-                    </h2>
-                    <Button
-                      asChild
-                      variant={theme === entry.id ? "default" : "outline"}
-                    >
-                      <a href={choose({ view: "showcase", theme: entry.id })}>
-                        查看组件总览
-                      </a>
-                    </Button>
+              {themeGroups.map((group) => (
+                <section key={group.label} className="mb-5">
+                  <h2 className="mb-2 text-sm font-semibold">{group.label}</h2>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {group.themes.map((entry) => (
+                      <Button
+                        key={entry.id}
+                        asChild
+                        variant="outline"
+                        className="h-auto min-w-0 justify-start border-border bg-background px-2.5 py-2 text-foreground"
+                        data-atlas-theme={entry.id}
+                      >
+                        <a
+                          href={choose({ view: "showcase", theme: entry.id })}
+                          aria-label={`查看${entry.label}主题的组件总览`}
+                        >
+                          <ThemeSwatch id={entry.id} />
+                          <span className="truncate">{entry.label}</span>
+                        </a>
+                      </Button>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </section>
+              ))}
             </DocPage>
           ) : (
             <DocPage

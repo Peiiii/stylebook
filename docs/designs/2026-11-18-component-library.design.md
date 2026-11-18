@@ -42,3 +42,7 @@ React/Vite 沿用。复用 shadcn/ui Radix 源码，固定到 968d8cb9dc42ae5d52
 ## 组件总览
 
 用户要求同一主题下在一页尽量紧凑地展示全部组件，移除面向浏览者的代码示例。组件总览是独立导航入口，主题卡也直接打开对应总览。继承全站主题选择和现有示例，按四个用途分组，使用两套网格分别排小控件和复杂组件，减少行高由单个大型示例撑开的空白。保留文档详情和页面模板预览，移除源码 UI、原文加载管线和高亮依赖。总览内演示只执行本地交互，沿用 Tooltip 上下文，并提供 Sonner 通知。
+
+## 主题切换
+
+顶栏用现有 shadcn Button 和 DropdownMenu RadioGroup，提供分组、色样和当前项，窄屏通过 Radix 定位及滚动。目录和菜单共用主题清单，主题 ID 仍随 URL 跨组件、模板及独立预览传递。主题库收录固定提交的 24 项官方基础色与强调色、经典 Gray 与 Slate、Neutral 暗色及 UI Atlas 自有的蓝图和暖纸，共 29 项。中性色的默认主题保留原有 shadcn ID。官方 token 来源为 `apps/v4/registry/themes.ts` 和 `apps/v4/public/r/themes/`。暗色同时启用 shadcn 的 dark 组件变体。

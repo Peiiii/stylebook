@@ -18,7 +18,7 @@ export function MainNav({
     <nav className={cn("items-center gap-0", className)} {...props}>
       {items.map((item) => (
         <Button
-          key={item.href}
+          key={item.id}
           variant="ghost"
           asChild
           size="sm"
@@ -27,7 +27,7 @@ export function MainNav({
           <a
             href={item.href}
             aria-current={active === item.id ? "page" : undefined}
-            className="relative items-center"
+            className="relative items-center aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"
           >
             {item.label}
           </a>

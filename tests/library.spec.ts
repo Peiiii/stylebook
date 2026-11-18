@@ -1,5 +1,14 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import registry from "../src/library/registry.json" with { type: "json" };
+
+const themeTrigger = (page: Page) =>
+  page.getByRole("button", { name: "切换主题", exact: true });
+
+async function selectTheme(page: Page, label: string) {
+  await themeTrigger(page).click();
+  await page.getByRole("menuitemradio", { name: label, exact: true }).click();
+  await expect(themeTrigger(page)).toHaveText(label);
+}
 
 test("official docs structure, component interaction and theme", async ({
   page,
@@ -12,11 +21,11 @@ test("official docs structure, component interaction and theme", async ({
   await expect(
     page.locator('[data-slot="sidebar"] a[aria-current="page"]'),
   ).toHaveText("Button");
-  await expect(page.getByLabel("主题")).toHaveValue("shadcn");
-  await page.getByLabel("主题").selectOption("paper");
+  await expect(themeTrigger(page)).toHaveText("shadcn 默认");
+  await selectTheme(page, "暖纸");
   await page.getByRole("link", { name: "Checkbox", exact: true }).click();
   await page.reload();
-  await expect(page.getByLabel("主题")).toHaveValue("paper");
+  await expect(themeTrigger(page)).toHaveText("暖纸");
   const checkbox = page.locator("#terms");
   await checkbox.focus();
   await page.keyboard.press("Space");
@@ -96,7 +105,7 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   await expect(
     page.getByRole("heading", { name: "可折叠侧栏", exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel("主题")).toHaveValue("blueprint");
+  await expect(themeTrigger(page)).toHaveText("蓝图");
   const block = page.frameLocator("iframe");
   await block.getByRole("button", { name: "Toggle Sidebar" }).click();
   await expect(block.getByRole("dialog")).toBeVisible();
@@ -125,7 +134,7 @@ test("showcase renders all components together and keeps one theme", async ({
     "grid-template-columns",
     /^(\S+ ){3}\S+$/,
   );
-  await page.getByLabel("主题").selectOption("paper");
+  await selectTheme(page, "暖纸");
   await expect(page.getByText("暖纸 · 39 个组件")).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
@@ -162,7 +171,7 @@ test("showcase renders all components together and keeps one theme", async ({
   await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
     timeout: 15000,
   });
-  await expect(page.getByLabel("主题")).toHaveValue("paper");
+  await expect(themeTrigger(page)).toHaveText("暖纸");
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
@@ -170,4 +179,39 @@ test("showcase renders all components together and keeps one theme", async ({
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(320);
+});
+
+test("theme menu exposes all presets and updates the block iframe", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto("/#view=blocks&template=login-01");
+  const trigger = themeTrigger(page);
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  const menu = page.getByRole("menu", { name: "切换主题" });
+  await expect(menu.getByRole("menuitemradio")).toHaveCount(29);
+  await expect(
+    menu.getByRole("menuitemradio", { name: "shadcn 默认" }),
+  ).toHaveAttribute("aria-checked", "true");
+  const rect = await menu.boundingBox();
+  expect(rect!.x).toBeGreaterThanOrEqual(0);
+  expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
+  await selectTheme(page, "暗色");
+  const frame = page.frameLocator("iframe");
+  await expect(frame.locator("html")).toHaveClass(/dark/);
+  await selectTheme(page, "翡翠");
+  await expect(frame.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "emerald",
+  );
+  await expect(frame.locator("html")).not.toHaveClass(/dark/);
+  await page.reload();
+  await expect(trigger).toHaveText("翡翠");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "emerald",
+  );
 });
