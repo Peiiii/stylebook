@@ -10,7 +10,7 @@ import { DocPage } from "./docs/DocPage";
 import { BlockViewer } from "./docs/BlockViewer";
 import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
-import { SceneShowcase } from "./docs/SceneShowcase";
+import { scenes } from "./scenes";
 import { SceneViewer } from "./docs/SceneViewer";
 import "./theme.css";
 import "./docs/styles.css";
@@ -84,6 +84,9 @@ export function Library() {
         (route.get("theme") === "glass" ? "ios" : route.get("theme")),
     ) ?? themes[0];
   const theme = selectedTheme.id;
+  const scene =
+    scenes.find((entry) => entry.id === route.get("scene")) ?? scenes[0];
+  const ScenePreview = scene.Preview;
   const Block = blocks[block.id];
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
@@ -157,7 +160,9 @@ export function Library() {
     return (
       <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
         <Toaster />
-        <SceneShowcase />
+        <Suspense fallback={<p className="p-6">正在加载场景…</p>}>
+          <ScenePreview key={scene.id} />
+        </Suspense>
       </ThemeProvider>
     );
 
@@ -205,8 +210,15 @@ export function Library() {
         />
       ) : view === "scene" ? (
         <SceneViewer
+          title={scene.label}
+          cases={scenes.map((entry) => ({
+            label: entry.label,
+            href: choose({ view: "scene", scene: entry.id }),
+            active: entry.id === scene.id,
+          }))}
           href={route.link({
             view: "scene-full",
+            scene: scene.id,
             theme,
             template: null,
             component: null,

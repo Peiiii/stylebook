@@ -20,6 +20,16 @@ export const themes = [
     description: "深色导航、白色内容区与紧凑的数据界面。",
   },
   {
+    id: "chatgpt",
+    label: "ChatGPT",
+    description: "白色画布、胶囊控件与克制的黑白层级。",
+  },
+  {
+    id: "claude",
+    label: "Claude",
+    description: "暖白表面、衬线标题与陶土色操作。",
+  },
+  {
     id: "retro",
     label: "复古",
     description: "纸张底色、衬线字体、粗边框与硬投影。",

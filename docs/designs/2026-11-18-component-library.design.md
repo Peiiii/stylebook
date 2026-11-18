@@ -82,3 +82,9 @@ Material 使用蓝色强调与接近白色的中性表面，按钮采用 full sh
 ### Ant Design 风格
 
 为中文管理后台加入 Ant Design 风格（`ant`）。参考 [Ant Design 设计变量](https://github.com/ant-design/ant-design/blob/master/DESIGN.md) 及 [Table 尺寸](https://ant.design/components/table/)，在现有 shadcn 组件上使用白色画布、紧凑控件、浅灰表头和小圆角。Ant Design 的布局底色与常规容器背景是独立角色，浅灰仅用于表头、悬停等局部层级。青禾工作室采用深色侧栏、下划线筛选和有文字标签的状态色。主操作采用更深的蓝色以保证白字对比。切换风格沿用原有路径并保留场景状态。
+
+### ChatGPT 与 Claude 风格
+
+ChatGPT 参考 [OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) 的中性色与轻量控件语言，采用白色画布、浅灰导航、黑色主操作和胶囊按钮。Claude 参考 [Anthropic 公开品牌配色](https://github.com/anthropics/skills/tree/main/skills/brand-guidelines)，在工作台中用暖白画布、衬线标题、暖色分隔及陶土色操作。两套均为 UI Atlas 的视觉适配，使用现有 shadcn 组件与公共场景，主题切换不重建场景状态。
+
+场景总览通过统一清单登记案例。青禾工作室展示高密度项目应用，Bento「设计手记」展示创作者主页中的非等宽卡片、数据与表单。链接以 `scene` 标识案例，旧链接仍默认进入青禾工作室。案例、预览尺寸和主题复用同一个容器。主题或尺寸切换保留当前案例状态，切换案例从目标案例的初始状态开始。

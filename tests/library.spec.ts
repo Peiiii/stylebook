@@ -210,7 +210,7 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   await trigger.focus();
   await page.keyboard.press("Enter");
   const menu = page.getByRole("menu", { name: "切换主题" });
-  await expect(menu.getByRole("menuitemradio")).toHaveCount(5);
+  await expect(menu.getByRole("menuitemradio")).toHaveCount(7);
   await expect(
     menu.getByRole("menuitemradio", { name: "shadcn 默认" }),
   ).toHaveAttribute("aria-checked", "true");
@@ -278,6 +278,28 @@ test("scene showcase keeps workbench state while switching themes", async ({
     "background-color",
     "rgb(250, 250, 250)",
   );
+  await selectTheme(page, "ChatGPT");
+  await expect(app.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "chatgpt",
+  );
+  await expect(app.getByRole("button", { name: "新建项目" })).toHaveCSS(
+    "border-top-left-radius",
+    "999px",
+  );
+  await selectTheme(page, "Claude");
+  await expect(app.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "claude",
+  );
+  await expect(app.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(250, 249, 245)",
+  );
+  await expect(app.getByRole("heading", { name: "团队项目" })).toHaveCSS(
+    "font-family",
+    /Georgia/,
+  );
   await expect(row).toContainText("计划中");
   await expect(app.getByRole("row")).toHaveCount(2);
   await row.getByRole("button", { name: "更新验收项目的状态" }).click();
@@ -306,4 +328,46 @@ test("scene showcase keeps workbench state while switching themes", async ({
       app.locator("html").evaluate((el) => el.scrollWidth - el.clientWidth),
     )
     .toBe(0);
+});
+
+test("bento case can be selected, themed, and opened on its own", async ({
+  page,
+}) => {
+  await page.goto("/#view=scene&theme=chatgpt");
+  const app = page.frameLocator("iframe");
+  await expect(app.getByRole("heading", { name: "项目工作台" })).toBeVisible();
+  await page
+    .getByRole("link", { name: "Bento · 设计手记", exact: true })
+    .click();
+  await expect(
+    app.getByRole("heading", { name: "从日常里找设计灵感" }),
+  ).toBeVisible();
+  await app.getByRole("button", { name: "收藏手记" }).click();
+  await selectTheme(page, "Claude");
+  await expect(app.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "claude",
+  );
+  await expect(app.getByRole("button", { name: "已收藏" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.getByRole("radio", { name: "手机预览" }).click();
+  await expect
+    .poll(() =>
+      app.locator("html").evaluate((el) => el.scrollWidth - el.clientWidth),
+    )
+    .toBe(0);
+  const opened = page.waitForEvent("popup");
+  await page.getByRole("link", { name: "独立打开" }).click();
+  const full = await opened;
+  await expect(
+    full.getByRole("heading", { name: "从日常里找设计灵感" }),
+  ).toBeVisible();
+  await expect(full.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "claude",
+  );
 });

@@ -12,7 +12,7 @@ class LibraryRoute {
   link = (values: Record<string, string | null>) => {
     const query = this.parameters();
     for (const key of [...query.keys()]) {
-      if (!["view", "component", "template", "theme"].includes(key))
+      if (!["view", "component", "template", "theme", "scene"].includes(key))
         query.delete(key);
     }
     for (const [key, value] of Object.entries(values)) {

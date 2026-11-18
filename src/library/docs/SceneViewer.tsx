@@ -3,7 +3,15 @@ import { ExternalLink, Monitor, Smartphone } from "lucide-react";
 import { Button } from "../ui/button";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
-export function SceneViewer({ href }: { href: string }) {
+export function SceneViewer({
+  href,
+  title,
+  cases,
+}: {
+  href: string;
+  title: string;
+  cases: { label: string; href: string; active: boolean }[];
+}) {
   const frame = useRef<HTMLIFrameElement>(null);
   const [initialHref] = useState(href);
   const [width, setWidth] = useState("desktop");
@@ -25,9 +33,23 @@ export function SceneViewer({ href }: { href: string }) {
   return (
     <main className="container-wrapper min-w-0 px-4 py-6 md:px-8 md:py-8">
       <h1 className="mb-4 text-2xl font-semibold tracking-tight">场景总览</h1>
+      <nav aria-label="演示案例" className="mb-4 flex flex-wrap gap-2">
+        {cases.map((item) => (
+          <Button
+            key={item.label}
+            asChild
+            size="sm"
+            variant={item.active ? "secondary" : "outline"}
+          >
+            <a href={item.href} aria-current={item.active ? "page" : undefined}>
+              {item.label}
+            </a>
+          </Button>
+        ))}
+      </nav>
       <div className="overflow-hidden rounded-xl border">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-card px-3 py-2">
-          <span className="text-sm font-medium">青禾工作室</span>
+          <span className="text-sm font-medium">{title}</span>
           <div className="flex items-center gap-2">
             <ToggleGroup
               type="single"
@@ -57,7 +79,7 @@ export function SceneViewer({ href }: { href: string }) {
           <iframe
             ref={frame}
             src={initialHref}
-            title="青禾工作室应用预览"
+            title={`${title}应用预览`}
             className={
               width === "mobile"
                 ? "mx-auto block h-[min(760px,80svh)] min-h-96 w-full max-w-[390px] border-x bg-background"

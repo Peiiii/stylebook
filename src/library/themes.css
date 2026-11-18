@@ -96,6 +96,46 @@
   --input: #d9d9d9;
 }
 
+[data-atlas-theme="chatgpt"] {
+  --radius: 1rem;
+  --atlas-control-radius: 999px;
+  --atlas-surface-radius: 1.25rem;
+  --atlas-popup-shadow: 0 8px 28px rgb(0 0 0 / 10%);
+  --background: #fff;
+  --foreground: #202020;
+  --card: #fff;
+  --popover: #fff;
+  --primary: #212121;
+  --primary-foreground: #fff;
+  --secondary: #f1f1f1;
+  --muted: #f7f7f7;
+  --muted-foreground: #5d5d5d;
+  --accent: #ebebeb;
+  --border: #e5e5e5;
+  --input: #d6d6d6;
+}
+
+[data-atlas-theme="claude"] {
+  --radius: 0.625rem;
+  --atlas-heading: Georgia, "Songti SC", "Noto Serif CJK SC", "SimSun", serif;
+  --atlas-control-radius: 0.625rem;
+  --atlas-surface-radius: 0.875rem;
+  --atlas-surface-shadow: 0 1px 2px rgb(38 34 25 / 5%);
+  --atlas-popup-shadow: 0 8px 24px rgb(38 34 25 / 12%);
+  --background: #faf9f5;
+  --foreground: #141413;
+  --card: #fff;
+  --popover: #fff;
+  --primary: #a64e36;
+  --primary-foreground: #fff;
+  --secondary: #f0eee6;
+  --muted: #f4f2ec;
+  --muted-foreground: #625f55;
+  --accent: #f0eee6;
+  --border: #e8e6dc;
+  --input: #d4d0c4;
+}
+
 [data-atlas-theme]:not([data-atlas-theme="shadcn"]) {
   --card-foreground: var(--foreground);
   --popover-foreground: var(--foreground);
@@ -635,5 +675,99 @@ html[data-atlas-theme] :is(h1, h2, h3),
     [data-slot="toggle-group-item"][data-state="on"] {
     border-bottom-color: var(--primary);
     color: var(--primary);
+  }
+}
+
+@scope (:is([data-atlas-theme="chatgpt"], [data-atlas-theme="claude"])) to ([data-atlas-theme]) {
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"],
+      [data-slot="dropdown-menu-content"], [data-slot="popover-content"],
+      [data-slot="select-content"]) {
+    background: var(--popover);
+    border-radius: var(--atlas-surface-radius);
+  }
+
+  :is([data-slot="input"], [data-slot="textarea"], [data-slot="input-group"],
+      [data-slot="select-trigger"], [data-variant="outline"][data-size]) {
+    background: var(--card);
+    border-color: var(--input);
+    box-shadow: none;
+  }
+
+  [data-variant="outline"][data-size]:hover {
+    background: var(--accent);
+  }
+
+  :is([data-slot="input"], [data-slot="textarea"], [data-slot="input-group"],
+      [data-slot="select-trigger"]):focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+
+  [data-slot="input-group-control"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"])[aria-invalid="true"],
+  [data-slot="input-group"]:has([aria-invalid="true"]) {
+    border-color: var(--destructive);
+    outline-color: var(--destructive);
+  }
+
+  [data-slot="workspace-sidebar"] nav [aria-current="page"] {
+    background: var(--accent);
+  }
+}
+
+@scope ([data-atlas-theme="chatgpt"]) to ([data-atlas-theme]) {
+  [data-slot="workspace-sidebar"] {
+    background: var(--muted);
+  }
+
+  :is([data-slot="input-group"], [data-slot="textarea"]) {
+    border-radius: 1.25rem;
+  }
+
+  [data-slot="badge"] {
+    border-radius: 999px;
+  }
+
+  [data-slot="table-head"] {
+    color: var(--muted-foreground);
+    font-weight: 500;
+  }
+
+  [data-slot="workspace-sidebar"] nav [data-slot="button"] {
+    border-radius: 0.625rem;
+  }
+}
+
+@scope ([data-atlas-theme="claude"]) to ([data-atlas-theme]) {
+  [data-slot="workspace-sidebar"] {
+    background: #f0eee6;
+  }
+
+  :is([data-slot="dialog-title"], [data-slot="alert-dialog-title"]) {
+    font-family: var(--atlas-heading);
+    font-weight: 500;
+  }
+
+  [data-slot="workspace-sidebar"] nav [aria-current="page"] {
+    background: #e8e6dc;
+  }
+
+  [data-slot="table-head"] {
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  :is([data-slot="input-group"], [data-slot="textarea"]) {
+    border-radius: 0.875rem;
+  }
+
+  [data-slot="badge"][data-variant="secondary"] {
+    background: #f7e9df;
+    color: #763b2b;
   }
 }
