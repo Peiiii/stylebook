@@ -419,7 +419,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
   }
 }
 
-@scope (:is([data-atlas-theme="ios"], [data-atlas-theme="retro"])) to ([data-atlas-theme]) {
+@scope ([data-atlas-theme="retro"]) to ([data-atlas-theme]) {
   :is(
     [data-variant][data-size],
     [data-slot="input"],
@@ -430,5 +430,35 @@ html[data-atlas-theme] :is(h1, h2, h3),
     box-shadow: none;
     outline: 2px solid var(--ring);
     outline-offset: -2px;
+  }
+}
+
+@scope ([data-atlas-theme="ios"]) to ([data-atlas-theme]) {
+  :is(
+    [data-variant][data-size],
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="input-group-control"],
+    [data-slot="select-trigger"]
+  ):focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"]
+  ):focus-visible:not([aria-invalid="true"]) {
+    border-color: transparent;
+  }
+
+  [data-slot="input-group"]:focus-within {
+    outline: none;
+    box-shadow: none;
+  }
+
+  [data-slot="input-group"]:focus-within:not(:has([aria-invalid="true"])) {
+    border-color: var(--input);
   }
 }
