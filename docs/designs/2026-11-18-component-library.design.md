@@ -78,3 +78,7 @@ Material 使用蓝色强调与接近白色的中性表面，按钮采用 full sh
 验收从顶栏或主题页进入。筛选后切换主题，列表与筛选条件应保持一致。新建项目后打开详情、更新状态，核对对应进度与活动。窄屏表格可在自身区域滚动。
 
 场景总览采用 [shadcn Blocks](https://ui.shadcn.com/blocks) 的独立预览容器做法。UI Atlas 内提供桌面与手机尺寸和独立打开入口。预览内部是同一个多页应用，贯通总览、项目、交付日历、活动和设置。切换主题更新预览地址而不重载应用，切换预览尺寸共用同一个实例。独立打开或刷新从初始演示数据开始。
+
+### Ant Design 风格
+
+为中文管理后台加入 Ant Design 风格（`ant`）。参考 [Ant Design 设计变量](https://github.com/ant-design/ant-design/blob/master/DESIGN.md) 及 [Table 尺寸](https://ant.design/components/table/)，在现有 shadcn 组件上使用浅灰画布、白色数据面板、紧凑控件、浅色表头和小圆角。青禾工作室采用深色侧栏、下划线筛选和有文字标签的状态色。主操作采用更深的蓝色以保证白字对比。切换风格沿用原有路径并保留场景状态。

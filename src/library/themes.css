@@ -74,6 +74,28 @@
   --input: #806755;
 }
 
+[data-atlas-theme="ant"] {
+  --radius: 6px;
+  --atlas-font:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --atlas-control-radius: 6px;
+  --atlas-surface-radius: 8px;
+  --atlas-popup-shadow: 0 6px 16px rgb(0 0 0 / 8%), 0 3px 6px rgb(0 0 0 / 8%);
+  --background: #f5f5f5;
+  --foreground: #1f1f1f;
+  --card: #fff;
+  --popover: #fff;
+  --primary: #0958d9;
+  --primary-foreground: #fff;
+  --secondary: #e6f4ff;
+  --muted: #fafafa;
+  --muted-foreground: #595959;
+  --accent: #e6f4ff;
+  --border: #f0f0f0;
+  --input: #d9d9d9;
+}
+
 [data-atlas-theme]:not([data-atlas-theme="shadcn"]) {
   --card-foreground: var(--foreground);
   --popover-foreground: var(--foreground);
@@ -460,5 +482,158 @@ html[data-atlas-theme] :is(h1, h2, h3),
 
   [data-slot="input-group"]:focus-within:not(:has([aria-invalid="true"])) {
     border-color: var(--input);
+  }
+}
+
+@scope ([data-atlas-theme="ant"]) to ([data-atlas-theme]) {
+  :is(
+    [data-slot="input"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"],
+    [data-slot="textarea"]
+  ) {
+    background: var(--card);
+    box-shadow: none;
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"],
+    [data-slot="textarea"]
+  ):focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+
+  [data-slot="input-group-control"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  [data-slot="button"][data-variant="outline"] {
+    border-color: var(--input);
+    background: var(--card);
+    box-shadow: none;
+  }
+
+  :is(
+      [data-slot="button"],
+      [data-slot="dialog-trigger"]
+    )[data-size="default"]:not([data-variant="link"]),
+  :is(
+    [data-slot="input"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"]
+  ):not([data-size="sm"]) {
+    min-height: 32px;
+    height: auto;
+  }
+
+  [data-slot="input-group"]:not(:has(textarea))
+    [data-slot="input-group-control"] {
+    min-height: 30px;
+  }
+
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    border: 0;
+    border-radius: 8px;
+    background: var(--card);
+  }
+
+  [data-slot="dialog-title"] {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  [data-slot="dialog-overlay"] {
+    background: rgb(0 0 0 / 45%);
+  }
+
+  [data-slot="table-container"] {
+    border-radius: 8px 8px 0 0;
+    background: var(--card);
+  }
+
+  [data-slot="table-head"] {
+    height: 36px;
+    padding-inline: 12px;
+    background: #fafafa;
+    font-weight: 600;
+  }
+
+  [data-slot="table-cell"] {
+    padding: 6px 12px;
+  }
+
+  [data-slot="table-row"]:hover {
+    background: #f5f5f5;
+  }
+
+  [data-slot="badge"] {
+    border-radius: 4px;
+  }
+
+  [data-project-status="计划中"] {
+    color: #594214;
+    background: #fffbe6;
+    border-color: #ffe58f;
+  }
+
+  [data-project-status="进行中"] {
+    color: #0958d9;
+    background: #e6f4ff;
+    border-color: #91caff;
+  }
+
+  [data-project-status="已完成"] {
+    color: #237804;
+    background: #f6ffed;
+    border-color: #b7eb8f;
+  }
+
+  [data-slot="workspace-sidebar"] {
+    background: #001529;
+    color: #fff;
+    border-color: rgb(255 255 255 / 16%);
+  }
+
+  [data-slot="workspace-sidebar"] nav button {
+    color: #d9e2eb;
+    border-radius: 6px;
+  }
+
+  [data-slot="workspace-sidebar"] nav button:hover {
+    color: #fff;
+    background: #173453;
+  }
+
+  [data-slot="workspace-sidebar"] nav button[aria-current="page"] {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  [data-slot="workspace-sidebar"] nav button:focus-visible {
+    outline: 2px solid #91caff;
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+
+  [data-workspace-projects] [data-slot="toggle-group"] {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+  }
+
+  [data-workspace-projects] [data-slot="toggle-group-item"] {
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+  }
+
+  [data-workspace-projects]
+    [data-slot="toggle-group-item"][data-state="on"] {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
   }
 }

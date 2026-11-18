@@ -277,7 +277,10 @@ export function SceneShowcase() {
 
   return (
     <div className="grid min-h-svh grid-cols-1 lg:grid-cols-[11rem_minmax(0,1fr)]">
-      <aside className="min-w-0 border-b bg-sidebar px-3 py-3 text-sidebar-foreground lg:sticky lg:top-0 lg:h-svh lg:border-r lg:border-b-0 lg:py-5">
+      <aside
+        data-slot="workspace-sidebar"
+        className="min-w-0 border-b bg-sidebar px-3 py-3 text-sidebar-foreground lg:sticky lg:top-0 lg:h-svh lg:border-r lg:border-b-0 lg:py-5"
+      >
         <div className="mb-3 flex items-center gap-2.5 px-2">
           <div className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
             <Layers3 className="size-4" />
@@ -580,7 +583,7 @@ export function SceneShowcase() {
         )}
 
         {page === "projects" && (
-          <Card className="mb-6 min-w-0 gap-4">
+          <Card data-workspace-projects className="mb-6 min-w-0 gap-4">
             <CardHeader className="flex flex-wrap items-center justify-between gap-3">
               <div className="grid gap-1.5">
                 <CardTitle>团队项目</CardTitle>
@@ -686,6 +689,7 @@ export function SceneShowcase() {
                       </TableCell>
                       <TableCell>
                         <Badge
+                          data-project-status={project.status}
                           variant={
                             project.status === "进行中"
                               ? "secondary"
