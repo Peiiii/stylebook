@@ -20,24 +20,24 @@ import "./theme.css";
 import "./docs/styles.css";
 
 const themes = [
-  { id: "shadcn", label: "shadcn Default" },
-  { id: "blueprint", label: "Blueprint" },
-  { id: "paper", label: "Warm Paper" },
+  { id: "shadcn", label: "shadcn 默认" },
+  { id: "blueprint", label: "蓝图" },
+  { id: "paper", label: "暖纸" },
 ];
 const views = [
-  { id: "components", label: "Components" },
-  { id: "blocks", label: "Blocks" },
-  { id: "themes", label: "Themes" },
+  { id: "components", label: "组件" },
+  { id: "blocks", label: "页面模板" },
+  { id: "themes", label: "主题" },
 ];
 const blockLabels: Record<string, { label: string; description: string }> = {
-  "login-01": { label: "Login", description: "A simple login form." },
+  "login-01": { label: "登录页", description: "包含表单与登录操作的页面。" },
   "sidebar-07": {
-    label: "Collapsible Sidebar",
-    description: "A sidebar that collapses to icons.",
+    label: "可折叠侧栏",
+    description: "侧栏可以收起为图标，保留主要导航。",
   },
   "dashboard-01": {
-    label: "Dashboard",
-    description: "A dashboard with sidebar, charts and data table.",
+    label: "仪表盘",
+    description: "包含侧栏、指标卡片、图表和数据表格的工作台。",
   },
 };
 const files = import.meta.glob<string>(
@@ -99,9 +99,8 @@ function PreviewSource({
   maxLines?: number;
 }) {
   const result = useSourceFile(file);
-  if (result?.failed)
-    return <p className="p-4 text-sm">The source file could not load.</p>;
-  if (!result) return <p className="p-4 text-sm">Loading source…</p>;
+  if (result?.failed) return <p className="p-4 text-sm">源码文件加载失败。</p>;
+  if (!result) return <p className="p-4 text-sm">正在加载源码…</p>;
   return (
     <ComponentSource
       code={result.content!}
@@ -119,7 +118,7 @@ function SourceFiles({ paths }: { paths: string[] }) {
     <div className="mt-4 min-w-0 rounded-xl border">
       <div className="flex items-center gap-2 border-b p-2">
         <select
-          aria-label="Source file"
+          aria-label="源码文件"
           value={file}
           onChange={(event) => setFile(event.target.value)}
           className="min-w-0 flex-1 rounded-md border bg-background p-2 text-sm"
@@ -133,7 +132,7 @@ function SourceFiles({ paths }: { paths: string[] }) {
         {content !== undefined && (
           <Button asChild variant="ghost" size="icon-sm">
             <a
-              aria-label="Download source"
+              aria-label="下载源码"
               href={`data:text/plain;charset=utf-8,${encodeURIComponent(content)}`}
               download={file.split("/").at(-1)}
             >
@@ -150,9 +149,7 @@ function SourceFiles({ paths }: { paths: string[] }) {
         />
       ) : (
         <p className="p-4 text-sm">
-          {result?.failed
-            ? "The source file could not load."
-            : "Loading source…"}
+          {result?.failed ? "源码文件加载失败。" : "正在加载源码…"}
         </p>
       )}
     </div>
@@ -210,14 +207,15 @@ export function Library() {
           .filter((entry) => entry.group === group)
           .map((entry) => ({
             id: entry.id,
-            name: entry.title,
+            name: entry.zh.title,
+            keywords: [entry.title],
             href: choose({ view: "components", component: entry.id }),
             active: view === "components" && item.id === entry.id,
           })),
       }),
     ),
     {
-      name: "Blocks",
+      name: "页面模板",
       pages: registry.blocks.map((entry) => ({
         id: entry.id,
         name: blockLabels[entry.id].label,
@@ -226,11 +224,11 @@ export function Library() {
       })),
     },
     {
-      name: "Themes",
+      name: "主题",
       pages: [
         {
           id: "themes",
-          name: "Theme presets",
+          name: "主题预设",
           href: choose({ view: "themes" }),
           active: view === "themes",
         },
@@ -251,7 +249,7 @@ export function Library() {
               event.preventDefault();
           }}
         >
-          <Suspense fallback={<p className="p-6">Loading block…</p>}>
+          <Suspense fallback={<p className="p-6">正在加载页面模板…</p>}>
             <Block key={block.id} />
           </Suspense>
         </main>
@@ -276,7 +274,7 @@ export function Library() {
           description={blockLabels[block.id].description}
           id={block.id}
           href={choose({ view: "full", template: block.id })}
-          links={groups.find((group) => group.name === "Blocks")!.pages}
+          links={groups.find((group) => group.name === "页面模板")!.pages}
           source={
             <SourceFiles
               key={block.id}
@@ -288,8 +286,8 @@ export function Library() {
         <DocsLayout groups={groups}>
           {view === "themes" ? (
             <DocPage
-              title="Themes"
-              description="Use the same shadcn components across different visual systems."
+              title="主题"
+              description="为同一套 shadcn 组件切换不同视觉风格。"
               sections={[]}
             >
               <div className="grid gap-4 sm:grid-cols-3">
@@ -307,7 +305,7 @@ export function Library() {
                       variant={theme === entry.id ? "default" : "outline"}
                     >
                       <a href={choose({ theme: entry.id })}>
-                        {theme === entry.id ? "Selected" : "Select theme"}
+                        {theme === entry.id ? "当前主题" : "使用此主题"}
                       </a>
                     </Button>
                   </div>
@@ -316,20 +314,20 @@ export function Library() {
             </DocPage>
           ) : (
             <DocPage
-              title={item.title}
-              description={item.description}
+              title={item.zh.title}
+              description={item.zh.description}
               previous={listing[index - 1]}
               next={listing[index + 1]}
               sections={[
-                { id: "preview", label: "Preview" },
-                { id: "source", label: "Source files" },
+                { id: "preview", label: "预览" },
+                { id: "source", label: "源码文件" },
               ]}
             >
               <section id="preview" className="scroll-mt-20">
                 <ComponentPreviewTabs
                   key={item.id}
                   component={
-                    <Suspense fallback={<p>Loading preview…</p>}>
+                    <Suspense fallback={<p>正在加载预览…</p>}>
                       <Example />
                     </Suspense>
                   }
@@ -341,10 +339,10 @@ export function Library() {
               </section>
               <section id="source" className="mt-8 scroll-mt-20">
                 <h2 className="text-xl font-semibold tracking-tight">
-                  Source files
+                  源码文件
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Copy the implementation and dependencies into your project.
+                  将组件实现和所需依赖复制到你的项目。
                 </p>
                 <SourceFiles
                   key={viewKey}

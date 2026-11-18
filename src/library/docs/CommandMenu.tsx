@@ -48,11 +48,11 @@ export function CommandMenu({ groups }: { groups: DocGroup[] }) {
         <Button
           variant="outline"
           className="relative h-8 shrink-0 justify-start rounded-lg border-none bg-muted px-2 text-foreground shadow-none transition-colors hover:bg-muted/50 md:w-48 md:px-3 lg:w-40 xl:w-64"
-          aria-label="Search documentation"
+          aria-label="搜索文档"
         >
           <SearchIcon className="md:hidden" />
-          <span className="hidden xl:inline-flex">Search documentation...</span>
-          <span className="hidden md:inline-flex xl:hidden">Search...</span>
+          <span className="hidden xl:inline-flex">搜索文档…</span>
+          <span className="hidden md:inline-flex xl:hidden">搜索…</span>
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -60,16 +60,14 @@ export function CommandMenu({ groups }: { groups: DocGroup[] }) {
         className="rounded-xl border-none bg-clip-padding p-2 shadow-2xl ring-4 ring-neutral-200/80"
       >
         <DialogHeader className="sr-only">
-          <DialogTitle>Search documentation</DialogTitle>
-          <DialogDescription>
-            Find components, Blocks and theme presets.
-          </DialogDescription>
+          <DialogTitle>搜索文档</DialogTitle>
+          <DialogDescription>查找组件、页面模板和主题预设。</DialogDescription>
         </DialogHeader>
         <Command className="rounded-none bg-transparent **:data-[slot=command-input]:h-9! **:data-[slot=command-input]:py-0 **:data-[slot=command-input-wrapper]:mb-0 **:data-[slot=command-input-wrapper]:h-9! **:data-[slot=command-input-wrapper]:rounded-md **:data-[slot=command-input-wrapper]:border **:data-[slot=command-input-wrapper]:border-input **:data-[slot=command-input-wrapper]:bg-input/50">
-          <CommandInput placeholder="Search documentation..." />
+          <CommandInput placeholder="搜索文档…" />
           <CommandList className="no-scrollbar min-h-60 scroll-pt-2 scroll-pb-1.5">
             <CommandEmpty className="py-12 text-center text-sm text-muted-foreground">
-              No results found.
+              没有找到匹配的结果。
             </CommandEmpty>
             {groups.map((group) => (
               <CommandGroup key={group.name} heading={group.name}>
@@ -77,7 +75,7 @@ export function CommandMenu({ groups }: { groups: DocGroup[] }) {
                   <CommandItem
                     key={page.id}
                     value={page.name}
-                    keywords={[page.id, group.name]}
+                    keywords={[page.id, group.name, ...(page.keywords ?? [])]}
                     className="h-9 rounded-md border border-transparent px-3! font-medium data-[selected=true]:border-input data-[selected=true]:bg-input/50"
                     onSelect={() => {
                       setOpen(false);

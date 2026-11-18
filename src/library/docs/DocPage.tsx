@@ -41,7 +41,7 @@ export function DocPage({
                   >
                     <a
                       href={previous.href}
-                      aria-label={`Previous: ${previous.name}`}
+                      aria-label={`上一篇：${previous.name}`}
                     >
                       <ChevronLeftIcon />
                     </a>
@@ -54,7 +54,7 @@ export function DocPage({
                     size="icon-sm"
                     className="size-8 shadow-none md:size-7"
                   >
-                    <a href={next.href} aria-label={`Next: ${next.name}`}>
+                    <a href={next.href} aria-label={`下一篇：${next.name}`}>
                       <ChevronRightIcon />
                     </a>
                   </Button>
@@ -76,7 +76,7 @@ export function DocPage({
         <div className="h-(--top-spacing) shrink-0" />
         {sections.length > 0 && (
           <div className="flex scroll-fade scrollbar-none flex-col gap-3 overflow-y-auto px-6 pt-8 text-sm">
-            <span className="font-medium">On This Page</span>
+            <span className="font-medium">本页目录</span>
             {sections.map((section) => (
               <a
                 key={section.id}

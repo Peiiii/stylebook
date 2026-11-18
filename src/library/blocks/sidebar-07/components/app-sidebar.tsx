@@ -37,42 +37,42 @@ const data = {
     {
       name: "Acme Inc",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "企业版",
     },
     {
       name: "Acme Corp.",
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: "初创版",
     },
     {
       name: "Evil Corp.",
       logo: Command,
-      plan: "Free",
+      plan: "免费版",
     },
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "试验场",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "历史记录",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "收藏",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "设置",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "模型",
       url: "#",
       icon: Bot,
       items: [
@@ -91,47 +91,47 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "文档",
       url: "#",
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "简介",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "开始使用",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "教程",
           url: "#",
         },
         {
-          title: "Changelog",
+          title: "更新记录",
           url: "#",
         },
       ],
     },
     {
-      title: "Settings",
+      title: "设置",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "通用",
           url: "#",
         },
         {
-          title: "Team",
+          title: "团队",
           url: "#",
         },
         {
-          title: "Billing",
+          title: "账单",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "限额",
           url: "#",
         },
       ],
@@ -139,17 +139,17 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "设计工程",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "销售与市场",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "差旅",
       url: "#",
       icon: Map,
     },

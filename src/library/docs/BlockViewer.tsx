@@ -32,7 +32,7 @@ export function BlockViewer({
       </header>
       <div className="relative mb-6 overflow-hidden">
         <ScrollArea className="max-w-none">
-          <nav className="flex min-w-max items-center" aria-label="Blocks">
+          <nav className="flex min-w-max items-center" aria-label="页面模板">
             {links.map((link) => (
               <a
                 key={link.href}
@@ -56,8 +56,8 @@ export function BlockViewer({
         <div className="flex w-full items-center gap-2 pl-2 md:pr-6">
           <Tabs value={view} onValueChange={setView}>
             <TabsList className="grid h-8! grid-cols-2 items-center rounded-lg p-1 *:data-[slot=tabs-trigger]:h-6 *:data-[slot=tabs-trigger]:rounded-sm *:data-[slot=tabs-trigger]:px-2 *:data-[slot=tabs-trigger]:text-xs">
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
+              <TabsTrigger value="preview">预览</TabsTrigger>
+              <TabsTrigger value="code">源码</TabsTrigger>
             </TabsList>
           </Tabs>
           <Separator orientation="vertical" className="mx-2 h-4!" />
@@ -67,10 +67,10 @@ export function BlockViewer({
             variant="ghost"
             className="ml-auto size-8 rounded-sm p-0"
             asChild
-            title="Open in New Tab"
+            title="在新标签页打开"
           >
             <a href={href} target="_blank" rel="noreferrer">
-              <span className="sr-only">Open in New Tab</span>
+              <span className="sr-only">在新标签页打开</span>
               <Fullscreen />
             </a>
           </Button>
@@ -79,7 +79,7 @@ export function BlockViewer({
           <div className="overflow-hidden rounded-xl border">
             <iframe
               src={href}
-              title={`${title} preview`}
+              title={`${title}预览`}
               height={id === "login-01" ? 600 : 840}
               loading="lazy"
               className="relative z-20 no-scrollbar w-full bg-background"

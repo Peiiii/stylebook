@@ -41,74 +41,74 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "仪表盘",
       url: "#",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
+      title: "生命周期",
       url: "#",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
+      title: "分析",
       url: "#",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
+      title: "项目",
       url: "#",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "团队",
       url: "#",
       icon: IconUsers,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: "采集",
       icon: IconCamera,
       isActive: true,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "进行中的提案",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "已归档",
           url: "#",
         },
       ],
     },
     {
-      title: "Proposal",
+      title: "提案",
       icon: IconFileDescription,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "进行中的提案",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "已归档",
           url: "#",
         },
       ],
     },
     {
-      title: "Prompts",
+      title: "提示词",
       icon: IconFileAi,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "进行中的提案",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "已归档",
           url: "#",
         },
       ],
@@ -116,34 +116,34 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "设置",
       url: "#",
       icon: IconSettings,
     },
     {
-      title: "Get Help",
+      title: "获取帮助",
       url: "#",
       icon: IconHelp,
     },
     {
-      title: "Search",
+      title: "搜索",
       url: "#",
       icon: IconSearch,
     },
   ],
   documents: [
     {
-      name: "Data Library",
+      name: "资料库",
       url: "#",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
+      name: "报告",
       url: "#",
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
+      name: "写作助手",
       url: "#",
       icon: IconFileWord,
     },

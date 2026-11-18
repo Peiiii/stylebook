@@ -37,7 +37,7 @@ export function SiteHeader({
                 variant="ghost"
                 size="icon"
                 className="mr-2 lg:hidden"
-                aria-label="Menu"
+                aria-label="打开导航"
               >
                 <Menu />
               </Button>
@@ -45,7 +45,7 @@ export function SiteHeader({
             <SheetContent side="left" className="overflow-y-auto px-4 py-6">
               <SheetTitle>UI Atlas</SheetTitle>
               <SheetDescription className="sr-only">
-                Components, themes and blocks
+                浏览组件、主题和页面模板。
               </SheetDescription>
               {groups.map((group) => (
                 <div key={group.name} className="grid gap-1">
@@ -76,12 +76,12 @@ export function SiteHeader({
           <MainNav
             items={items}
             className="hidden lg:flex"
-            aria-label="Main navigation"
+            aria-label="主导航"
           />
           <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
             <CommandMenu groups={groups} />
             <label className="sr-only" htmlFor="atlas-theme">
-              Theme
+              主题
             </label>
             <select
               id="atlas-theme"

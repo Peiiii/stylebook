@@ -65,7 +65,7 @@ export function ComponentPreviewTabs({
                 className="relative z-10 rounded-lg bg-background text-foreground shadow-none hover:bg-muted"
                 onClick={() => setIsMobileCodeVisible(true)}
               >
-                View Code
+                查看示例源码
               </Button>
             </div>
           </div>

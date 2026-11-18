@@ -12,7 +12,13 @@ import {
 
 export type DocGroup = {
   name: string;
-  pages: { id: string; name: string; href: string; active: boolean }[];
+  pages: {
+    id: string;
+    name: string;
+    href: string;
+    active: boolean;
+    keywords?: string[];
+  }[];
 };
 
 // Adapted from apps/v4/components/docs-sidebar.tsx. The local registry supplies
