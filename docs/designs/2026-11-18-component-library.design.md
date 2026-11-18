@@ -49,4 +49,16 @@ React/Vite 沿用。复用 shadcn/ui Radix 源码，固定到 968d8cb9dc42ae5d52
 
 ## 风格体系
 
-29 项配色清单已退场。主题选择只呈现 shadcn 默认基准、Material、玻璃拟态和复古。复用 URL 状态、主题菜单、组件和模板。风格规则覆盖字体、控件及容器圆角、边框、投影和浮层；主题页使用实际 shadcn 组件提供并列样本。Material 参考 Material 的圆角与表面层级，代码和交互继续使用 shadcn。旧配色链接回退到默认基准。
+29 项配色清单已退场。主题选择只呈现 shadcn 默认基准、Material、iOS和复古。复用 URL 状态、主题菜单、组件和模板。风格规则覆盖字体、控件及容器圆角、边框、投影和浮层；主题页使用实际 shadcn 组件提供并列样本。Material 参考 Material 的圆角与表面层级，代码和交互继续使用 shadcn。旧配色链接回退到默认基准。
+
+### Material 与展示容器修正
+
+北极星：让组件成为主角，目录包装退后。总览网格保留紧凑多列，以细线、固定小圆角和轻量标题分隔样本，不套用主题 Card 的圆角、底色与阴影；真正的 Card 示例与 Blocks 才体现组件表面风格。简单样本采用一致最小高度，复杂样本按内容扩展，保留原始 shadcn 交互。
+
+Material 使用蓝色强调与接近白色的中性表面，按钮采用 full shape，Outlined Input、Textarea、Select 使用 4px 圆角和清楚的轮廓，不再把字段做成胶囊。Card 采用 12px 圆角、低对比表面，不加常驻重阴影。字体统一使用 Roboto 与本机无衬线回退，不混入 Avenir 标题。参考 [官方色彩角色](https://m3.material.io/styles/color/the-color-system)、[Material Web Button tokens](https://github.com/material-components/material-web/blob/main/tokens/versions/v0_192/_md-comp-filled-button.scss)、[Outlined Text Field tokens](https://github.com/material-components/material-web/blob/main/tokens/versions/v0_192/_md-comp-outlined-text-field.scss)；这是 shadcn 上的风格适配，不宣称实现完整 Material 规范。
+
+验收：打开 Material 总览，表单第一屏能区分强调按钮、轻量容器与字段边界；切换其它风格时目录边框与圆角保持克制，组件外观正常切换；打开 Card 与 Dashboard 验证真实内容容器，桌面、390px 与 200% 缩放无横向溢出。视觉偏好由用户确认，AI 负责实际截图、交互与响应式核验。
+
+### 以明确体系命名
+
+用户纠正：使用有明确来源的品牌或平台体系名称。原 glass 风格改为 iOS（ID `ios`，旧 `glass` 链接映射到 iOS）。使用系统字体、浅灰分组背景、白色内容表面、蓝色操作与绿色开关；内容卡片不做满屏渐变和模糊，半透明材质用于导航和浮层。依据 [Apple HIG Materials](https://developer.apple.com/design/human-interface-guidelines/materials)，这是 shadcn 的 iOS 风格适配，不是原生 UIKit 或完整 Liquid Glass 实现。用户要求后续不再使用子代理。

@@ -221,16 +221,15 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
-  await selectTheme(page, "玻璃拟态");
+  await selectTheme(page, "iOS");
   const frame = page.frameLocator("iframe");
   await expect(frame.locator("html")).toHaveAttribute(
     "data-atlas-theme",
-    "glass",
+    "ios",
   );
-  await expect(frame.locator('[data-slot="card"]').first()).toHaveCSS(
-    "backdrop-filter",
-    /blur/,
-  );
+  await trigger.click();
+  await expect(page.getByRole("menu")).toHaveCSS("backdrop-filter", /blur/);
+  await page.keyboard.press("Escape");
   await selectTheme(page, "Material");
   await expect(frame.locator("html")).toHaveAttribute(
     "data-atlas-theme",

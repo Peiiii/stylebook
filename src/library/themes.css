@@ -11,47 +11,45 @@
 }
 
 [data-atlas-theme="material"] {
-  --radius: 1.2rem;
-  --atlas-font: "Roboto", "Helvetica Neue", sans-serif;
-  --atlas-heading: "Avenir Next", var(--atlas-font);
+  --radius: 0.75rem;
+  --atlas-font: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --atlas-heading: var(--atlas-font);
   --atlas-control-radius: 999px;
-  --atlas-surface-shadow:
-    0 1px 3px rgb(36 25 63 / 14%), 0 4px 12px rgb(36 25 63 / 7%);
-  --atlas-popup-shadow: 0 5px 24px rgb(36 25 63 / 18%);
-  --background: #f7f3fb;
-  --foreground: #211c2a;
-  --card: #eee8f5;
-  --popover: #f1eaf8;
-  --primary: #5e4297;
+  --atlas-surface-radius: 12px;
+  --atlas-popup-shadow: 0 4px 16px rgb(31 31 31 / 12%);
+  --background: #fdfdfd;
+  --foreground: #1f1f1f;
+  --card: #f0f4f9;
+  --popover: #f0f4f9;
+  --primary: #0b57d0;
   --primary-foreground: #fff;
-  --secondary: #e6dcf4;
-  --muted: #ebe4f0;
-  --muted-foreground: #595064;
-  --accent: #e5daf3;
-  --border: #d9cee4;
-  --input: #9b8ca9;
+  --secondary: #d3e3fd;
+  --muted: #f0f4f9;
+  --muted-foreground: #444746;
+  --accent: #e8f0fe;
+  --border: #c4c7c5;
+  --input: #747775;
 }
 
-[data-atlas-theme="glass"] {
-  --radius: 0.95rem;
-  --atlas-font: "Avenir Next", "Segoe UI", sans-serif;
+[data-atlas-theme="ios"] {
+  --radius: 0.75rem;
+  --atlas-font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   --atlas-heading: var(--atlas-font);
-  --atlas-surface-shadow:
-    0 8px 22px rgb(38 65 125 / 12%), inset 0 1px 0 rgb(255 255 255 / 85%);
-  --atlas-control-shadow: 0 2px 6px rgb(38 65 125 / 10%);
-  --atlas-popup-shadow: 0 12px 38px rgb(38 65 125 / 23%);
-  --background: #edf4ff;
-  --foreground: #182c4a;
-  --card: rgb(255 255 255 / 64%);
-  --popover: rgb(249 252 255 / 88%);
-  --primary: #254d99;
+  --atlas-control-radius: 10px;
+  --atlas-surface-radius: 16px;
+  --atlas-popup-shadow: 0 12px 36px rgb(0 0 0 / 14%), inset 0 1px 0 #fff;
+  --background: #f2f2f7;
+  --foreground: #1c1c1e;
+  --card: #fff;
+  --popover: rgb(255 255 255 / 85%);
+  --primary: #0066cc;
   --primary-foreground: #fff;
-  --secondary: #dce9fc;
-  --muted: #e2ebfb;
-  --muted-foreground: #475c78;
-  --accent: #dbe8fe;
-  --border: #b1c5e1;
-  --input: #829bbb;
+  --secondary: #e5e5ea;
+  --muted: #e5e5ea;
+  --muted-foreground: #636366;
+  --accent: #e8f2ff;
+  --border: #d1d1d6;
+  --input: #aeaeb2;
 }
 
 [data-atlas-theme="retro"] {
@@ -105,8 +103,11 @@ html[data-atlas-theme] :is(h1, h2, h3),
 }
 
 @scope ([data-atlas-theme]:not([data-atlas-theme="shadcn"])) to ([data-atlas-theme]) {
+  [data-variant][data-size] {
+    border-radius: var(--atlas-control-radius);
+  }
+
   :is(
-    [data-slot="button"],
     [data-slot="select-trigger"],
     [data-slot="input"],
     [data-slot="textarea"]
@@ -116,7 +117,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
 }
 
 @scope ([data-atlas-theme]:not([data-atlas-theme="shadcn"])) to ([data-atlas-theme]) {
-  :is([data-slot="card"], .showcase-card) {
+  [data-slot="card"] {
     border-radius: var(--atlas-surface-radius);
     box-shadow: var(--atlas-surface-shadow);
   }
@@ -135,54 +136,99 @@ html[data-atlas-theme] :is(h1, h2, h3),
 }
 
 @scope ([data-atlas-theme="material"]) to ([data-atlas-theme]) {
-  :is([data-slot="input"], [data-slot="textarea"]) {
-    border-radius: var(--radius-md);
-    background: var(--muted);
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"]
+  ) {
+    border-radius: 4px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  [data-slot="card"] {
+    border-color: transparent;
+  }
+
+  [data-variant][data-size][data-variant="outline"] {
+    border-color: var(--input);
+    color: var(--primary);
+    background: transparent;
+    box-shadow: none;
+  }
+
+  [data-variant][data-size][data-variant="outline"]:hover {
+    background: var(--accent);
+  }
+
+  [data-variant][data-size="default"],
+  [data-variant][data-size="icon"]:not([data-day]) {
+    min-height: 40px;
+  }
+
+  [data-variant][data-size="icon"]:not([data-day]) {
+    min-width: 40px;
   }
 }
 
-html[data-atlas-theme="glass"] body,
-[data-atlas-theme="glass"].style-specimen {
-  background-image:
-    radial-gradient(ellipse at 0% 0%, #c4d8ff 0, transparent 58%),
-    radial-gradient(ellipse at 100% 28%, #d9cff5 0, transparent 52%),
-    radial-gradient(ellipse at 38% 100%, #c3eaf3 0, transparent 58%);
-  background-size: 100% 100svh;
-  background-attachment: fixed;
-}
-
-@scope ([data-atlas-theme="glass"]) to ([data-atlas-theme]) {
+@scope ([data-atlas-theme="ios"]) to ([data-atlas-theme]) {
   :is(
-    [data-slot="card"],
-    .showcase-card,
     [data-slot="dialog-content"],
     [data-slot="dropdown-menu-content"],
     [data-slot="popover-content"],
     [data-slot="select-content"],
     [data-slot="sheet-content"]
   ) {
-    backdrop-filter: blur(14px) saturate(125%);
+    backdrop-filter: blur(20px) saturate(150%);
+    border-color: rgb(255 255 255 / 70%);
+    border-radius: 16px;
+  }
+
+  header.sticky {
+    background: rgb(242 242 247 / 82%);
+    backdrop-filter: blur(20px) saturate(150%);
+    border-bottom: 1px solid rgb(60 60 67 / 12%);
   }
 }
 
-@scope ([data-atlas-theme="glass"]) to ([data-atlas-theme]) {
+@scope ([data-atlas-theme="ios"]) to ([data-atlas-theme]) {
   :is(
-    [data-slot="button"]:is([data-variant="default"], [data-variant="outline"]),
+    [data-variant][data-size]:is(
+        [data-variant="default"],
+        [data-variant="outline"]
+      ),
     [data-slot="input"],
     [data-slot="select-trigger"]
   ) {
-    box-shadow: var(--atlas-control-shadow);
+    box-shadow: none;
+  }
+
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="select-trigger"] {
+    background: var(--card);
+  }
+
+  [data-variant="outline"][data-size] {
+    color: var(--primary);
+    background: var(--card);
+  }
+
+  [data-slot="switch"][data-state="checked"] {
+    background: #248a3d;
   }
 }
 
 @scope ([data-atlas-theme="retro"]) to ([data-atlas-theme]) {
   :is(
-    [data-slot="button"]:is([data-variant="default"], [data-variant="outline"]),
+    [data-variant][data-size]:is(
+        [data-variant="default"],
+        [data-variant="outline"]
+      ),
     [data-slot="input"],
     [data-slot="textarea"],
     [data-slot="select-trigger"],
     [data-slot="card"],
-    .showcase-card,
     .style-specimen,
     [data-slot="dialog-content"],
     [data-slot="dropdown-menu-content"],
@@ -194,13 +240,16 @@ html[data-atlas-theme="glass"] body,
 }
 
 @scope ([data-atlas-theme="retro"]) to ([data-atlas-theme]) {
-  [data-slot="button"]:is([data-variant="default"], [data-variant="outline"]) {
+  [data-variant][data-size]:is(
+      [data-variant="default"],
+      [data-variant="outline"]
+    ) {
     box-shadow: var(--atlas-control-shadow);
   }
 }
 
 @scope ([data-atlas-theme="retro"]) to ([data-atlas-theme]) {
-  [data-slot="button"]:is(
+  [data-variant][data-size]:is(
       [data-variant="default"],
       [data-variant="outline"]
     ):active {
@@ -225,9 +274,9 @@ html[data-atlas-theme="glass"] body,
   }
 }
 
-@scope (:is([data-atlas-theme="glass"], [data-atlas-theme="retro"])) to ([data-atlas-theme]) {
+@scope (:is([data-atlas-theme="ios"], [data-atlas-theme="retro"])) to ([data-atlas-theme]) {
   :is(
-    [data-slot="button"],
+    [data-variant][data-size],
     [data-slot="input"],
     [data-slot="select-trigger"]
   ):focus-visible {

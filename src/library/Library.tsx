@@ -76,7 +76,11 @@ export function Library() {
     registry.components.find((entry) => entry.id === route.get("component")) ??
     registry.components[0];
   const selectedTheme =
-    themes.find((entry) => entry.id === route.get("theme")) ?? themes[0];
+    themes.find(
+      (entry) =>
+        entry.id ===
+        (route.get("theme") === "glass" ? "ios" : route.get("theme")),
+    ) ?? themes[0];
   const theme = selectedTheme.id;
   const Block = blocks[block.id];
   const Example = examples[item.id];

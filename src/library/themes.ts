@@ -7,17 +7,17 @@ export const themes = [
   {
     id: "material",
     label: "Material",
-    description: "圆润控件、柔和色阶与分层表面。",
+    description: "蓝色强调、中性表面与清晰的控件层级。",
   },
   {
-    id: "glass",
-    label: "玻璃拟态",
-    description: "透光面板、细亮边框与背景模糊。",
+    id: "ios",
+    label: "iOS",
+    description: "系统字体、蓝色操作、分组表面与轻透浮层。",
   },
   {
     id: "retro",
     label: "复古",
-    description: "纸张底色、衬线标题、粗边框与硬投影。",
+    description: "纸张底色、衬线字体、粗边框与硬投影。",
   },
 ] as const;
 

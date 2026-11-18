@@ -1,6 +1,6 @@
 # UI Atlas
 
-UI Atlas 将 shadcn/ui 的组件文档和 Blocks 按需移植到 Vite。顶部使用 shadcn DropdownMenu 切换 shadcn 默认、Material、玻璃拟态和复古。风格通过字体、形状、边框、阴影和表面效果作用于同一套组件、页面模板与独立预览。
+UI Atlas 将 shadcn/ui 的组件文档和 Blocks 按需移植到 Vite。顶部使用 shadcn DropdownMenu 切换 shadcn 默认、Material、iOS和复古。风格通过字体、形状、边框、阴影和表面效果作用于同一套组件、页面模板与独立预览。
 
 ## 运行
 

@@ -4,10 +4,10 @@ UI Atlas 是基于 shadcn/ui 的精选多风格组件库。2026-11-18 用户确�
 
 ## 当前交付
 
-- 直接复用 shadcn/ui 的文档阅读布局、侧栏、主导航、组件预览和源码展示中相关的代码。按本地 React/Vite 环境适配数据及路由。
+- 直接复用 shadcn/ui 的文档阅读布局、侧栏、主导航和组件预览中相关的代码。按本地 React/Vite 环境适配数据及路由，不展示源码示例。
 - 官方 New York Radix 组件及示例 39 项，覆盖常用表单、导航、弹层、反馈和数据展示。
-- 官方 Blocks 采用 Login、Collapsible Sidebar、Dashboard，包含实际预览与可复制源码。
-- shadcn Default、Blueprint 与 Warm Paper 共用原有组件接口。首页与旧版风格目录的历史由 Git 保留。
+- 官方 Blocks 采用 Login、Collapsible Sidebar、Dashboard，包含实际预览。
+- shadcn Default、Material、iOS与复古共用原有组件接口，39 个组件支持单页紧凑总览。目录包装与主题组件样式分离，Material 使用中性表面和蓝色强调。早期版本历史由 Git 保留。
 - 后续按真实场景扩展风格或组件，更新时核对固定上游提交及已移植片段。
 
 [实施与验证记录](designs/2026-11-18-component-library.design.md) · [历史首版设计](designs/2026-11-18-catalog-v0.1.design.md)
