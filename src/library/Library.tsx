@@ -11,6 +11,7 @@ import { BlockViewer } from "./docs/BlockViewer";
 import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
 import { SceneShowcase } from "./docs/SceneShowcase";
+import { SceneViewer } from "./docs/SceneViewer";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
@@ -152,6 +153,14 @@ export function Library() {
       ],
     },
   ];
+  if (view === "scene-full")
+    return (
+      <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
+        <Toaster />
+        <SceneShowcase />
+      </ThemeProvider>
+    );
+
   if (view === "full")
     return (
       <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
@@ -195,7 +204,14 @@ export function Library() {
           links={blockGroup.pages}
         />
       ) : view === "scene" ? (
-        <SceneShowcase />
+        <SceneViewer
+          href={route.link({
+            view: "scene-full",
+            theme,
+            template: null,
+            component: null,
+          })}
+        />
       ) : view === "showcase" ? (
         <Showcase
           theme={selectedTheme.label}

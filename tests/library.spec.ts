@@ -249,23 +249,46 @@ test("scene showcase keeps workbench state while switching themes", async ({
   page,
 }) => {
   await page.goto("/#view=scene");
-  await expect(page.getByRole("heading", { name: "项目工作台" })).toBeVisible();
-  await page.getByRole("button", { name: "新建项目" }).click();
-  await page.getByLabel("项目名称").fill("验收项目");
-  await page.getByRole("button", { name: "创建项目", exact: true }).click();
-  await page.getByRole("radio", { name: "计划中", exact: true }).click();
-  const search = page.getByRole("textbox", { name: "搜索项目" });
+  const app = page.frameLocator("iframe");
+  await expect(app.getByRole("heading", { name: "项目工作台" })).toBeVisible();
+  await app.getByRole("button", { name: "新建项目" }).click();
+  await app.getByLabel("项目名称").fill("验收项目");
+  await app.getByLabel("交付日期").fill("2026-11-20");
+  await app.getByRole("button", { name: "创建项目", exact: true }).click();
+  await app.getByRole("radio", { name: "计划中", exact: true }).click();
+  const search = app.getByRole("textbox", { name: "搜索项目" });
   await search.fill("验收");
 
   await selectTheme(page, "iOS");
-  await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ios");
+  await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", "ios");
   await expect(search).toHaveValue("验收");
-  const row = page.getByRole("row").filter({ hasText: "验收项目" });
+  const row = app.getByRole("row").filter({ hasText: "验收项目" });
   await expect(row).toContainText("计划中");
-  await expect(page.getByRole("row")).toHaveCount(2);
+  await expect(app.getByRole("row")).toHaveCount(2);
   await row.getByRole("button", { name: "更新验收项目的状态" }).click();
-  await page.getByRole("menuitem", { name: "设为已完成" }).click();
-  await expect(page.getByText("没有匹配的项目")).toBeVisible();
-  await page.getByRole("radio", { name: "已完成", exact: true }).click();
+  await app.getByRole("menuitem", { name: "设为已完成" }).click();
+  await expect(app.getByText("没有匹配的项目")).toBeVisible();
+  await app.getByRole("radio", { name: "已完成", exact: true }).click();
   await expect(row).toContainText("100%");
+  const nav = app.getByRole("navigation", { name: "工作室导航" });
+  await nav.getByRole("button", { name: "活动", exact: true }).click();
+  await expect(app.getByText("将「验收项目」设为已完成")).toBeVisible();
+  await nav.getByRole("button", { name: "设置", exact: true }).click();
+  await app.getByLabel("工作室名称").fill("新的工作室");
+  await app.getByRole("button", { name: "保存资料" }).click();
+  await page.getByRole("radio", { name: "手机预览" }).click();
+  await expect(app.locator("aside")).toContainText("新的工作室");
+  await nav.getByRole("button", { name: "交付", exact: true }).click();
+  await expect(app.getByText("交付日历", { exact: true })).toBeVisible();
+  await app.getByRole("button", { name: /2026年11月20日/ }).click();
+  await expect(
+    app.getByRole("list").getByText("验收项目", { exact: true }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 720 });
+  await nav.getByRole("button", { name: "项目", exact: true }).click();
+  await expect
+    .poll(() =>
+      app.locator("html").evaluate((el) => el.scrollWidth - el.clientWidth),
+    )
+    .toBe(0);
 });
