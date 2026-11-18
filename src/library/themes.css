@@ -423,9 +423,12 @@ html[data-atlas-theme] :is(h1, h2, h3),
   :is(
     [data-variant][data-size],
     [data-slot="input"],
+    [data-slot="textarea"],
     [data-slot="select-trigger"]
   ):focus-visible {
+    border-color: transparent;
+    box-shadow: none;
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 }
