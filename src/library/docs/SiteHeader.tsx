@@ -70,9 +70,16 @@ export function SiteHeader({
             </SheetContent>
           </Sheet>
           <a
-            className="mr-2 shrink-0 sm:mr-4 text-sm font-semibold tracking-tight"
+            className="mr-2 inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold tracking-tight sm:mr-4"
             href={items[0].href}
           >
+            <img
+              src={`${import.meta.env.BASE_URL}stylebook-mark.svg`}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 shrink-0"
+            />
             Stylebook
           </a>
           <MainNav

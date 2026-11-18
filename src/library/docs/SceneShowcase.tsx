@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 import {
   Bell,
   FolderKanban,
@@ -10,6 +10,9 @@ import {
   MoreHorizontal,
   Plus,
   Search,
+  ChevronDown,
+  ChevronsUpDown,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -36,6 +39,9 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
@@ -66,6 +72,28 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+  useSidebar,
+} from "../ui/sidebar";
 
 const statuses = ["计划中", "进行中", "已完成"] as const;
 type Status = (typeof statuses)[number];
@@ -184,8 +212,181 @@ const pages = [
   },
 ] as const;
 
+type WorkspacePage = (typeof pages)[number]["id"];
+
+const workspaceGroups = [
+  { label: "工作台", pages: ["overview", "projects"] },
+  { label: "协作", pages: ["delivery", "activity"] },
+] as const;
+
+function WorkspaceSidebar({
+  workspace,
+  page,
+  onNavigate,
+  reminders,
+  onRemindersChange,
+}: {
+  workspace: string;
+  page: WorkspacePage;
+  onNavigate: (page: WorkspacePage) => void;
+  reminders: boolean;
+  onRemindersChange: (value: boolean) => void;
+}) {
+  const { isMobile, open, setOpenMobile } = useSidebar();
+
+  function navigate(target: WorkspacePage) {
+    onNavigate(target);
+    if (isMobile) setOpenMobile(false);
+  }
+
+  function renderPage({ id, nav, icon: Icon }: (typeof pages)[number]) {
+    return (
+      <SidebarMenuItem key={id}>
+        <SidebarMenuButton
+          isActive={page === id}
+          aria-current={page === id ? "page" : undefined}
+          aria-label={nav}
+          tooltip={nav}
+          onClick={() => navigate(id)}
+        >
+          <Icon />
+          <span>{nav}</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
+
+  return (
+    <Sidebar collapsible="icon">
+      <div
+        data-slot="workspace-sidebar"
+        className="flex min-h-0 flex-1 flex-col"
+      >
+        <SidebarHeader className="shrink-0">
+          <SidebarMenu>
+            <SidebarMenuItem className="flex items-center gap-2 px-1 py-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+              <div className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
+                <Layers3 className="size-4" />
+              </div>
+              <strong className="min-w-0 flex-1 truncate text-sm group-data-[collapsible=icon]:sr-only">
+                {workspace}
+              </strong>
+              {isMobile && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="关闭工作室导航"
+                  onClick={() => setOpenMobile(false)}
+                >
+                  <X />
+                </Button>
+              )}
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <nav aria-label="工作室导航">
+            {workspaceGroups.map(({ label, pages: groupPages }) => (
+              <Collapsible
+                key={label}
+                defaultOpen
+                className="group/workspace-group"
+              >
+                <SidebarGroup className="group-data-[collapsible=icon]:py-1">
+                  <CollapsibleTrigger asChild>
+                    <SidebarGroupLabel
+                      asChild
+                      className="group-data-[collapsible=icon]:hidden"
+                    >
+                      <button
+                        type="button"
+                        className="cursor-pointer justify-between"
+                      >
+                        {label}
+                        <ChevronDown className="transition-transform group-data-[state=closed]/workspace-group:-rotate-90" />
+                      </button>
+                    </SidebarGroupLabel>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent
+                    forceMount
+                    className={
+                      isMobile || open
+                        ? "data-[state=closed]:hidden"
+                        : undefined
+                    }
+                  >
+                    <SidebarMenu>
+                      {pages
+                        .filter(({ id }) =>
+                          (groupPages as readonly WorkspacePage[]).includes(id),
+                        )
+                        .map(renderPage)}
+                    </SidebarMenu>
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </Collapsible>
+            ))}
+            <SidebarGroup className="group-data-[collapsible=icon]:py-1">
+              <SidebarMenu>
+                {pages.filter(({ id }) => id === "settings").map(renderPage)}
+              </SidebarMenu>
+            </SidebarGroup>
+          </nav>
+        </SidebarContent>
+        <SidebarFooter className="shrink-0 border-t border-sidebar-border">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    tooltip="林沐的账户菜单"
+                    aria-label="林沐的账户菜单"
+                  >
+                    <Avatar className="size-8 shrink-0 rounded-md">
+                      <AvatarFallback className="rounded-md text-foreground">
+                        林
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="grid min-w-0 flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                      <strong className="truncate font-medium">林沐</strong>
+                      <span className="truncate text-xs opacity-70">
+                        工作室管理员
+                      </span>
+                    </span>
+                    <ChevronsUpDown className="ml-auto size-4 opacity-70 group-data-[collapsible=icon]:hidden" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side={isMobile ? "top" : "right"}
+                  align="end"
+                  className="w-48"
+                >
+                  <DropdownMenuLabel>林沐</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => navigate("settings")}>
+                    <Settings />
+                    工作室设置
+                  </DropdownMenuItem>
+                  <DropdownMenuCheckboxItem
+                    checked={reminders}
+                    onCheckedChange={onRemindersChange}
+                  >
+                    交付提醒
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </div>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
 export function SceneShowcase() {
-  const [page, setPage] = useState<(typeof pages)[number]["id"]>("overview");
+  const [page, setPage] = useState<WorkspacePage>("overview");
   const currentPage = pages.find((item) => item.id === page)!;
   const [workspace, setWorkspace] = useState("青禾工作室");
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -276,48 +477,29 @@ export function SceneShowcase() {
   }
 
   return (
-    <div className="grid min-h-svh grid-cols-1 lg:grid-cols-[11rem_minmax(0,1fr)]">
-      <aside
-        data-slot="workspace-sidebar"
-        className="min-w-0 border-b bg-sidebar px-3 py-3 text-sidebar-foreground lg:sticky lg:top-0 lg:h-svh lg:border-r lg:border-b-0 lg:py-5"
-      >
-        <div className="mb-3 flex items-center gap-2.5 px-2">
-          <div className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-            <Layers3 className="size-4" />
-          </div>
-          <strong className="min-w-0 truncate text-sm">{workspace}</strong>
-        </div>
-        <nav className="flex flex-wrap gap-1 lg:grid" aria-label="工作室导航">
-          {pages.map(({ id, nav, icon: Icon }) => (
-            <Button
-              key={id}
-              variant={page === id ? "secondary" : "ghost"}
-              size="sm"
-              className="justify-start px-2 lg:px-3"
-              aria-current={page === id ? "page" : undefined}
-              onClick={() => setPage(id)}
-            >
-              <Icon />
-              {nav}
-            </Button>
-          ))}
-        </nav>
-        <div className="mt-6 hidden items-center gap-2 border-t px-2 pt-4 lg:flex">
-          <Avatar className="size-7">
-            <AvatarFallback>林</AvatarFallback>
-          </Avatar>
-          <span className="text-sm">林沐</span>
-        </div>
-      </aside>
-      <main className="min-w-0 p-3 sm:p-6 lg:p-8">
+    <SidebarProvider style={{ "--sidebar-width": "13rem" } as CSSProperties}>
+      <WorkspaceSidebar
+        workspace={workspace}
+        page={page}
+        onNavigate={setPage}
+        reminders={reminders}
+        onRemindersChange={setReminders}
+      />
+      <SidebarInset className="min-w-0 p-3 sm:p-6 lg:p-8">
         <header
           data-slot="workspace-header"
           className="mb-6 flex flex-wrap items-end justify-between gap-4"
         >
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {currentPage.label}
-            </h1>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger
+                aria-label="切换工作室侧栏"
+                className="size-8 shrink-0"
+              />
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                {currentPage.label}
+              </h1>
+            </div>
             <p className="mt-2 text-sm text-muted-foreground">
               {currentPage.description}
             </p>
@@ -845,7 +1027,7 @@ export function SceneShowcase() {
             </CardContent>
           </Card>
         )}
-      </main>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

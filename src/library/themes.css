@@ -759,7 +759,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
     font-weight: 500;
   }
 
-  [data-slot="workspace-sidebar"] nav [data-slot="button"] {
+  [data-slot="workspace-sidebar"] nav [data-slot="sidebar-menu-button"] {
     border-radius: 0.625rem;
   }
 }

@@ -323,16 +323,55 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await nav.getByRole("button", { name: "设置", exact: true }).click();
   await app.getByLabel("工作室名称").fill("新的工作室");
   await app.getByRole("button", { name: "保存资料" }).click();
+  const sidebar = app.locator('[data-slot="workspace-sidebar"]');
+  const footer = sidebar.locator('[data-slot="sidebar-footer"]');
+  await expect
+    .poll(() =>
+      footer.evaluate((el) =>
+        Math.abs(
+          el.getBoundingClientRect().bottom -
+            el
+              .closest('[data-slot="workspace-sidebar"]')!
+              .getBoundingClientRect().bottom,
+        ),
+      ),
+    )
+    .toBeLessThan(2);
+  const group = nav.getByRole("button", { name: "工作台", exact: true });
+  const projects = nav.getByRole("button", { name: "项目", exact: true });
+  const toggle = app.getByRole("button", {
+    name: "切换工作室侧栏",
+    exact: true,
+  });
+  await group.click();
+  await expect(group).toHaveAttribute("aria-expanded", "false");
+  await expect(projects).toBeHidden();
+  await toggle.click();
+  await expect(group).toBeHidden();
+  await projects.click();
+  await expect(projects).toHaveAttribute("aria-current", "page");
+  await toggle.click();
+  await expect(group).toHaveAttribute("aria-expanded", "false");
+  await group.click();
+  await expect(projects).toBeVisible();
+  await footer.getByRole("button", { name: "林沐的账户菜单" }).click();
+  await app.getByRole("menuitemcheckbox", { name: "交付提醒" }).click();
+  await nav.getByRole("button", { name: "设置", exact: true }).click();
+  await expect(app.getByRole("switch", { name: "交付提醒" })).not.toBeChecked();
   await page.getByRole("radio", { name: "手机预览" }).click();
-  await expect(app.locator("aside")).toContainText("新的工作室");
+  await expect(nav).toBeHidden();
+  await toggle.click();
+  await expect(sidebar).toContainText("新的工作室");
   await nav.getByRole("button", { name: "交付", exact: true }).click();
+  await expect(nav).toBeHidden();
   await expect(app.getByText("交付日历", { exact: true })).toBeVisible();
   await app.getByRole("button", { name: /2026年11月20日/ }).click();
   await expect(
     app.getByRole("list").getByText("验收项目", { exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 320, height: 720 });
-  await nav.getByRole("button", { name: "项目", exact: true }).click();
+  await toggle.click();
+  await projects.click();
   await expect
     .poll(() =>
       app.locator("html").evaluate((el) => el.scrollWidth - el.clientWidth),
