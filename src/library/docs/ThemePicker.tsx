@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -11,15 +11,33 @@ import {
 } from "../ui/dropdown-menu";
 import { themes, type AtlasTheme } from "../themes";
 
-export function ThemeSwatch({ id }: { id: string }) {
+const themeLogos = {
+  shadcn: "shadcn",
+  material: "material",
+  ios: "apple",
+  ant: "ant",
+  chatgpt: "chatgpt",
+  claude: "claude",
+} satisfies Record<Exclude<AtlasTheme["id"], "retro">, string>;
+
+function ThemeIcon({ id }: { id: AtlasTheme["id"] }) {
+  if (id === "retro") {
+    return (
+      <BookOpen
+        className="size-4 shrink-0 text-muted-foreground"
+        aria-hidden="true"
+      />
+    );
+  }
+
   return (
-    <span
-      data-atlas-theme={id}
-      className="inline-flex size-4 shrink-0 items-center justify-center rounded-sm border border-border bg-background"
-      aria-hidden="true"
-    >
-      <span className="size-2 rounded-xs bg-primary" />
-    </span>
+    <img
+      src={`${import.meta.env.BASE_URL}theme-icons/${themeLogos[id]}.svg`}
+      alt=""
+      width={16}
+      height={16}
+      className="size-4 shrink-0 object-contain [color-scheme:light]"
+    />
   );
 }
 
@@ -41,7 +59,7 @@ export function ThemePicker({
           aria-label="切换主题"
           className="max-w-32 shrink-0 gap-1.5 px-2 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
         >
-          <ThemeSwatch id={theme.id} />
+          <ThemeIcon id={theme.id} />
           <span className="truncate">{theme.label}</span>
           <ChevronDown className="size-3.5 opacity-65" />
         </Button>
@@ -61,7 +79,7 @@ export function ThemePicker({
               indicator="check-end"
               className="h-10 cursor-pointer whitespace-nowrap"
             >
-              <ThemeSwatch id={entry.id} />
+              <ThemeIcon id={entry.id} />
               <span className="min-w-0 truncate">{entry.label}</span>
             </DropdownMenuRadioItem>
           ))}
