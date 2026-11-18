@@ -15,7 +15,7 @@ export function ThemeSwatch({ id }: { id: string }) {
   return (
     <span
       data-atlas-theme={id}
-      className="inline-flex size-4 shrink-0 items-end justify-end rounded-sm border border-border bg-background p-px"
+      className="inline-flex size-4 shrink-0 items-center justify-center rounded-sm border border-border bg-background"
       aria-hidden="true"
     >
       <span className="size-2 rounded-xs bg-primary" />
@@ -50,7 +50,7 @@ export function ThemePicker({
         align="end"
         sideOffset={8}
         collisionPadding={8}
-        className="z-60 w-72 max-w-[calc(100vw-1rem)] max-h-[min(38rem,var(--radix-dropdown-menu-content-available-height))] overscroll-contain p-1.5"
+        className="z-60 w-52 max-w-[calc(100vw-1rem)] overscroll-contain p-1"
       >
         <DropdownMenuRadioGroup value={theme.id} onValueChange={onTheme}>
           {themes.map((entry) => (
@@ -58,20 +58,16 @@ export function ThemePicker({
               key={entry.id}
               value={entry.id}
               textValue={entry.label}
-              className="min-h-11 cursor-pointer gap-2 py-2 pl-7 pr-2 data-[state=checked]:bg-accent"
+              indicator="check-end"
+              className="h-10 cursor-pointer whitespace-nowrap"
             >
               <ThemeSwatch id={entry.id} />
-              <span className="min-w-0">
-                <span className="block font-medium">{entry.label}</span>
-                <span className="block text-xs text-muted-foreground">
-                  {entry.description}
-                </span>
-              </span>
+              <span className="min-w-0 truncate">{entry.label}</span>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="cursor-pointer">
+        <DropdownMenuItem asChild className="h-10 cursor-pointer pl-8">
           <a href={themesHref}>浏览全部主题</a>
         </DropdownMenuItem>
       </DropdownMenuContent>
