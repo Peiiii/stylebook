@@ -34,7 +34,6 @@ import { CopyButton } from "./components/Clipboard";
 const Source = lazy(() =>
   import("./pages/Source").then((module) => ({ default: module.Source })),
 );
-import "./app.css";
 
 function SelectionPanel({ close }: { close: () => void }) {
   const selected = catalog.list("adopt").map((id) => findEntry(id)!);
@@ -630,7 +629,6 @@ export default function App() {
   const routeHash = useSyncExternalStore(catalog.subscribe, catalog.snapshot);
   const [selectionOpen, setSelectionOpen] = useState(false);
   const [notice, setNotice] = useState("");
-  useEffect(catalog.start, []);
   const page = catalog.get("page");
   const entry = findEntry(catalog.get("entry"));
   const mode = catalog.get("mode", "light") === "dark" ? "dark" : "light";
@@ -691,7 +689,7 @@ export default function App() {
     ) : (
       <div className="empty-state">
         <h1>没有找到这个预览</h1>
-        <a className="button" href="#">
+        <a className="button" href="#kind=theme">
           返回目录
         </a>
       </div>
@@ -756,7 +754,13 @@ export default function App() {
             <p>ID 可能有误或已不存在。已有选型保留在采用清单中。</p>
             <button
               className="button"
-              onClick={() => catalog.patch({ page: null, entry: null })}
+              onClick={() =>
+                catalog.patch({
+                  page: null,
+                  entry: null,
+                  kind: catalog.get("kind", "theme"),
+                })
+              }
             >
               返回目录
             </button>
@@ -768,7 +772,7 @@ export default function App() {
         <Browse compare={compare} />
       )}
       <footer className="site-footer">
-        <a className="brand" href="#">
+        <a className="brand" href="#kind=theme">
           UI Atlas
         </a>
         <span>为清晰的选择而设计。</span>

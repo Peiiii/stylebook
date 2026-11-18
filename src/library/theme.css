@@ -1,0 +1,93 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "tw-animate-css";
+@source "./ui";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+  --color-background: var(--kit-bg);
+  --color-foreground: var(--kit-fg);
+  --color-card: var(--kit-card);
+  --color-card-foreground: var(--kit-fg);
+  --color-primary: var(--kit-primary);
+  --color-primary-foreground: var(--kit-on-primary);
+  --color-secondary: var(--kit-secondary);
+  --color-secondary-foreground: var(--kit-fg);
+  --color-muted: var(--kit-secondary);
+  --color-muted-foreground: var(--kit-muted);
+  --color-accent: var(--kit-secondary);
+  --color-accent-foreground: var(--kit-fg);
+  --color-destructive: #b73546;
+  --color-input: var(--kit-border);
+  --color-border: var(--kit-border);
+  --color-ring: var(--kit-primary);
+  --radius-md: var(--kit-radius);
+  --radius-lg: calc(var(--kit-radius) + 2px);
+  --radius-xl: calc(var(--kit-radius) + 5px);
+}
+[data-atlas-theme] {
+  --kit-bg: #f5f7fb;
+  --kit-fg: #1d293e;
+  --kit-card: #fff;
+  --kit-secondary: #eaf0fb;
+  --kit-muted: #56627a;
+  --kit-border: #d3dbea;
+  --kit-primary: #264cc5;
+  --kit-on-primary: #fff;
+  --kit-radius: 5px;
+  --kit-gap: 16px;
+  --kit-shadow: none;
+  --kit-heading: inherit;
+}
+[data-atlas-theme="paper"] {
+  --kit-bg: #f5ede0;
+  --kit-fg: #342820;
+  --kit-card: #fffaf3;
+  --kit-secondary: #f3e5d5;
+  --kit-muted: #716052;
+  --kit-border: #ddccba;
+  --kit-primary: #8d3b27;
+  --kit-radius: 14px;
+  --kit-gap: 24px;
+  --kit-shadow: 0 7px 23px #6e3e2212;
+  --kit-heading: Georgia, "Songti SC", serif;
+}
+[data-atlas-theme] :is([data-slot="card"], [data-slot="dialog-content"]) {
+  color: var(--kit-fg);
+  box-shadow: var(--kit-shadow);
+  border: 1px solid var(--kit-border);
+}
+[data-atlas-theme="paper"] [data-slot="card-title"] {
+  font-family: var(--kit-heading);
+  font-size: 1.15rem;
+}
+[data-atlas-theme="paper"] [data-slot="button"] {
+  min-height: 2.55rem;
+}
+[data-atlas-theme="paper"] [data-slot="card"] {
+  padding-block: 1.8rem;
+}
+[data-atlas-theme] [data-slot="dialog-content"] {
+  font-family: system-ui, sans-serif;
+}
+[data-atlas-theme] [data-slot="dialog-content"] h2,
+[data-atlas-theme] [data-slot="dialog-content"] p {
+  margin: 0;
+}
+[data-atlas-theme] [data-slot="switch"] {
+  padding: 0;
+}
+[data-atlas-theme] :is([data-slot="button"], [data-slot="switch"]) {
+  cursor: pointer;
+}
+
+@layer base {
+  [data-atlas-theme] :is(button, input, [data-slot]) {
+    box-sizing: border-box;
+    border: 0 solid var(--kit-border);
+  }
+  [data-atlas-theme] :is(button, input) {
+    background-color: transparent;
+    font: inherit;
+  }
+}

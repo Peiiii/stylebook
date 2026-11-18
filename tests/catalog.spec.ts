@@ -6,7 +6,7 @@ test("discover, compare fairly, adopt and recover in a new page", async ({
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/");
+  await page.goto("/#kind=theme");
   await expect(page.locator(".entry-card")).toHaveCount(2);
   await page
     .getByRole("button", { name: "加入比较 清晰描边", exact: true })
@@ -53,7 +53,7 @@ test("discover, compare fairly, adopt and recover in a new page", async ({
   for (const frame of page.frames().slice(1))
     await expect(frame.locator(".example")).toBeVisible();
   await page.screenshot({
-    path: "docs/validation/compare-desktop.png",
+    path: ".local/test-results/compare-desktop.png",
     fullPage: true,
   });
 });
@@ -62,7 +62,7 @@ test("search, empty recovery, incompatible compare and clipboard denial", async 
   page,
   context,
 }) => {
-  await page.goto("/");
+  await page.goto("/#kind=theme");
   await page
     .getByRole("button", { name: "加入比较 清晰描边", exact: true })
     .click();
@@ -141,21 +141,21 @@ test("all 18 examples render, source matches, interactive states work", async ({
 test("dark, long, empty and error scenes stay readable on mobile; screenshot evidence", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/#kind=theme");
   await expect(page.locator("iframe")).toHaveCount(2);
   for (const frame of await page.locator("iframe").all())
     await expect(frame.contentFrame().locator(".example")).toBeVisible();
   await page.screenshot({
-    path: "docs/validation/catalog-desktop.png",
+    path: ".local/test-results/catalog-desktop.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/#kind=theme");
   await expect(page.locator("iframe")).toHaveCount(2);
   for (const frame of await page.locator("iframe").all())
     await expect(frame.contentFrame().locator(".example")).toBeVisible();
   await page.screenshot({
-    path: "docs/validation/catalog-mobile.png",
+    path: ".local/test-results/catalog-mobile.png",
     fullPage: true,
   });
   for (const style of ["outline", "soft"])
@@ -179,7 +179,7 @@ test("dark, long, empty and error scenes stay readable on mobile; screenshot evi
             "工作原则",
           );
           await page.screenshot({
-            path: `docs/validation/settings-${style}-mobile-dark.png`,
+            path: `.local/test-results/settings-${style}-mobile-dark.png`,
             fullPage: true,
           });
         }
@@ -198,19 +198,19 @@ test("dark, long, empty and error scenes stay readable on mobile; screenshot evi
       .locator(".example"),
   ).toBeVisible();
   await page.screenshot({
-    path: "docs/validation/compare-mobile.png",
+    path: ".local/test-results/compare-mobile.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/#page=clean&entry=page.settings.soft&state=long");
   await page.screenshot({
-    path: "docs/validation/settings-desktop.png",
+    path: ".local/test-results/settings-desktop.png",
     fullPage: true,
   });
   await page.goto("/#page=detail&entry=theme.soft-elevation&scene=settings");
   await expect(page.frameLocator("iframe").locator(".example")).toBeVisible();
   await page.screenshot({
-    path: "docs/validation/detail-desktop.png",
+    path: ".local/test-results/detail-desktop.png",
     fullPage: true,
   });
 });
@@ -251,7 +251,7 @@ test("shell dark stays separate, phone clean link preserves width and selection 
       ),
   );
   await page.screenshot({
-    path: "docs/validation/detail-200-percent-reflow.png",
+    path: ".local/test-results/detail-200-percent-reflow.png",
     fullPage: true,
   });
   expect(

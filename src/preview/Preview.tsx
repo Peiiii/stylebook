@@ -17,7 +17,7 @@ export class PreviewBoundary extends Component<
         <TriangleAlert />
         <h2>预览未能加载</h2>
         <p>请刷新页面，或返回目录选择其他条目。</p>
-        <a href="#">返回目录</a>
+        <a href="#kind=theme">返回目录</a>
       </div>
     ) : (
       this.props.children

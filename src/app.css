@@ -55,7 +55,7 @@ svg {
   vertical-align: middle;
   flex-shrink: 0;
 }
-button {
+button:not([data-slot]) {
   color: inherit;
 }
 .atlas {
