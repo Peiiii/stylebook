@@ -12,7 +12,7 @@ export const themes = [
   {
     id: "ios",
     label: "iOS",
-    description: "系统字体、蓝色操作、分组表面与轻透浮层。",
+    description: "白色内容画布、胶囊操作与轻透导航。",
   },
   {
     id: "retro",

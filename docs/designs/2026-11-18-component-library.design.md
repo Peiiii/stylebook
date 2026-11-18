@@ -62,3 +62,7 @@ Material 使用蓝色强调与接近白色的中性表面，按钮采用 full sh
 ### 以明确体系命名
 
 用户纠正：使用有明确来源的品牌或平台体系名称。原 glass 风格改为 iOS（ID `ios`，旧 `glass` 链接映射到 iOS）。使用系统字体、浅灰分组背景、白色内容表面、蓝色操作与绿色开关；内容卡片不做满屏渐变和模糊，半透明材质用于导航和浮层。依据 [Apple HIG Materials](https://developer.apple.com/design/human-interface-guidelines/materials)，这是 shadcn 的 iOS 风格适配，不是原生 UIKit 或完整 Liquid Glass 实现。用户要求后续不再使用子代理。
+
+#### iOS 参考与纠偏
+
+上一版将 grouped 背景误用到整个总览，控件主要保留默认 shadcn 外观，用户否决。当前按 Apple HIG 的 iOS 26 实际控件图校准：[背景层级](https://developer.apple.com/design/human-interface-guidelines/color#Platform-considerations)、[工具栏参考](https://developer.apple.com/tutorials/images/com.apple.HIG/colors-liquid-glass-usage-correct@2x.png)、[开关参考](https://developer.apple.com/tutorials/images/com.apple.HIG/toggles-ios-default-color@2x.png)。总览采用白色 system 内容画布，去除每个样本的矩形外框；灰色用于字段、分组卡片与分段控件。按钮与导航操作采用胶囊/圆形和轻薄高光，默认开关按参考做绿色轨道、白色滑块，Slider、Tabs、菜单、AlertDialog 分别适配，不再只修改全局颜色。保留全部 shadcn 行为与 39 项覆盖；没有原生同类的组件仅作网页适配。验收覆盖白色总览、开关两态、Tabs 切换、菜单与 AlertDialog 的键盘操作、320px 窄屏和 Blocks，截图与官方图实际对照。最终交付不宣称 UIKit 或光学折射的逐像素复刻。
