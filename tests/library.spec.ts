@@ -9,14 +9,14 @@ test("official docs structure, component interaction, theme and source", async (
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(
-    page.getByRole("heading", { name: "按钮", exact: true }),
+    page.getByRole("heading", { name: "Button", exact: true }),
   ).toBeVisible();
   await expect(
     page.locator('[data-slot="sidebar"] a[aria-current="page"]'),
-  ).toHaveText("按钮");
+  ).toHaveText("Button");
   await expect(page.getByLabel("主题")).toHaveValue("shadcn");
   await page.getByLabel("主题").selectOption("paper");
-  await page.getByRole("link", { name: "复选框", exact: true }).click();
+  await page.getByRole("link", { name: "Checkbox", exact: true }).click();
   await page.reload();
   await expect(page.getByLabel("主题")).toHaveValue("paper");
   const checkbox = page.locator("#terms");
@@ -27,10 +27,10 @@ test("official docs structure, component interaction, theme and source", async (
   const search = page.getByRole("dialog", { name: "搜索文档" });
   await search.getByRole("combobox").fill("对话框");
   await expect(
-    search.getByRole("option", { name: "对话框", exact: true }),
+    search.getByRole("option", { name: "Dialog", exact: true }),
   ).toBeVisible();
   await search.getByRole("combobox").fill("dialog");
-  await search.getByRole("option", { name: "对话框", exact: true }).click();
+  await search.getByRole("option", { name: "Dialog", exact: true }).click();
   const trigger = page.getByRole("button", { name: "Open Dialog" });
   await trigger.click();
   await expect(page.getByRole("dialog")).toHaveAccessibleName("Edit profile");
@@ -61,7 +61,7 @@ test("all 39 official demos and three Blocks resolve at their entry points", asy
   for (const item of registry.components) {
     await page.goto(`/#component=${item.id}`);
     await expect(
-      page.getByRole("heading", { name: item.zh.title, exact: true }),
+      page.getByRole("heading", { name: item.title, exact: true }),
     ).toBeVisible();
 
     await expect(

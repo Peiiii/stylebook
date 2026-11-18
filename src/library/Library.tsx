@@ -207,8 +207,8 @@ export function Library() {
           .filter((entry) => entry.group === group)
           .map((entry) => ({
             id: entry.id,
-            name: entry.zh.title,
-            keywords: [entry.title],
+            name: entry.title,
+            keywords: [entry.zh.title],
             href: choose({ view: "components", component: entry.id }),
             active: view === "components" && item.id === entry.id,
           })),
@@ -314,7 +314,7 @@ export function Library() {
             </DocPage>
           ) : (
             <DocPage
-              title={item.zh.title}
+              title={item.title}
               description={item.zh.description}
               previous={listing[index - 1]}
               next={listing[index + 1]}
