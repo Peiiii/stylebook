@@ -1,6 +1,8 @@
-# UI Atlas
+# Stylebook
 
-UI Atlas 将 shadcn/ui 的组件文档和 Blocks 按需移植到 Vite。顶部使用 shadcn DropdownMenu 切换 shadcn 默认、Material、iOS、Ant Design、ChatGPT、Claude 和复古。风格通过字体、形状、边框、阴影和表面效果作用于同一套组件、页面模板与独立预览。
+Stylebook 将 shadcn/ui 的组件文档和 Blocks 按需移植到 Vite。顶部使用 shadcn DropdownMenu 切换 shadcn 默认、Material、iOS、Ant Design、ChatGPT、Claude 和复古。风格通过字体、形状、边框、阴影和表面效果作用于同一套组件、页面模板与独立预览。
+
+公开站点：[stylebook.peiiii.com](https://stylebook.peiiii.com/)。发布使用 `npm run build` 和 `wrangler deploy`，自定义域名由 `wrangler.jsonc` 管理。
 
 ## 运行
 
@@ -31,4 +33,4 @@ npm run preview
 
 浏览器测试使用本机 Chrome。预览服务器启动后，也可用 `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4173 npm test` 验证生产构建。
 
-[项目目标](docs/product-brief.md) · [仓库](https://github.com/Peiiii/ui-atlas)
+[项目目标](docs/product-brief.md) · [仓库](https://github.com/Peiiii/stylebook)

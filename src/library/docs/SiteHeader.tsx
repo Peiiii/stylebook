@@ -45,7 +45,7 @@ export function SiteHeader({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="overflow-y-auto px-4 py-6">
-              <SheetTitle>UI Atlas</SheetTitle>
+              <SheetTitle>Stylebook</SheetTitle>
               <SheetDescription className="sr-only">
                 浏览组件总览、主题和页面模板。
               </SheetDescription>
@@ -73,7 +73,7 @@ export function SiteHeader({
             className="mr-2 shrink-0 sm:mr-4 text-sm font-semibold tracking-tight"
             href={items[0].href}
           >
-            UI Atlas
+            Stylebook
           </a>
           <MainNav
             items={items}
@@ -98,7 +98,7 @@ export function SiteHeader({
               className="hidden min-[360px]:inline-flex"
             >
               <a
-                href="https://github.com/Peiiii/ui-atlas"
+                href="https://github.com/Peiiii/stylebook"
                 aria-label="GitHub"
                 target="_blank"
                 rel="noreferrer"
