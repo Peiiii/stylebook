@@ -1,21 +1,15 @@
-import {
-  lazy,
-  Suspense,
-  useEffect,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import { ArrowDownToLine } from "lucide-react";
+import { lazy, Suspense, useEffect, useSyncExternalStore } from "react";
 import { ThemeProvider } from "next-themes";
 import { route } from "./route";
 import registry from "./registry.json";
 import { Button } from "./ui/button";
+import { Toaster } from "./ui/sonner";
 import { SiteHeader } from "./docs/SiteHeader";
 import DocsLayout from "./docs/DocsLayout";
 import { DocPage } from "./docs/DocPage";
 import { BlockViewer } from "./docs/BlockViewer";
-import { ComponentPreviewTabs } from "./docs/ComponentPreviewTabs";
-import { ComponentSource } from "./docs/ComponentSource";
+import { ComponentPreview } from "./docs/ComponentPreview";
+import { Showcase } from "./docs/Showcase";
 import "./theme.css";
 import "./docs/styles.css";
 
@@ -26,6 +20,7 @@ const themes = [
 ];
 const views = [
   { id: "components", label: "组件" },
+  { id: "showcase", label: "组件总览" },
   { id: "blocks", label: "页面模板" },
   { id: "themes", label: "主题" },
 ];
@@ -40,16 +35,6 @@ const blockLabels: Record<string, { label: string; description: string }> = {
     description: "包含侧栏、指标卡片、图表和数据表格的工作台。",
   },
 };
-const files = import.meta.glob<string>(
-  [
-    "./ui/*.{tsx,ts,md}",
-    "./examples/*.tsx",
-    "./blocks/**/*.{tsx,json}",
-    "./hooks/*.ts",
-    "./theme.css",
-  ],
-  { query: "?raw", import: "default" },
-);
 const exampleModules = import.meta.glob<{ default: React.ComponentType }>(
   "./examples/*-demo.tsx",
 );
@@ -68,93 +53,6 @@ const blocks = Object.fromEntries(
     lazy(blockModules[`./blocks/${item.id}/page.tsx`]),
   ]),
 );
-
-function useSourceFile(file: string) {
-  const [result, setResult] = useState<{
-    file: string;
-    content?: string;
-    failed?: boolean;
-  }>();
-  useEffect(() => {
-    let current = true;
-    files[`./${file}`]()
-      .then((content) => {
-        if (current) setResult({ file, content });
-      })
-      .catch(() => {
-        if (current) setResult({ file, failed: true });
-      });
-    return () => {
-      current = false;
-    };
-  }, [file]);
-  return result?.file === file ? result : undefined;
-}
-
-function PreviewSource({
-  file,
-  maxLines,
-}: {
-  file: string;
-  maxLines?: number;
-}) {
-  const result = useSourceFile(file);
-  if (result?.failed) return <p className="p-4 text-sm">源码文件加载失败。</p>;
-  if (!result) return <p className="p-4 text-sm">正在加载源码…</p>;
-  return (
-    <ComponentSource
-      code={result.content!}
-      title={maxLines ? undefined : file.split("/").at(-1)}
-      maxLines={maxLines}
-    />
-  );
-}
-
-function SourceFiles({ paths }: { paths: string[] }) {
-  const [file, setFile] = useState(paths[0]);
-  const result = useSourceFile(file);
-  const content = result?.content;
-  return (
-    <div className="mt-4 min-w-0 rounded-xl border">
-      <div className="flex items-center gap-2 border-b p-2">
-        <select
-          aria-label="源码文件"
-          value={file}
-          onChange={(event) => setFile(event.target.value)}
-          className="min-w-0 flex-1 rounded-md border bg-background p-2 text-sm"
-        >
-          {paths.map((path) => (
-            <option key={path} value={path}>
-              {path}
-            </option>
-          ))}
-        </select>
-        {content !== undefined && (
-          <Button asChild variant="ghost" size="icon-sm">
-            <a
-              aria-label="下载源码"
-              href={`data:text/plain;charset=utf-8,${encodeURIComponent(content)}`}
-              download={file.split("/").at(-1)}
-            >
-              <ArrowDownToLine />
-            </a>
-          </Button>
-        )}
-      </div>
-      {content !== undefined ? (
-        <ComponentSource
-          key={file}
-          code={content}
-          title={file.split("/").at(-1)}
-        />
-      ) : (
-        <p className="p-4 text-sm">
-          {result?.failed ? "源码文件加载失败。" : "正在加载源码…"}
-        </p>
-      )}
-    </div>
-  );
-}
 
 export function Library() {
   useSyncExternalStore(route.subscribe, route.snapshot);
@@ -183,7 +81,7 @@ export function Library() {
   const Block = blocks[block.id];
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
-    route.link({ view, theme, tab: "", ...values });
+    route.link({ view, theme, ...values });
   const blockView = view === "blocks";
   const viewKey = `${view}:${blockView ? block.id : item.id}`;
   useEffect(() => {
@@ -199,30 +97,32 @@ export function Library() {
     ...entry,
     href: choose({ view: entry.id }),
   }));
-  const groups = [
-    ...Array.from(new Set(registry.components.map((entry) => entry.group))).map(
-      (group) => ({
-        name: group,
-        pages: registry.components
-          .filter((entry) => entry.group === group)
-          .map((entry) => ({
-            id: entry.id,
-            name: entry.title,
-            keywords: [entry.zh.title],
-            href: choose({ view: "components", component: entry.id }),
-            active: view === "components" && item.id === entry.id,
-          })),
-      }),
-    ),
-    {
-      name: "页面模板",
-      pages: registry.blocks.map((entry) => ({
+  const componentGroups = Array.from(
+    new Set(registry.components.map((entry) => entry.group)),
+  ).map((group) => ({
+    name: group,
+    pages: registry.components
+      .filter((entry) => entry.group === group)
+      .map((entry) => ({
         id: entry.id,
-        name: blockLabels[entry.id].label,
-        href: choose({ view: "blocks", template: entry.id }),
-        active: blockView && block.id === entry.id,
+        name: entry.title,
+        keywords: [entry.zh.title],
+        href: choose({ view: "components", component: entry.id }),
+        active: view === "components" && item.id === entry.id,
       })),
-    },
+  }));
+  const blockGroup = {
+    name: "页面模板",
+    pages: registry.blocks.map((entry) => ({
+      id: entry.id,
+      name: blockLabels[entry.id].label,
+      href: choose({ view: "blocks", template: entry.id }),
+      active: blockView && block.id === entry.id,
+    })),
+  };
+  const groups = [
+    ...componentGroups,
+    blockGroup,
     {
       name: "主题",
       pages: [
@@ -231,6 +131,12 @@ export function Library() {
           name: "主题预设",
           href: choose({ view: "themes" }),
           active: view === "themes",
+        },
+        {
+          id: "showcase",
+          name: "组件总览",
+          href: choose({ view: "showcase" }),
+          active: view === "showcase",
         },
       ],
     },
@@ -256,10 +162,11 @@ export function Library() {
       </ThemeProvider>
     );
 
-  const listing = groups.slice(0, -2).flatMap((group) => group.pages);
+  const listing = componentGroups.flatMap((group) => group.pages);
   const index = listing.findIndex((entry) => entry.id === item.id);
   return (
     <ThemeProvider forcedTheme="light" enableSystem={false}>
+      <Toaster />
       <SiteHeader
         items={navItems}
         groups={groups}
@@ -274,13 +181,30 @@ export function Library() {
           description={blockLabels[block.id].description}
           id={block.id}
           href={choose({ view: "full", template: block.id })}
-          links={groups.find((group) => group.name === "页面模板")!.pages}
-          source={
-            <SourceFiles
-              key={block.id}
-              paths={[...block.files, "theme.css", "ui/LICENSE.md"]}
-            />
-          }
+          links={blockGroup.pages}
+        />
+      ) : view === "showcase" ? (
+        <Showcase
+          theme={themes.find((entry) => entry.id === theme)!.label}
+          groups={componentGroups.map((group, index) => ({
+            id: `showcase-group-${index}`,
+            name: group.name,
+            entries: group.pages.map((page) => {
+              const Demo = examples[page.id];
+              return {
+                ...page,
+                preview: (
+                  <Suspense
+                    fallback={
+                      <p className="text-sm text-muted-foreground">正在加载…</p>
+                    }
+                  >
+                    <Demo />
+                  </Suspense>
+                ),
+              };
+            }),
+          }))}
         />
       ) : (
         <DocsLayout groups={groups}>
@@ -304,8 +228,8 @@ export function Library() {
                       asChild
                       variant={theme === entry.id ? "default" : "outline"}
                     >
-                      <a href={choose({ theme: entry.id })}>
-                        {theme === entry.id ? "当前主题" : "使用此主题"}
+                      <a href={choose({ view: "showcase", theme: entry.id })}>
+                        查看组件总览
                       </a>
                     </Button>
                   </div>
@@ -318,36 +242,17 @@ export function Library() {
               description={item.zh.description}
               previous={listing[index - 1]}
               next={listing[index + 1]}
-              sections={[
-                { id: "preview", label: "预览" },
-                { id: "source", label: "源码文件" },
-              ]}
+              sections={[{ id: "preview", label: "预览" }]}
             >
               <section id="preview" className="scroll-mt-20">
-                <ComponentPreviewTabs
+                <ComponentPreview
                   key={item.id}
-                  component={
-                    <Suspense fallback={<p>正在加载预览…</p>}>
-                      <Example />
-                    </Suspense>
-                  }
-                  source={<PreviewSource file={item.files[0]} />}
-                  sourcePreview={
-                    <PreviewSource file={item.files[0]} maxLines={3} />
-                  }
-                />
-              </section>
-              <section id="source" className="mt-8 scroll-mt-20">
-                <h2 className="text-xl font-semibold tracking-tight">
-                  源码文件
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  将组件实现和所需依赖复制到你的项目。
-                </p>
-                <SourceFiles
-                  key={viewKey}
-                  paths={[...item.files, "theme.css", "ui/LICENSE.md"]}
-                />
+                  className="min-h-72 rounded-2xl border bg-card p-6 sm:p-10"
+                >
+                  <Suspense fallback={<p>正在加载预览…</p>}>
+                    <Example />
+                  </Suspense>
+                </ComponentPreview>
               </section>
             </DocPage>
           )}

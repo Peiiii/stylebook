@@ -1,11 +1,9 @@
 import { expect, test } from "@playwright/test";
 import registry from "../src/library/registry.json" with { type: "json" };
 
-test("official docs structure, component interaction, theme and source", async ({
+test("official docs structure, component interaction and theme", async ({
   page,
-  context,
 }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(
@@ -36,20 +34,8 @@ test("official docs structure, component interaction, theme and source", async (
   await expect(page.getByRole("dialog")).toHaveAccessibleName("Edit profile");
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
-  await page.getByRole("button", { name: "查看示例源码" }).click();
-  const inline = page.locator('[data-slot="code"]');
-  await expect(inline.locator("[data-line-numbers]")).toContainText(
-    "DialogDemo",
-  );
-  await inline.getByRole("button", { name: "复制源码", exact: true }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
-    "DialogDemo",
-  );
-  await page.getByLabel("源码文件").selectOption("ui/dialog.tsx");
-  const download = page.waitForEvent("download");
-  await page.getByRole("link", { name: "下载源码" }).click();
-  expect((await download).suggestedFilename()).toBe("dialog.tsx");
-  await expect(page.locator("#source")).toContainText("DialogPrimitive");
+  await expect(page.locator('[data-slot="preview"]')).toBeVisible();
+  await expect(page.getByText("查看示例源码", { exact: true })).toHaveCount(0);
 });
 
 test("all 39 official demos and three Blocks resolve at their entry points", async ({
@@ -65,7 +51,7 @@ test("all 39 official demos and three Blocks resolve at their entry points", asy
     ).toBeVisible();
 
     await expect(
-      page.locator('[data-slot="preview"] .preview > :first-child'),
+      page.locator('[data-slot="preview"] > :first-child'),
     ).toBeVisible();
     await expect(page.getByText("正在加载预览…", { exact: true })).toHaveCount(
       0,
@@ -93,13 +79,7 @@ test("all 39 official demos and three Blocks resolve at their entry points", asy
   const full = await popup;
   await expect(full.getByRole("table").first()).toBeVisible();
   await expect(full.getByText("总收入", { exact: true })).toBeVisible();
-  await page.getByRole("tab", { name: "源码" }).click();
-  await expect(page.getByLabel("源码文件")).toHaveValue(
-    "blocks/dashboard-01/page.tsx",
-  );
-  await expect(
-    page.getByText("ChartAreaInteractive", { exact: true }).first(),
-  ).toBeVisible();
+  await expect(page.getByRole("tab", { name: "源码" })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
@@ -123,4 +103,71 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
+});
+
+test("showcase renders all components together and keeps one theme", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("navigation", { name: "主导航" })
+    .getByRole("link", { name: "组件总览", exact: true })
+    .click();
+  const cards = page.locator("[data-showcase-component]");
+  await expect(cards).toHaveCount(registry.components.length);
+  await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
+    timeout: 15000,
+  });
+  await expect(cards.locator('[data-slot="preview"]')).toHaveCount(
+    registry.components.length,
+  );
+  await expect(page.locator(".showcase-grid").first()).toHaveCSS(
+    "grid-template-columns",
+    /^(\S+ ){3}\S+$/,
+  );
+  await page.getByLabel("主题").selectOption("paper");
+  await expect(page.getByText("暖纸 · 39 个组件")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "paper",
+  );
+  const dupes = await page.locator("main").evaluate((root) => {
+    const ids = [...root.querySelectorAll("[id]")].map((el) => el.id);
+    return ids.filter((id, index) => ids.indexOf(id) !== index);
+  });
+  expect(dupes).toEqual([]);
+  const toggle = cards
+    .filter({ has: page.getByRole("heading", { name: "Switch", exact: true }) })
+    .getByRole("switch");
+  await toggle.click();
+  await expect(toggle).toBeChecked();
+  await page.getByRole("button", { name: "Show Toast" }).click();
+  await expect(
+    page.getByText("Event has been created", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "弹层", exact: true }).click();
+  await expect(page.getByRole("region", { name: "弹层" })).toBeFocused();
+  const trigger = cards
+    .filter({ has: page.getByRole("heading", { name: "Dialog", exact: true }) })
+    .getByRole("button", { name: "Open Dialog" });
+  await trigger.click();
+  await expect(
+    page.getByRole("dialog", { name: "Edit profile" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload();
+  await expect(cards).toHaveCount(registry.components.length);
+  await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
+    timeout: 15000,
+  });
+  await expect(page.getByLabel("主题")).toHaveValue("paper");
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(390);
+  await page.setViewportSize({ width: 320, height: 800 });
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(320);
 });
