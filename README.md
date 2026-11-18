@@ -1,6 +1,6 @@
 # UI Atlas
 
-基于 shadcn/ui 的精选多风格 React 组件库。默认使用 shadcn 的中性主题，也可切换「蓝图」或「暖纸」。组件预览和页面模板使用同一套风格。模板直接组合库内组件。
+UI Atlas 将 shadcn/ui 的组件文档和 Blocks 按需移植到 Vite。顶部主题选择器提供 shadcn Default、Blueprint 和 Warm Paper，同样作用于组件、Blocks 和新标签页预览。
 
 ## 运行
 
@@ -11,15 +11,14 @@ npm ci
 npm run dev
 ```
 
-在 [本机组件文档](http://127.0.0.1:5173/) 打开组件预览。「源码」提供组件、官方示例、所需依赖源码、主题样式和许可文件。可复制或逐个下载。选择页面模板后可以打开完整页面，风格随链接保留。
+打开 [组件文档](http://127.0.0.1:5173/)。左侧按用途整理 39 个组件。示例来自官方 registry，可以展开高亮示例源码，或在 Source files 切换、复制和下载实际文件。Blocks 提供 `login-01`、`sidebar-07`、`dashboard-01` 和各自的源文件。
 
-## 内容与扩展
+## 使用与维护
 
-- 组件：Button、Input、Card、Badge、Switch、Dialog。
-- 模板：项目看板、工作区设置。
-- 组件源码来自 [shadcn/ui 的 Radix 新纽约实现](https://github.com/shadcn-ui/ui/tree/968d8cb9dc42ae5d52e8fd356cf84596ec832a26/apps/v4/registry/new-york-v4/ui)。本地只调整导入路径与格式，保留组件 API、交互原语和样式类。许可见 [上游 MIT](src/library/ui/LICENSE.md)。
-- 在 [theme.css](src/library/theme.css) 新增主题变量和外观规则，在 [Library.tsx](src/library/Library.tsx) 登记风格。新组件沿相同方式从选定的上游版本引入，并通过真实组件预览验证。
-- 官方示例来自同一提交的 [examples](https://github.com/shadcn-ui/ui/tree/968d8cb9dc42ae5d52e8fd356cf84596ec832a26/apps/v4/registry/new-york-v4/examples)。预览直接导入这些文件，调整仅涉及本地导入和移除未使用的图标。Card、Dialog、Switch 的 Label 也是上游原件。
+- 组件、示例、Blocks 和本地依赖关系见 [registry.json](src/library/registry.json)。把所需文件按显示路径保存，React 项目用 Tailwind CSS v4 编译并导入 [theme.css](src/library/theme.css)。第三方依赖的已验证版本见 [package.json](package.json)。
+- 主题应用于 `html[data-atlas-theme]`，值为 `shadcn`、`blueprint` 或 `paper`。新增主题在主题 CSS 中声明语义变量，并登记到主题选择器。
+- Sidebar 与 Dashboard 的演示头像从 [public/avatars/shadcn.jpg](public/avatars/shadcn.jpg) 读取。迁入其他 Vite 项目时按相同路径保存头像。
+- [官方上游固定提交](https://github.com/shadcn-ui/ui/tree/968d8cb9dc42ae5d52e8fd356cf84596ec832a26/apps/v4)，许可见 [上游 MIT](src/library/ui/LICENSE.md)。`src/library/ui`、`examples`、`blocks` 采用 New York Radix 源码。`src/library/docs` 保留官方文档结构、导航、预览、代码展示与 Block Viewer 中适用的代码，Next.js 和 MDX 的数据接入改为 Vite 本地 registry。具体来源见 [移植记录](docs/designs/2026-11-18-component-library.design.md#官方文档与-blocks-移植)。
 
 ```sh
 npm run lint
@@ -28,8 +27,6 @@ npm test
 npm run preview
 ```
 
-Playwright 使用本机 Chrome。静态构建输出 `dist/`，hash 深链接无需服务器重写。
+浏览器测试使用本机 Chrome。预览服务器启动后，也可用 `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4173 npm test` 验证生产构建。
 
-[本轮设计与验收](docs/designs/2026-11-18-component-library.design.md) · [项目目标](docs/product-brief.md) · [开源仓库](https://github.com/Peiiii/ui-atlas)
-
-原创内容采用 [MIT](LICENSE)。第三方代码与依赖保留各自许可。
+[项目目标](docs/product-brief.md) · [仓库](https://github.com/Peiiii/ui-atlas)

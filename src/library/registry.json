@@ -1,0 +1,559 @@
+{
+  "components": [
+    {
+      "id": "button",
+      "group": "Forms",
+      "files": [
+        "examples/button-demo.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Button",
+      "description": "Displays a button or a component that looks like a button."
+    },
+    {
+      "id": "input",
+      "group": "Forms",
+      "files": [
+        "examples/input-demo.tsx",
+        "ui/input.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Input",
+      "description": "A text input component for forms and user data entry with built-in styling and accessibility features."
+    },
+    {
+      "id": "label",
+      "group": "Forms",
+      "files": [
+        "examples/label-demo.tsx",
+        "ui/label.tsx",
+        "ui/checkbox.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Label",
+      "description": "Renders an accessible label associated with controls."
+    },
+    {
+      "id": "textarea",
+      "group": "Forms",
+      "files": [
+        "examples/textarea-demo.tsx",
+        "ui/textarea.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Textarea",
+      "description": "Displays a form textarea or a component that looks like a textarea."
+    },
+    {
+      "id": "checkbox",
+      "group": "Forms",
+      "files": [
+        "examples/checkbox-demo.tsx",
+        "ui/checkbox.tsx",
+        "ui/cn.ts",
+        "ui/label.tsx"
+      ],
+      "title": "Checkbox",
+      "description": "A control that allows the user to toggle between checked and not checked."
+    },
+    {
+      "id": "radio-group",
+      "group": "Forms",
+      "files": [
+        "examples/radio-group-demo.tsx",
+        "ui/radio-group.tsx",
+        "ui/cn.ts",
+        "ui/label.tsx"
+      ],
+      "title": "Radio Group",
+      "description": "A set of checkable buttons\u2014known as radio buttons\u2014where no more than one of the buttons can be checked at a time."
+    },
+    {
+      "id": "select",
+      "group": "Forms",
+      "files": [
+        "examples/select-demo.tsx",
+        "ui/select.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Select",
+      "description": "Displays a list of options for the user to pick from\u2014triggered by a button."
+    },
+    {
+      "id": "switch",
+      "group": "Forms",
+      "files": [
+        "examples/switch-demo.tsx",
+        "ui/switch.tsx",
+        "ui/cn.ts",
+        "ui/label.tsx"
+      ],
+      "title": "Switch",
+      "description": "A control that allows the user to toggle between checked and not checked."
+    },
+    {
+      "id": "slider",
+      "group": "Forms",
+      "files": [
+        "examples/slider-demo.tsx",
+        "ui/slider.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Slider",
+      "description": "An input where the user selects a value from within a given range."
+    },
+    {
+      "id": "calendar",
+      "group": "Forms",
+      "files": [
+        "examples/calendar-demo.tsx",
+        "ui/calendar.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Calendar",
+      "description": "A calendar component that allows users to select a date or a range of dates."
+    },
+    {
+      "id": "field",
+      "group": "Forms",
+      "files": [
+        "examples/field-demo.tsx",
+        "ui/field.tsx",
+        "ui/button.tsx",
+        "ui/checkbox.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx",
+        "ui/select.tsx",
+        "ui/separator.tsx",
+        "ui/textarea.tsx"
+      ],
+      "title": "Field",
+      "description": "Combine labels, controls, and help text to compose accessible form fields and grouped inputs."
+    },
+    {
+      "id": "input-group",
+      "group": "Forms",
+      "files": [
+        "examples/input-group-demo.tsx",
+        "ui/input-group.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/dropdown-menu.tsx",
+        "ui/input.tsx",
+        "ui/separator.tsx",
+        "ui/textarea.tsx",
+        "ui/tooltip.tsx"
+      ],
+      "title": "Input Group",
+      "description": "Add addons, buttons, and helper content to inputs."
+    },
+    {
+      "id": "accordion",
+      "group": "Layout & Data",
+      "files": [
+        "examples/accordion-demo.tsx",
+        "ui/accordion.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Accordion",
+      "description": "A vertically stacked set of interactive headings that each reveal a section of content."
+    },
+    {
+      "id": "avatar",
+      "group": "Layout & Data",
+      "files": [
+        "examples/avatar-demo.tsx",
+        "ui/avatar.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Avatar",
+      "description": "An image element with a fallback for representing the user."
+    },
+    {
+      "id": "badge",
+      "group": "Layout & Data",
+      "files": [
+        "examples/badge-demo.tsx",
+        "ui/badge.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Badge",
+      "description": "Displays a badge or a component that looks like a badge."
+    },
+    {
+      "id": "breadcrumb",
+      "group": "Layout & Data",
+      "files": [
+        "examples/breadcrumb-demo.tsx",
+        "ui/breadcrumb.tsx",
+        "ui/cn.ts",
+        "ui/dropdown-menu.tsx"
+      ],
+      "title": "Breadcrumb",
+      "description": "Displays the path to the current resource using a hierarchy of links."
+    },
+    {
+      "id": "card",
+      "group": "Layout & Data",
+      "files": [
+        "examples/card-demo.tsx",
+        "ui/card.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx"
+      ],
+      "title": "Card",
+      "description": "Displays a card with header, content, and footer."
+    },
+    {
+      "id": "empty",
+      "group": "Layout & Data",
+      "files": [
+        "examples/empty-demo.tsx",
+        "ui/empty.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Empty",
+      "description": "Use the Empty component to display an empty state."
+    },
+    {
+      "id": "pagination",
+      "group": "Layout & Data",
+      "files": [
+        "examples/pagination-demo.tsx",
+        "ui/pagination.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Pagination",
+      "description": "Pagination with page navigation, next and previous links."
+    },
+    {
+      "id": "progress",
+      "group": "Layout & Data",
+      "files": [
+        "examples/progress-demo.tsx",
+        "ui/progress.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Progress",
+      "description": "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar."
+    },
+    {
+      "id": "scroll-area",
+      "group": "Layout & Data",
+      "files": [
+        "examples/scroll-area-demo.tsx",
+        "ui/scroll-area.tsx",
+        "ui/cn.ts",
+        "ui/separator.tsx"
+      ],
+      "title": "Scroll Area",
+      "description": "Augments native scroll functionality for custom, cross-browser styling."
+    },
+    {
+      "id": "separator",
+      "group": "Layout & Data",
+      "files": [
+        "examples/separator-demo.tsx",
+        "ui/separator.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Separator",
+      "description": "Visually or semantically separates content."
+    },
+    {
+      "id": "skeleton",
+      "group": "Layout & Data",
+      "files": [
+        "examples/skeleton-demo.tsx",
+        "ui/skeleton.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Skeleton",
+      "description": "Use to show a placeholder while content is loading."
+    },
+    {
+      "id": "table",
+      "group": "Layout & Data",
+      "files": [
+        "examples/table-demo.tsx",
+        "ui/table.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Table",
+      "description": "A responsive table component."
+    },
+    {
+      "id": "alert-dialog",
+      "group": "Overlays",
+      "files": [
+        "examples/alert-dialog-demo.tsx",
+        "ui/alert-dialog.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Alert Dialog",
+      "description": "A modal dialog that interrupts the user with important content and expects a response."
+    },
+    {
+      "id": "command",
+      "group": "Overlays",
+      "files": [
+        "examples/command-demo.tsx",
+        "ui/command.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/dialog.tsx"
+      ],
+      "title": "Command",
+      "description": "Command menu for search and quick actions."
+    },
+    {
+      "id": "dialog",
+      "group": "Overlays",
+      "files": [
+        "examples/dialog-demo.tsx",
+        "ui/dialog.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx"
+      ],
+      "title": "Dialog",
+      "description": "A window overlaid on either the primary window or another dialog window, rendering the content underneath inert."
+    },
+    {
+      "id": "drawer",
+      "group": "Overlays",
+      "files": [
+        "examples/drawer-demo.tsx",
+        "ui/drawer.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Drawer",
+      "description": "A drawer component for React."
+    },
+    {
+      "id": "dropdown-menu",
+      "group": "Overlays",
+      "files": [
+        "examples/dropdown-menu-demo.tsx",
+        "ui/dropdown-menu.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Dropdown Menu",
+      "description": "Displays a menu to the user \u2014 such as a set of actions or functions \u2014 triggered by a button."
+    },
+    {
+      "id": "popover",
+      "group": "Overlays",
+      "files": [
+        "examples/popover-demo.tsx",
+        "ui/popover.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx"
+      ],
+      "title": "Popover",
+      "description": "Displays rich content in a portal, triggered by a button."
+    },
+    {
+      "id": "sheet",
+      "group": "Overlays",
+      "files": [
+        "examples/sheet-demo.tsx",
+        "ui/sheet.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx"
+      ],
+      "title": "Sheet",
+      "description": "Extends the Dialog component to display content that complements the main content of the screen."
+    },
+    {
+      "id": "tooltip",
+      "group": "Overlays",
+      "files": [
+        "examples/tooltip-demo.tsx",
+        "ui/tooltip.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Tooltip",
+      "description": "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it."
+    },
+    {
+      "id": "alert",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/alert-demo.tsx",
+        "ui/alert.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Alert",
+      "description": "Displays a callout for user attention."
+    },
+    {
+      "id": "collapsible",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/collapsible-demo.tsx",
+        "ui/collapsible.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Collapsible",
+      "description": "An interactive component which expands/collapses a panel."
+    },
+    {
+      "id": "navigation-menu",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/navigation-menu-demo.tsx",
+        "ui/navigation-menu.tsx",
+        "hooks/use-mobile.ts",
+        "ui/cn.ts"
+      ],
+      "title": "Navigation Menu",
+      "description": "A collection of links for navigating websites."
+    },
+    {
+      "id": "sonner",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/sonner-demo.tsx",
+        "ui/sonner.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Sonner",
+      "description": "An opinionated toast component for React."
+    },
+    {
+      "id": "tabs",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/tabs-demo.tsx",
+        "ui/tabs.tsx",
+        "ui/button.tsx",
+        "ui/card.tsx",
+        "ui/cn.ts",
+        "ui/input.tsx",
+        "ui/label.tsx"
+      ],
+      "title": "Tabs",
+      "description": "A set of layered sections of content\u2014known as tab panels\u2014that are displayed one at a time."
+    },
+    {
+      "id": "toggle",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/toggle-demo.tsx",
+        "ui/toggle.tsx",
+        "ui/cn.ts"
+      ],
+      "title": "Toggle",
+      "description": "A two-state button that can be either on or off."
+    },
+    {
+      "id": "toggle-group",
+      "group": "Navigation & Feedback",
+      "files": [
+        "examples/toggle-group-demo.tsx",
+        "ui/toggle-group.tsx",
+        "ui/cn.ts",
+        "ui/toggle.tsx"
+      ],
+      "title": "Toggle Group",
+      "description": "A set of two-state buttons that can be toggled on or off."
+    }
+  ],
+  "blocks": [
+    {
+      "id": "login-01",
+      "files": [
+        "blocks/login-01/page.tsx",
+        "blocks/login-01/components/login-form.tsx",
+        "ui/button.tsx",
+        "ui/card.tsx",
+        "ui/cn.ts",
+        "ui/field.tsx",
+        "ui/input.tsx",
+        "ui/label.tsx",
+        "ui/separator.tsx"
+      ]
+    },
+    {
+      "id": "sidebar-07",
+      "files": [
+        "blocks/sidebar-07/page.tsx",
+        "blocks/sidebar-07/components/app-sidebar.tsx",
+        "blocks/sidebar-07/components/nav-main.tsx",
+        "blocks/sidebar-07/components/nav-projects.tsx",
+        "blocks/sidebar-07/components/nav-user.tsx",
+        "blocks/sidebar-07/components/team-switcher.tsx",
+        "hooks/use-mobile.ts",
+        "ui/avatar.tsx",
+        "ui/breadcrumb.tsx",
+        "ui/button.tsx",
+        "ui/cn.ts",
+        "ui/collapsible.tsx",
+        "ui/dropdown-menu.tsx",
+        "ui/input.tsx",
+        "ui/separator.tsx",
+        "ui/sheet.tsx",
+        "ui/sidebar.tsx",
+        "ui/skeleton.tsx",
+        "ui/tooltip.tsx"
+      ]
+    },
+    {
+      "id": "dashboard-01",
+      "files": [
+        "blocks/dashboard-01/page.tsx",
+        "blocks/dashboard-01/components/app-sidebar.tsx",
+        "blocks/dashboard-01/components/chart-area-interactive.tsx",
+        "blocks/dashboard-01/components/data-table.tsx",
+        "blocks/dashboard-01/components/nav-documents.tsx",
+        "blocks/dashboard-01/components/nav-main.tsx",
+        "blocks/dashboard-01/components/nav-secondary.tsx",
+        "blocks/dashboard-01/components/nav-user.tsx",
+        "blocks/dashboard-01/components/section-cards.tsx",
+        "blocks/dashboard-01/components/site-header.tsx",
+        "blocks/dashboard-01/data.json",
+        "hooks/use-mobile.ts",
+        "ui/avatar.tsx",
+        "ui/badge.tsx",
+        "ui/button.tsx",
+        "ui/card.tsx",
+        "ui/chart.tsx",
+        "ui/checkbox.tsx",
+        "ui/cn.ts",
+        "ui/drawer.tsx",
+        "ui/dropdown-menu.tsx",
+        "ui/input.tsx",
+        "ui/label.tsx",
+        "ui/select.tsx",
+        "ui/separator.tsx",
+        "ui/sheet.tsx",
+        "ui/sidebar.tsx",
+        "ui/skeleton.tsx",
+        "ui/table.tsx",
+        "ui/tabs.tsx",
+        "ui/toggle-group.tsx",
+        "ui/toggle.tsx",
+        "ui/tooltip.tsx"
+      ]
+    }
+  ]
+}

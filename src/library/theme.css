@@ -2,87 +2,58 @@
 @import "tw-animate-css";
 @source "./ui";
 @source "./examples";
+@source "./blocks";
 @custom-variant dark (&:is(.dark *));
+
 @theme inline {
-  --color-background: var(--kit-bg);
-  --color-foreground: var(--kit-fg);
-  --color-card: var(--kit-card);
-  --color-card-foreground: var(--kit-fg);
-  --color-primary: var(--kit-primary);
-  --color-primary-foreground: var(--kit-on-primary);
-  --color-secondary: var(--kit-secondary);
-  --color-secondary-foreground: var(--secondary-foreground, var(--kit-fg));
-  --color-muted: var(--kit-secondary);
-  --color-muted-foreground: var(--kit-muted);
-  --color-accent: var(--kit-secondary);
-  --color-accent-foreground: var(--accent-foreground, var(--kit-fg));
-  --color-destructive: var(--destructive, #b73546);
-  --color-input: var(--input, var(--kit-border));
-  --color-border: var(--kit-border);
-  --color-ring: var(--ring, var(--kit-primary));
-  --radius-sm: calc(var(--radius, var(--kit-radius)) * 0.6);
-  --radius-md: calc(var(--radius, var(--kit-radius)) * 0.8);
-  --radius-lg: var(--radius, calc(var(--kit-radius) + 2px));
-  --radius-xl: calc(var(--radius, var(--kit-radius)) * 1.4);
-}
-[data-atlas-theme] {
-  --kit-bg: #f5f7fb;
-  --kit-fg: #1d293e;
-  --kit-card: #fff;
-  --kit-secondary: #eaf0fb;
-  --kit-muted: #56627a;
-  --kit-border: #d3dbea;
-  --kit-primary: #264cc5;
-  --kit-on-primary: #fff;
-  --kit-radius: 5px;
-  --kit-gap: 16px;
-  --kit-shadow: none;
-  --kit-heading: inherit;
-}
-[data-atlas-theme="paper"] {
-  --kit-bg: #f5ede0;
-  --kit-fg: #342820;
-  --kit-card: #fffaf3;
-  --kit-secondary: #f3e5d5;
-  --kit-muted: #716052;
-  --kit-border: #ddccba;
-  --kit-primary: #8d3b27;
-  --kit-radius: 14px;
-  --kit-gap: 24px;
-  --kit-shadow: 0 7px 23px #6e3e2212;
-  --kit-heading: Georgia, "Songti SC", serif;
-}
-[data-atlas-theme]:not([data-atlas-theme="shadcn"])
-  :is([data-slot="card"], [data-slot="dialog-content"]) {
-  color: var(--kit-fg);
-  box-shadow: var(--kit-shadow);
-  border: 1px solid var(--kit-border);
-}
-[data-atlas-theme="paper"] [data-slot="card-title"] {
-  font-family: var(--kit-heading);
-  font-size: 1.15rem;
-}
-[data-atlas-theme="paper"] [data-slot="button"] {
-  min-height: 2.55rem;
-}
-[data-atlas-theme="paper"] [data-slot="card"] {
-  padding-block: 1.8rem;
-}
-[data-atlas-theme] [data-slot="dialog-content"] {
-  font-family: system-ui, sans-serif;
-}
-[data-atlas-theme] [data-slot="dialog-content"] h2,
-[data-atlas-theme] [data-slot="dialog-content"] p {
-  margin: 0;
-}
-[data-atlas-theme] [data-slot="switch"] {
-  padding: 0;
-}
-[data-atlas-theme] :is([data-slot="button"], [data-slot="switch"]) {
-  cursor: pointer;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-code: var(--code);
+  --color-code-foreground: var(--code-foreground);
+  --color-code-highlight: var(--code-highlight);
+  --color-code-number: var(--code-number);
 }
 
-[data-atlas-theme="shadcn"] {
+/* Relevant light variables from shadcn/ui apps/v4/app/globals.css. */
+:root,
+[data-atlas-theme] {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0% 0 0);
@@ -103,22 +74,104 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-
-  --kit-bg: var(--background);
-  --kit-fg: var(--foreground);
-  --kit-card: var(--card);
-  --kit-primary: var(--primary);
-  --kit-on-primary: var(--primary-foreground);
-  --kit-secondary: var(--secondary);
-  --kit-muted: var(--muted-foreground);
-  --kit-border: var(--border);
-  --kit-radius: var(--radius);
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0% 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --surface: oklch(0.98 0 0);
+  --surface-foreground: var(--foreground);
+  --code: var(--surface);
+  --code-foreground: var(--surface-foreground);
+  --code-highlight: oklch(0.96 0 0);
+  --code-number: oklch(0.56 0 0);
 }
+
+[data-atlas-theme="blueprint"] {
+  --radius: 0.425rem;
+  --background: #f5f7fb;
+  --foreground: #1d293e;
+  --card: #fff;
+  --card-foreground: var(--foreground);
+  --primary: #264cc5;
+  --primary-foreground: #fff;
+  --secondary: #eaf0fb;
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: #56627a;
+  --border: #d3dbea;
+  --accent: var(--secondary);
+  --accent-foreground: var(--foreground);
+  --code: #eef2f9;
+  --chart-1: #92abfa;
+  --chart-2: var(--primary);
+}
+
+[data-atlas-theme="paper"] {
+  --radius: 0.875rem;
+  --background: #f5ede0;
+  --foreground: #342820;
+  --card: #fffaf3;
+  --card-foreground: var(--foreground);
+  --primary: #8d3b27;
+  --primary-foreground: #fff;
+  --secondary: #f3e5d5;
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: #716052;
+  --border: #ddccba;
+  --accent: var(--secondary);
+  --accent-foreground: var(--foreground);
+  --code: #f1e6d6;
+  --chart-1: #d7a47f;
+  --chart-2: var(--primary);
+}
+
+:is([data-atlas-theme="blueprint"], [data-atlas-theme="paper"]) {
+  --input: var(--border);
+  --ring: var(--primary);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --code-foreground: var(--foreground);
+  --code-number: var(--muted-foreground);
+}
+
+[data-atlas-theme="paper"] [data-slot="card-title"] {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 1.15rem;
+}
+[data-atlas-theme="paper"] [data-slot="button"] {
+  min-height: 2.55rem;
+}
+[data-atlas-theme="paper"] [data-slot="card"] {
+  padding-block: 1.8rem;
+  box-shadow: 0 7px 23px #6e3e2212;
+}
+
 @layer base {
-  [data-atlas-theme] {
-    @apply border-border text-foreground;
-  }
-  [data-atlas-theme] * {
+  * {
     @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  :is([data-slot="button"], [data-slot="switch"]):not(:disabled) {
+    cursor: pointer;
   }
 }

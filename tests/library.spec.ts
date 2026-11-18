@@ -1,63 +1,119 @@
 import { expect, test } from "@playwright/test";
+import registry from "../src/library/registry.json" with { type: "json" };
 
-test("navigate the library, persist theme, download actual component source", async ({
+test("official docs structure, component interaction, theme and source", async ({
   page,
+  context,
 }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "按钮 button" }),
+    page.getByRole("heading", { name: "Button", exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel("当前风格")).toHaveValue("shadcn");
   await expect(
-    page.getByRole("button", { name: "Button", exact: true }),
-  ).toBeVisible();
-  await page.getByLabel("当前风格").selectOption("paper");
-  await page.getByLabel("搜索组件").fill("dialog");
-  await page.getByRole("link", { name: "对话框 dialog" }).click();
+    page.locator('[data-slot="sidebar"] a[aria-current="page"]'),
+  ).toHaveText("Button");
+  await expect(page.getByLabel("Theme")).toHaveValue("shadcn");
+  await page.getByLabel("Theme").selectOption("paper");
+  await page.getByRole("link", { name: "Checkbox", exact: true }).click();
   await page.reload();
-  await expect(page.getByLabel("当前风格")).toHaveValue("paper");
+  await expect(page.getByLabel("Theme")).toHaveValue("paper");
+  const checkbox = page.locator("#terms");
+  await checkbox.focus();
+  await page.keyboard.press("Space");
+  await expect(checkbox).toBeChecked();
+  await page.keyboard.press("Control+k");
+  const search = page.getByRole("dialog", { name: "Search documentation" });
+  await search.getByRole("combobox").fill("dialog");
+  await search.getByRole("option", { name: "Dialog", exact: true }).click();
   const trigger = page.getByRole("button", { name: "Open Dialog" });
   await trigger.click();
   await expect(page.getByRole("dialog")).toHaveAccessibleName("Edit profile");
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
-  await page.getByRole("link", { name: "源码", exact: true }).click();
-  await expect(page.locator(".lib-code")).toContainText("DialogPrimitive");
+  await page.getByRole("button", { name: "View Code" }).click();
+  const inline = page.locator('[data-slot="code"]');
+  await expect(inline.locator("[data-line-numbers]")).toContainText(
+    "DialogDemo",
+  );
+  await inline.getByRole("button", { name: "Copy", exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
+    "DialogDemo",
+  );
+  await page.getByLabel("Source file").selectOption("ui/dialog.tsx");
   const download = page.waitForEvent("download");
-  await page.getByRole("link", { name: "下载当前文件" }).click();
+  await page.getByRole("link", { name: "Download source" }).click();
   expect((await download).suggestedFilename()).toBe("dialog.tsx");
-  await page
-    .getByLabel("选择源码文件")
-    .selectOption("./examples/dialog-demo.tsx");
-  await expect(page.locator(".lib-code")).toContainText("Open Dialog");
+  await expect(page.locator("#source")).toContainText("DialogPrimitive");
 });
 
-test("templates use the chosen theme and remain usable at 390px", async ({
+test("all 39 official demos and three Blocks resolve at their entry points", async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const item of registry.components) {
+    await page.goto(`/#component=${item.id}`);
+    await expect(
+      page.getByRole("heading", { name: item.title, exact: true }),
+    ).toBeVisible();
+
+    await expect(
+      page.locator('[data-slot="preview"] .preview > :first-child'),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Loading preview…", { exact: true }),
+    ).toHaveCount(0);
+  }
+  for (const block of registry.blocks) {
+    await page.goto(`/#view=full&template=${block.id}&theme=paper`);
+    await expect(
+      page.locator('[data-slot="block-preview"] > :first-child'),
+    ).toBeVisible();
+    await expect(page.getByText("Loading block…", { exact: true })).toHaveCount(
+      0,
+    );
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-atlas-theme",
+      "paper",
+    );
+  }
+  await page.goto("/#view=blocks&template=dashboard-01&theme=paper");
+  await expect(
+    page.frameLocator("iframe").getByRole("table").first(),
+  ).toBeVisible();
+  const popup = page.waitForEvent("popup");
+  await page.getByRole("link", { name: "Open in New Tab" }).click();
+  const full = await popup;
+  await expect(full.getByRole("table").first()).toBeVisible();
+  await page.getByRole("tab", { name: "Code" }).click();
+  await expect(page.getByLabel("Source file")).toHaveValue(
+    "blocks/dashboard-01/page.tsx",
+  );
+  await expect(
+    page.getByText("ChartAreaInteractive", { exact: true }).first(),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("mobile navigation reaches a Block and preserves the selected theme", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#view=templates&template=dashboard&theme=paper");
-  await page.getByRole("button", { name: "新建项目" }).click();
-  await page.getByLabel("项目名称").fill("设计复核");
-  await page.getByRole("button", { name: "添加项目" }).click();
-  await expect(page.getByText("设计复核", { exact: true })).toBeVisible();
-  const popup = page.waitForEvent("popup");
-  await page.getByRole("link", { name: "打开完整页面" }).click();
-  const full = await popup;
-  await expect(full.getByRole("heading", { name: "项目看板" })).toBeVisible();
-  await expect(full.locator("html")).toHaveAttribute(
-    "data-atlas-theme",
-    "paper",
-  );
-  await expect(full.getByRole("navigation", { name: "主导航" })).toHaveCount(0);
-  await page.getByRole("link", { name: "工作区设置", exact: true }).click();
-  const toggle = page.getByRole("switch", { name: /项目更新/ });
-  await toggle.focus();
-  await page.keyboard.press("Space");
-  await expect(toggle).toHaveAttribute("aria-checked", "false");
-  await page.getByLabel("工作区名称").fill("设计工作室");
-  await page.getByRole("button", { name: "保存设置" }).click();
-  await expect(page.getByRole("status")).toContainText("设计工作室");
+  await page.goto("/#theme=blueprint");
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("link", { name: "Collapsible Sidebar", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Collapsible Sidebar", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Theme")).toHaveValue("blueprint");
+  const block = page.frameLocator("iframe");
+  await block.getByRole("button", { name: "Toggle Sidebar" }).click();
+  await expect(block.getByRole("dialog")).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);

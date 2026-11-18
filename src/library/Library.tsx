@@ -1,443 +1,360 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
 import {
-  ArrowDownToLine,
-  ArrowUpRight,
-  Box,
-  Code2,
-  Layers,
-  LayoutTemplate,
-  Search,
-} from "lucide-react";
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { ArrowDownToLine } from "lucide-react";
+import { ThemeProvider } from "next-themes";
 import { route } from "./route";
-import { CopyButton } from "../components/Clipboard";
-import ButtonDemo from "./examples/button-demo";
-import InputDemo from "./examples/input-demo";
-import SwitchDemo from "./examples/switch-demo";
-import CardDemo from "./examples/card-demo";
-import BadgeDemo from "./examples/badge-demo";
-import DialogDemo from "./examples/dialog-demo";
-import { Dashboard, Settings } from "./Templates";
+import registry from "./registry.json";
+import { Button } from "./ui/button";
+import { SiteHeader } from "./docs/SiteHeader";
+import DocsLayout from "./docs/DocsLayout";
+import { DocPage } from "./docs/DocPage";
+import { BlockViewer } from "./docs/BlockViewer";
+import { ComponentPreviewTabs } from "./docs/ComponentPreviewTabs";
+import { ComponentSource } from "./docs/ComponentSource";
 import "./theme.css";
-import "./library.css";
+import "./docs/styles.css";
 
-const components = [
-  {
-    id: "button",
-    name: "按钮",
-    group: "基础控件",
-    description: "触发操作，区分主要、辅助与危险动作。",
-    usage: "<Button onClick={handleSave}>保存修改</Button>",
-  },
-  {
-    id: "input",
-    name: "输入框",
-    group: "基础控件",
-    description: "输入单行文本，支持原生字段类型与表单校验。",
-    usage:
-      '<Input aria-label="邮箱地址" type="email" placeholder="you@example.com" />',
-  },
-  {
-    id: "switch",
-    name: "开关",
-    group: "基础控件",
-    description: "立即切换一项设置，支持键盘操作与受控状态。",
-    usage:
-      '<Switch aria-label="启用通知" checked={enabled} onCheckedChange={setEnabled} />',
-  },
-  {
-    id: "card",
-    name: "卡片",
-    group: "信息展示",
-    description: "组合标题、内容和操作，建立清晰的信息分区。",
-    usage:
-      "<Card>\n  <CardHeader><CardTitle>项目概览</CardTitle></CardHeader>\n  <CardContent>项目内容</CardContent>\n</Card>",
-  },
-  {
-    id: "badge",
-    name: "标签",
-    group: "信息展示",
-    description: "简洁标记类别、状态或优先级。",
-    usage: '<Badge variant="secondary">进行中</Badge>',
-  },
-  {
-    id: "dialog",
-    name: "对话框",
-    group: "弹层",
-    description: "聚焦当前操作，支持 Escape 退出并归还焦点。",
-    usage:
-      "<Dialog>\n  <DialogTrigger asChild><Button>打开</Button></DialogTrigger>\n  <DialogContent>\n    <DialogTitle>项目设置</DialogTitle>\n    <DialogDescription>更新项目名称与说明。</DialogDescription>\n  </DialogContent>\n</Dialog>",
-  },
-] as const;
 const themes = [
-  {
-    id: "shadcn",
-    name: "shadcn 默认",
-    description: "使用 shadcn/ui 文档的默认中性色与圆角。",
-  },
-  {
-    id: "blueprint",
-    name: "蓝图",
-    description: "冷白界面、清晰边框与紧凑节奏。适合控制台和高频工作区。",
-  },
-  {
-    id: "paper",
-    name: "暖纸",
-    description: "暖色纸面、衬线字阶与舒展空间。适合阅读、创作和团队协作。",
-  },
+  { id: "shadcn", label: "shadcn Default" },
+  { id: "blueprint", label: "Blueprint" },
+  { id: "paper", label: "Warm Paper" },
 ];
-const templates = [
-  {
-    id: "dashboard",
-    name: "项目看板",
-    description: "任务概览、项目状态与新建流程。",
-    Page: Dashboard,
-  },
-  {
-    id: "settings",
-    name: "工作区设置",
-    description: "分组表单、受控开关与提交反馈。",
-    Page: Settings,
-  },
+const views = [
+  { id: "components", label: "Components" },
+  { id: "blocks", label: "Blocks" },
+  { id: "themes", label: "Themes" },
 ];
-const files = import.meta.glob(
+const blockLabels: Record<string, { label: string; description: string }> = {
+  "login-01": { label: "Login", description: "A simple login form." },
+  "sidebar-07": {
+    label: "Collapsible Sidebar",
+    description: "A sidebar that collapses to icons.",
+  },
+  "dashboard-01": {
+    label: "Dashboard",
+    description: "A dashboard with sidebar, charts and data table.",
+  },
+};
+const files = import.meta.glob<string>(
   [
-    "./ui/*.tsx",
+    "./ui/*.{tsx,ts,md}",
     "./examples/*.tsx",
-    "./ui/cn.ts",
-    "./ui/LICENSE.md",
+    "./blocks/**/*.{tsx,json}",
+    "./hooks/*.ts",
     "./theme.css",
-    "./Templates.tsx",
-    "./templates.css",
   ],
-  { eager: true, query: "?raw", import: "default" },
-) as Record<string, string>;
-const deps =
-  "npm install radix-ui class-variance-authority clsx tailwind-merge lucide-react\nnpm install -D tailwindcss @tailwindcss/vite tw-animate-css";
+  { query: "?raw", import: "default" },
+);
+const exampleModules = import.meta.glob<{ default: React.ComponentType }>(
+  "./examples/*-demo.tsx",
+);
+const blockModules = import.meta.glob<{ default: React.ComponentType }>(
+  "./blocks/*/page.tsx",
+);
+const examples = Object.fromEntries(
+  registry.components.map((item) => [
+    item.id,
+    lazy(exampleModules[`./examples/${item.id}-demo.tsx`]),
+  ]),
+);
+const blocks = Object.fromEntries(
+  registry.blocks.map((item) => [
+    item.id,
+    lazy(blockModules[`./blocks/${item.id}/page.tsx`]),
+  ]),
+);
 
-function SourceFiles({ paths, use }: { paths: string[]; use: string }) {
-  const [file, setFile] = useState(paths[0]);
-  const content = files[file];
+function useSourceFile(file: string) {
+  const [result, setResult] = useState<{
+    file: string;
+    content?: string;
+    failed?: boolean;
+  }>();
+  useEffect(() => {
+    let current = true;
+    files[`./${file}`]()
+      .then((content) => {
+        if (current) setResult({ file, content });
+      })
+      .catch(() => {
+        if (current) setResult({ file, failed: true });
+      });
+    return () => {
+      current = false;
+    };
+  }, [file]);
+  return result?.file === file ? result : undefined;
+}
+
+function PreviewSource({
+  file,
+  maxLines,
+}: {
+  file: string;
+  maxLines?: number;
+}) {
+  const result = useSourceFile(file);
+  if (result?.failed)
+    return <p className="p-4 text-sm">The source file could not load.</p>;
+  if (!result) return <p className="p-4 text-sm">Loading source…</p>;
   return (
-    <section className="lib-source">
-      <h2>源码与使用</h2>
-      <p>
-        在 React 项目安装依赖，启用 Tailwind CSS v4。按下方路径保存文件并导入
-        theme.css，在根节点设置 <code>data-atlas-theme</code> 为{" "}
-        <code>shadcn</code>、<code>blueprint</code> 或 <code>paper</code>。
-      </p>
-      <pre>{deps}</pre>
-      {use && <pre>{use}</pre>}
-      <div className="lib-file-tools">
-        <select
-          aria-label="选择源码文件"
-          value={file}
-          onChange={(e) => setFile(e.target.value)}
-        >
-          {paths.map((path) => (
-            <option value={path} key={path}>
-              {path.slice(2)}
-            </option>
-          ))}
-        </select>
-        <CopyButton text={content} label="复制源码" />
-        <a
-          href={`data:text/plain;charset=utf-8,${encodeURIComponent(content)}`}
-          download={file.split("/").at(-1)}
-          aria-label="下载当前文件"
-        >
-          <ArrowDownToLine size={17} />
-        </a>
-      </div>
-      <pre className="lib-code">{content}</pre>
-    </section>
+    <ComponentSource
+      code={result.content!}
+      title={maxLines ? undefined : file.split("/").at(-1)}
+      maxLines={maxLines}
+    />
   );
 }
 
-const demos = {
-  button: ButtonDemo,
-  input: InputDemo,
-  switch: SwitchDemo,
-  card: CardDemo,
-  badge: BadgeDemo,
-  dialog: DialogDemo,
-};
-const demoDependencies: Partial<Record<keyof typeof demos, string[]>> = {
-  switch: ["label"],
-  card: ["button", "input", "label"],
-  dialog: ["button", "input", "label"],
-};
+function SourceFiles({ paths }: { paths: string[] }) {
+  const [file, setFile] = useState(paths[0]);
+  const result = useSourceFile(file);
+  const content = result?.content;
+  return (
+    <div className="mt-4 min-w-0 rounded-xl border">
+      <div className="flex items-center gap-2 border-b p-2">
+        <select
+          aria-label="Source file"
+          value={file}
+          onChange={(event) => setFile(event.target.value)}
+          className="min-w-0 flex-1 rounded-md border bg-background p-2 text-sm"
+        >
+          {paths.map((path) => (
+            <option key={path} value={path}>
+              {path}
+            </option>
+          ))}
+        </select>
+        {content !== undefined && (
+          <Button asChild variant="ghost" size="icon-sm">
+            <a
+              aria-label="Download source"
+              href={`data:text/plain;charset=utf-8,${encodeURIComponent(content)}`}
+              download={file.split("/").at(-1)}
+            >
+              <ArrowDownToLine />
+            </a>
+          </Button>
+        )}
+      </div>
+      {content !== undefined ? (
+        <ComponentSource
+          key={file}
+          code={content}
+          title={file.split("/").at(-1)}
+        />
+      ) : (
+        <p className="p-4 text-sm">
+          {result?.failed
+            ? "The source file could not load."
+            : "Loading source…"}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export function Library() {
   useSyncExternalStore(route.subscribe, route.snapshot);
-
-  const area = route.get("view", "components");
-  const theme = themes.find((t) => t.id === route.get("theme"))?.id ?? "shadcn";
-  const picked =
-    components.find((c) => c.id === route.get("component")) ?? components[0];
-  const Demo = demos[picked.id];
-  const template =
-    templates.find((t) => t.id === route.get("template")) ?? templates[0];
-  const [query, setQuery] = useState("");
-  const codeOpen = route.get("tab") === "code";
+  const currentView = route.get("view", "components");
+  const view =
+    currentView === "templates"
+      ? "blocks"
+      : currentView === "styles"
+        ? "themes"
+        : currentView;
+  const requestedBlock = route.get("template");
+  const currentBlock =
+    requestedBlock === "dashboard"
+      ? "dashboard-01"
+      : requestedBlock === "settings"
+        ? "sidebar-07"
+        : requestedBlock;
+  const block =
+    registry.blocks.find((item) => item.id === currentBlock) ??
+    registry.blocks[0];
+  const item =
+    registry.components.find((entry) => entry.id === route.get("component")) ??
+    registry.components[0];
+  const theme =
+    themes.find((entry) => entry.id === route.get("theme"))?.id ?? "shadcn";
+  const Block = blocks[block.id];
+  const Example = examples[item.id];
+  const choose = (values: Record<string, string>) =>
+    route.link({ view, theme, tab: "", ...values });
+  const blockView = view === "blocks";
+  const viewKey = `${view}:${blockView ? block.id : item.id}`;
   useEffect(() => {
     document.documentElement.dataset.atlasTheme = theme;
     return () => {
       delete document.documentElement.dataset.atlasTheme;
     };
   }, [theme]);
-  const choose = (values: Record<string, string>) =>
-    route.link({ view: area, theme, tab: "", ...values });
-  const componentPaths = [
-    `./ui/${picked.id}.tsx`,
-    `./examples/${picked.id}-demo.tsx`,
-    ...(demoDependencies[picked.id] ?? []).map((id) => `./ui/${id}.tsx`),
-    "./ui/cn.ts",
-    "./theme.css",
-    "./ui/LICENSE.md",
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [viewKey]);
+  const navItems = views.map((entry) => ({
+    ...entry,
+    href: choose({ view: entry.id }),
+  }));
+  const groups = [
+    ...Array.from(new Set(registry.components.map((entry) => entry.group))).map(
+      (group) => ({
+        name: group,
+        pages: registry.components
+          .filter((entry) => entry.group === group)
+          .map((entry) => ({
+            id: entry.id,
+            name: entry.title,
+            href: choose({ view: "components", component: entry.id }),
+            active: view === "components" && item.id === entry.id,
+          })),
+      }),
+    ),
+    {
+      name: "Blocks",
+      pages: registry.blocks.map((entry) => ({
+        id: entry.id,
+        name: blockLabels[entry.id].label,
+        href: choose({ view: "blocks", template: entry.id }),
+        active: blockView && block.id === entry.id,
+      })),
+    },
+    {
+      name: "Themes",
+      pages: [
+        {
+          id: "themes",
+          name: "Theme presets",
+          href: choose({ view: "themes" }),
+          active: view === "themes",
+        },
+      ],
+    },
   ];
-  const templatePaths = [
-    "./Templates.tsx",
-    "./templates.css",
-    "./theme.css",
-    ...components.map((c) => `./ui/${c.id}.tsx`),
-    "./ui/cn.ts",
-    "./ui/LICENSE.md",
-  ];
-  if (area === "full")
+  if (view === "full")
     return (
-      <main className="atlas-kit kit-full">
-        <template.Page />
-      </main>
-    );
-  return (
-    <div className="library">
-      <header className="lib-top">
-        <a
-          className="lib-brand"
-          href={choose({ view: "components", component: "button" })}
+      <ThemeProvider forcedTheme="light" enableSystem={false}>
+        <main
+          data-slot="block-preview"
+          onSubmit={(event) => event.preventDefault()}
+          onClick={(event) => {
+            if (
+              event.target instanceof Element &&
+              event.target.closest('a[href="#"]')
+            )
+              event.preventDefault();
+          }}
         >
-          <span>
-            <Layers size={19} />
-          </span>
-          UI Atlas
-        </a>
-        <nav aria-label="主导航">
-          {[
-            ["components", "组件"],
-            ["styles", "风格体系"],
-            ["templates", "页面模板"],
-          ].map(([id, name]) => (
-            <a
-              key={id}
-              aria-current={area === id ? "page" : undefined}
-              href={choose({ view: id })}
-            >
-              {name}
-            </a>
-          ))}
-        </nav>
-        <label className="lib-theme">
-          <span>当前风格</span>
-          <select
-            aria-label="当前风格"
-            value={theme}
-            onChange={(e) => route.patch({ theme: e.target.value })}
-          >
-            {themes.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </header>
-      <div className="lib-layout">
-        <aside className="lib-sidebar">
-          <div className="lib-guide">
-            <Box size={15} /> 组件文档
-          </div>
-          <label className="lib-search">
-            <Search size={15} />
-            <input
-              aria-label="搜索组件"
-              placeholder="搜索组件…"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (area !== "components")
-                  route.patch({ view: "components", tab: null });
-              }}
+          <Suspense fallback={<p className="p-6">Loading block…</p>}>
+            <Block key={block.id} />
+          </Suspense>
+        </main>
+      </ThemeProvider>
+    );
+
+  const listing = groups.slice(0, -2).flatMap((group) => group.pages);
+  const index = listing.findIndex((entry) => entry.id === item.id);
+  return (
+    <ThemeProvider forcedTheme="light" enableSystem={false}>
+      <SiteHeader
+        items={navItems}
+        groups={groups}
+        themes={themes}
+        theme={theme}
+        onTheme={(value) => route.patch({ theme: value })}
+      />
+      {blockView ? (
+        <BlockViewer
+          key={block.id}
+          title={blockLabels[block.id].label}
+          description={blockLabels[block.id].description}
+          id={block.id}
+          href={choose({ view: "full", template: block.id })}
+          links={groups.find((group) => group.name === "Blocks")!.pages}
+          source={
+            <SourceFiles
+              key={block.id}
+              paths={[...block.files, "theme.css", "ui/LICENSE.md"]}
             />
-          </label>
-          {["基础控件", "信息展示", "弹层"].map((group) => {
-            const matches = components.filter(
-              (c) =>
-                c.group === group &&
-                `${c.name} ${c.id}`.includes(query.trim().toLowerCase()),
-            );
-            return (
-              matches.length > 0 && (
-                <div className="lib-group" key={group}>
-                  <h2>{group}</h2>
-                  {matches.map((c) => (
-                    <a
-                      key={c.id}
-                      aria-current={
-                        area === "components" && c.id === picked.id
-                          ? "page"
-                          : undefined
-                      }
-                      href={choose({ view: "components", component: c.id })}
+          }
+        />
+      ) : (
+        <DocsLayout groups={groups}>
+          {view === "themes" ? (
+            <DocPage
+              title="Themes"
+              description="Use the same shadcn components across different visual systems."
+              sections={[]}
+            >
+              <div className="grid gap-4 sm:grid-cols-3">
+                {themes.map((entry) => (
+                  <div
+                    key={entry.id}
+                    data-atlas-theme={entry.id}
+                    className="rounded-xl border bg-background p-4 text-foreground"
+                  >
+                    <h2 className="mb-4 text-sm font-semibold">
+                      {entry.label}
+                    </h2>
+                    <Button
+                      asChild
+                      variant={theme === entry.id ? "default" : "outline"}
                     >
-                      {c.name}
-                      <small>{c.id}</small>
-                    </a>
-                  ))}
-                </div>
-              )
-            );
-          })}
-          {query &&
-            !components.some((c) =>
-              `${c.name} ${c.id}`.includes(query.trim().toLowerCase()),
-            ) && <p className="lib-muted">没有匹配的组件</p>}
-          <div className="lib-group">
-            <h2>页面模板</h2>
-            {templates.map((t) => (
-              <a
-                key={t.id}
-                aria-current={
-                  area === "templates" && t.id === template.id
-                    ? "page"
-                    : undefined
-                }
-                href={choose({ view: "templates", template: t.id })}
-              >
-                {t.name}
-                <LayoutTemplate size={14} />
-              </a>
-            ))}
-          </div>
-        </aside>
-        <main className="lib-main">
-          {area === "styles" ? (
-            <>
-              <div className="lib-heading">
-                <h1>风格体系</h1>
-                <p>同一套 shadcn 组件。选择风格后，组件与页面模板同步切换。</p>
-              </div>
-              <div className="lib-styles">
-                {themes.map((t) => (
-                  <article className="lib-style-card" key={t.id}>
-                    <div
-                      className="atlas-kit lib-style-preview"
-                      data-atlas-theme={t.id}
-                    >
-                      <ButtonDemo />
-                      <BadgeDemo />
-                    </div>
-                    <div className="lib-style-meta">
-                      <h2>{t.name}</h2>
-                      <p>{t.description}</p>
-                      <a href={choose({ theme: t.id, view: "components" })}>
-                        浏览这套组件 <ArrowUpRight size={15} />
+                      <a href={choose({ theme: entry.id })}>
+                        {theme === entry.id ? "Selected" : "Select theme"}
                       </a>
-                    </div>
-                  </article>
+                    </Button>
+                  </div>
                 ))}
               </div>
-            </>
+            </DocPage>
           ) : (
-            <>
-              <div className="lib-heading">
-                <div className="lib-crumb">
-                  {area === "templates" ? "页面模板" : picked.group}
-                </div>
-                <h1>
-                  {area === "templates" ? template.name : picked.name}
-                  {area !== "templates" && <small> {picked.id}</small>}
-                </h1>
-                <p>
-                  {area === "templates"
-                    ? template.description
-                    : picked.description}
-                </p>
-              </div>
-              <div className="lib-tabs">
-                <a
-                  aria-current={!codeOpen ? "page" : undefined}
-                  href={choose({})}
-                >
-                  预览
-                </a>
-                <a
-                  aria-current={codeOpen ? "page" : undefined}
-                  href={choose({ tab: "code" })}
-                >
-                  <Code2 size={16} /> 源码
-                </a>
-                {area === "templates" && (
-                  <a
-                    className="lib-full-link"
-                    href={choose({ view: "full", template: template.id })}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    打开完整页面 <ArrowUpRight size={15} />
-                  </a>
-                )}
-              </div>
-              {codeOpen ? (
-                <SourceFiles
-                  key={area === "templates" ? template.id : picked.id}
-                  paths={area === "templates" ? templatePaths : componentPaths}
-                  use={
-                    area === "templates"
-                      ? `import { ${template.id === "dashboard" ? "Dashboard" : "Settings"} } from "./Templates";\nimport "./theme.css";`
-                      : picked.usage
+            <DocPage
+              title={item.title}
+              description={item.description}
+              previous={listing[index - 1]}
+              next={listing[index + 1]}
+              sections={[
+                { id: "preview", label: "Preview" },
+                { id: "source", label: "Source files" },
+              ]}
+            >
+              <section id="preview" className="scroll-mt-20">
+                <ComponentPreviewTabs
+                  key={item.id}
+                  component={
+                    <Suspense fallback={<p>Loading preview…</p>}>
+                      <Example />
+                    </Suspense>
+                  }
+                  source={<PreviewSource file={item.files[0]} />}
+                  sourcePreview={
+                    <PreviewSource file={item.files[0]} maxLines={3} />
                   }
                 />
-              ) : (
-                <>
-                  <div
-                    data-slot={
-                      area === "templates" ? undefined : "component-preview"
-                    }
-                    className={`atlas-kit ${area === "templates" ? "kit-template" : "group relative flex flex-col overflow-hidden rounded-2xl border bg-background"}`}
-                  >
-                    {area === "templates" ? (
-                      <template.Page key={template.id} />
-                    ) : (
-                      <div
-                        data-slot="preview"
-                        data-align="center"
-                        className="preview relative flex min-h-72 w-full justify-center p-6 data-[align=center]:items-center sm:p-10"
-                        key={picked.id}
-                        onSubmit={(event) => event.preventDefault()}
-                        onClick={(event) => {
-                          if (
-                            event.target instanceof Element &&
-                            event.target.closest('a[href="#"]')
-                          )
-                            event.preventDefault();
-                        }}
-                      >
-                        <Demo />
-                      </div>
-                    )}
-                  </div>
-                  {area !== "templates" && (
-                    <section className="lib-use">
-                      <h2>示例源码</h2>
-                      <pre>{files[`./examples/${picked.id}-demo.tsx`]}</pre>
-                    </section>
-                  )}
-                </>
-              )}
-            </>
+              </section>
+              <section id="source" className="mt-8 scroll-mt-20">
+                <h2 className="text-xl font-semibold tracking-tight">
+                  Source files
+                </h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Copy the implementation and dependencies into your project.
+                </p>
+                <SourceFiles
+                  key={viewKey}
+                  paths={[...item.files, "theme.css", "ui/LICENSE.md"]}
+                />
+              </section>
+            </DocPage>
           )}
-        </main>
-      </div>
-    </div>
+        </DocsLayout>
+      )}
+    </ThemeProvider>
   );
 }

@@ -24,3 +24,17 @@ React/Vite 沿用。复用 shadcn/ui Radix 源码，固定到 968d8cb9dc42ae5d52
 用户要求直接复制相关 shadcn 代码。六个已选组件的官方 demo 原样进入组件文档，保留英文示例文本与 DOM，改动限本地路径和 Badge 示例的未用图标导入。加入其 Label 原语依赖。预览框移植上游 ComponentPreviewTabs 的相关布局，去除 Next.js、RTL 和其他无关站点依赖。默认主题使用上游中性 token；蓝图和暖纸是项目主题。移除旧目录、比较、采用、旧数据和 Markdown/Prism 专用依赖。保留能够复用组件的看板与设置模板。
 
 本批将六个 demo 与固定提交逐文件对比，确认只有上述导入改动。TypeScript、ESLint、构建和两条现行 Playwright 链路通过。逐项打开桌面默认主题和 390px 暖纸主题的六套官方 demo，均无运行错误及横向页面溢出。实际检查 Card 的两张截图；局部源码区可独立滚动。旧链路对应的测试已随功能删除。
+
+## 官方文档与 Blocks 移植
+
+14:00 用户修正范围。文档壳、导航、预览、源码展示也采用上游，亲自验证更完整的可用组件集合。固定提交同上，保留 React/Vite 和单一主题状态。
+
+| 上游文件 | 迁入路径 | 适配范围 |
+| --- | --- | --- |
+| `app/(app)/docs/layout.tsx`、`app/(app)/docs/[[...slug]]/page.tsx` | `docs/DocsLayout.tsx`、`docs/DocPage.tsx` | 官方 SidebarProvider 网格、主阅读列、前后导航和右侧目录。用本地元数据替换 MDX 页树。 |
+| `components/docs-sidebar.tsx`、`main-nav.tsx`、`site-header.tsx`、`command-menu.tsx` | `docs/DocsSidebar.tsx`、`docs/MainNav.tsx`、`docs/SiteHeader.tsx`、`docs/CommandMenu.tsx` | Sidebar、菜单高亮、主导航 Button 结构、窄屏 Sheet 和本地命令搜索。删站点推广、功能旗标及无关官网入口。 |
+| `components/component-preview-tabs.tsx`、`component-source.tsx`、`copy-button.tsx`、`lib/highlight-code.ts`、`app/globals.css` | `docs/ComponentPreviewTabs.tsx`、`docs/ComponentSource.tsx`、`docs/CopyButton.tsx`、`docs/highlight-code.ts`、`docs/styles.css` | 保留预览与 View Code 分支、代码 figure、复制和 Shiki 渲染。删服务器文件读取、遥测、RTL 分支。 |
+| `components/block-viewer.tsx`、`blocks-nav.tsx` | `docs/BlockViewer.tsx` | 保留分类横栏、Preview/Code 切换、独立页与 iframe。删分发平台入口、演示截图和调试工具。 |
+| `registry/new-york-v4/{ui,examples,blocks,hooks}` | `src/library/{ui,examples,blocks,hooks}` | 39 对组件/官方示例及传递依赖，三个官方 Blocks。替换别名、Next Link，裁去未用导入；适配 Vite 头像路径与新版 Recharts 数值类型。 |
+
+验收按生产构建运行。全部 39 个组件与三个 Blocks 逐项打开；验证 Dialog 键盘焦点归还、Checkbox 键盘切换、官方源码高亮、剪贴板内容和下载文件名。Block 验证在文档、独立标签页和 390px 的关系一致，Dashboard 在 1,374px 的桌面预览中显示侧栏、实际图表和数据表，并可查看实际入口源码。对比桌面文档和手机 Block 的真实截图。主线按现有授权提交与推送；本机预览交付。
