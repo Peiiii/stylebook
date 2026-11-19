@@ -318,6 +318,12 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await app.getByRole("radio", { name: "已完成", exact: true }).click();
   await expect(row).toContainText("100%");
   const nav = app.getByRole("navigation", { name: "工作室导航" });
+  const collaboration = nav.getByRole("button", {
+    name: "团队协作",
+    exact: true,
+  });
+  await expect(collaboration).toHaveAttribute("aria-expanded", "false");
+  await collaboration.click();
   await nav.getByRole("button", { name: "活动", exact: true }).click();
   await expect(app.getByText("将「验收项目」设为已完成")).toBeVisible();
   await nav.getByRole("button", { name: "设置", exact: true }).click();
@@ -337,7 +343,10 @@ test("scene showcase keeps workbench state while switching themes", async ({
       ),
     )
     .toBeLessThan(2);
-  const group = nav.getByRole("button", { name: "工作台", exact: true });
+  await expect(
+    nav.getByRole("button", { name: "工作台", exact: true }),
+  ).toHaveCount(0);
+  const group = nav.getByRole("button", { name: "项目管理", exact: true });
   const projects = nav.getByRole("button", { name: "项目", exact: true });
   const toggle = app.getByRole("button", {
     name: "切换工作室侧栏",
@@ -347,13 +356,12 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await expect(group).toHaveAttribute("aria-expanded", "false");
   await expect(projects).toBeHidden();
   await toggle.click();
-  await expect(group).toBeHidden();
-  await projects.click();
-  await expect(projects).toHaveAttribute("aria-current", "page");
-  await toggle.click();
   await expect(group).toHaveAttribute("aria-expanded", "false");
+  await expect(projects).toBeHidden();
   await group.click();
   await expect(projects).toBeVisible();
+  await projects.click();
+  await expect(projects).toHaveAttribute("aria-current", "page");
   await footer.getByRole("button", { name: "林沐的账户菜单" }).click();
   await app.getByRole("menuitemcheckbox", { name: "交付提醒" }).click();
   await nav.getByRole("button", { name: "设置", exact: true }).click();
@@ -362,6 +370,7 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await expect(nav).toBeHidden();
   await toggle.click();
   await expect(sidebar).toContainText("新的工作室");
+  await collaboration.click();
   await nav.getByRole("button", { name: "交付", exact: true }).click();
   await expect(nav).toBeHidden();
   await expect(app.getByText("交付日历", { exact: true })).toBeVisible();
@@ -371,6 +380,7 @@ test("scene showcase keeps workbench state while switching themes", async ({
   ).toBeVisible();
   await page.setViewportSize({ width: 320, height: 720 });
   await toggle.click();
+  await group.click();
   await projects.click();
   await expect
     .poll(() =>

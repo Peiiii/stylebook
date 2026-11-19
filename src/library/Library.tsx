@@ -42,6 +42,14 @@ const exampleModules = import.meta.glob<{ default: React.ComponentType }>(
 const blockModules = import.meta.glob<{ default: React.ComponentType }>(
   "./blocks/*/page.tsx",
 );
+
+function PreviewPending() {
+  return (
+    <span className="sr-only" role="status">
+      正在加载预览
+    </span>
+  );
+}
 const examples = Object.fromEntries(
   registry.components.map((item) => [
     item.id,
@@ -160,7 +168,7 @@ export function Library() {
     return (
       <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
         <Toaster />
-        <Suspense fallback={<p className="p-6">正在加载场景…</p>}>
+        <Suspense fallback={<PreviewPending />}>
           <ScenePreview key={scene.id} />
         </Suspense>
       </ThemeProvider>
@@ -180,7 +188,7 @@ export function Library() {
               event.preventDefault();
           }}
         >
-          <Suspense fallback={<p className="p-6">正在加载页面模板…</p>}>
+          <Suspense fallback={<PreviewPending />}>
             <Block key={block.id} />
           </Suspense>
         </main>
@@ -235,11 +243,7 @@ export function Library() {
               return {
                 ...page,
                 preview: (
-                  <Suspense
-                    fallback={
-                      <p className="text-sm text-muted-foreground">正在加载…</p>
-                    }
-                  >
+                  <Suspense fallback={<PreviewPending />}>
                     <Demo />
                   </Suspense>
                 ),
@@ -299,7 +303,7 @@ export function Library() {
                   key={item.id}
                   className="min-h-72 rounded-2xl border bg-card p-6 sm:p-10"
                 >
-                  <Suspense fallback={<p>正在加载预览…</p>}>
+                  <Suspense fallback={<PreviewPending />}>
                     <Example />
                   </Suspense>
                 </ComponentPreview>

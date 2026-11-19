@@ -6,17 +6,24 @@ import {
   CalendarDays,
   LayoutDashboard,
   History,
+  Users,
   Settings,
   MoreHorizontal,
   Plus,
   Search,
-  ChevronDown,
   ChevronsUpDown,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "../ui/breadcrumb";
+import { NavMain } from "../blocks/sidebar-07/components/nav-main";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import {
@@ -71,19 +78,14 @@ import {
 } from "../ui/table";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { Switch } from "../ui/switch";
+import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
@@ -214,10 +216,14 @@ const pages = [
 
 type WorkspacePage = (typeof pages)[number]["id"];
 
-const workspaceGroups = [
-  { label: "工作台", pages: ["overview", "projects"] },
-  { label: "协作", pages: ["delivery", "activity"] },
-] as const;
+const workspaceGroups: {
+  title: string;
+  icon: typeof FolderKanban;
+  pages: WorkspacePage[];
+}[] = [
+  { title: "项目管理", icon: FolderKanban, pages: ["overview", "projects"] },
+  { title: "团队协作", icon: Users, pages: ["delivery", "activity"] },
+];
 
 function WorkspaceSidebar({
   workspace,
@@ -232,7 +238,7 @@ function WorkspaceSidebar({
   reminders: boolean;
   onRemindersChange: (value: boolean) => void;
 }) {
-  const { isMobile, open, setOpenMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   function navigate(target: WorkspacePage) {
     onNavigate(target);
@@ -286,46 +292,23 @@ function WorkspaceSidebar({
         </SidebarHeader>
         <SidebarContent>
           <nav aria-label="工作室导航">
-            {workspaceGroups.map(({ label, pages: groupPages }) => (
-              <Collapsible
-                key={label}
-                defaultOpen
-                className="group/workspace-group"
-              >
-                <SidebarGroup className="group-data-[collapsible=icon]:py-1">
-                  <CollapsibleTrigger asChild>
-                    <SidebarGroupLabel
-                      asChild
-                      className="group-data-[collapsible=icon]:hidden"
-                    >
-                      <button
-                        type="button"
-                        className="cursor-pointer justify-between"
-                      >
-                        {label}
-                        <ChevronDown className="transition-transform group-data-[state=closed]/workspace-group:-rotate-90" />
-                      </button>
-                    </SidebarGroupLabel>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent
-                    forceMount
-                    className={
-                      isMobile || open
-                        ? "data-[state=closed]:hidden"
-                        : undefined
-                    }
-                  >
-                    <SidebarMenu>
-                      {pages
-                        .filter(({ id }) =>
-                          (groupPages as readonly WorkspacePage[]).includes(id),
-                        )
-                        .map(renderPage)}
-                    </SidebarMenu>
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </Collapsible>
-            ))}
+            <NavMain
+              label="工作台"
+              items={workspaceGroups.map(
+                ({ title, icon, pages: groupPages }) => ({
+                  title,
+                  icon,
+                  isActive: groupPages.includes(page),
+                  items: pages
+                    .filter(({ id }) => groupPages.includes(id))
+                    .map(({ id, nav }) => ({
+                      title: nav,
+                      isActive: page === id,
+                      onSelect: () => navigate(id),
+                    })),
+                }),
+              )}
+            />
             <SidebarGroup className="group-data-[collapsible=icon]:py-1">
               <SidebarMenu>
                 {pages.filter(({ id }) => id === "settings").map(renderPage)}
@@ -485,21 +468,29 @@ export function SceneShowcase() {
         reminders={reminders}
         onRemindersChange={setReminders}
       />
-      <SidebarInset className="min-w-0 p-3 sm:p-6 lg:p-8">
+      <SidebarInset className="min-w-0 px-3 pb-3 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
+        <div className="flex h-14 shrink-0 items-center gap-2 transition-[height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <SidebarTrigger aria-label="切换工作室侧栏" className="-ml-1" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-[orientation=vertical]:h-4"
+          />
+          <Breadcrumb aria-label="工作室当前位置">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbPage>{currentPage.nav}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
         <header
           data-slot="workspace-header"
           className="mb-6 flex flex-wrap items-end justify-between gap-4"
         >
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger
-                aria-label="切换工作室侧栏"
-                className="size-8 shrink-0"
-              />
-              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                {currentPage.label}
-              </h1>
-            </div>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              {currentPage.label}
+            </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {currentPage.description}
             </p>

@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../../../ui/collapsible"
+} from "../../../ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,25 +16,32 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "../../../ui/sidebar"
+  useSidebar,
+} from "../../../ui/sidebar";
+
+type NavSubItem = {
+  title: string;
+  isActive?: boolean;
+} & ({ url: string } | { onSelect: () => void });
 
 export function NavMain({
   items,
+  label = "平台",
 }: {
+  label?: string;
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+    title: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    url?: string;
+    items?: NavSubItem[];
+  }[];
 }) {
+  const { state, isMobile, setOpen } = useSidebar();
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>平台</SidebarGroupLabel>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -45,7 +52,20 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  aria-label={item.title}
+                  onClick={(event) => {
+                    if (isMobile || state !== "collapsed") return;
+                    setOpen(true);
+                    if (
+                      event.currentTarget.getAttribute("aria-expanded") ===
+                      "true"
+                    ) {
+                      event.preventDefault();
+                    }
+                  }}
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -55,10 +75,24 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                      <SidebarMenuSubButton asChild isActive={subItem.isActive}>
+                        {"url" in subItem ? (
+                          <a
+                            href={subItem.url}
+                            aria-current={subItem.isActive ? "page" : undefined}
+                          >
+                            <span>{subItem.title}</span>
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            className="w-full text-left"
+                            onClick={subItem.onSelect}
+                            aria-current={subItem.isActive ? "page" : undefined}
+                          >
+                            <span>{subItem.title}</span>
+                          </button>
+                        )}
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
@@ -69,5 +103,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
