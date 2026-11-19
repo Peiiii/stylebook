@@ -21,7 +21,12 @@ export default function ToggleGroupDemo() {
         <SegmentedControlItem value="week">周</SegmentedControlItem>
         <SegmentedControlItem value="month">月</SegmentedControlItem>
       </SegmentedControl>
-      <ToggleGroup variant="outline" type="multiple" aria-label="文本格式">
+      <ToggleGroup
+        variant="outline"
+        type="multiple"
+        defaultValue={["bold"]}
+        aria-label="文本格式"
+      >
         <ToggleGroupItem value="bold" aria-label="切换加粗">
           <Bold className="h-4 w-4" />
         </ToggleGroupItem>

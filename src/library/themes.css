@@ -253,6 +253,75 @@ html[data-atlas-theme] :is(h1, h2, h3),
   [data-variant][data-size="icon"]:not([data-day]) {
     min-width: 40px;
   }
+
+  :is(
+    [data-slot="segmented-control"],
+    [data-slot="toggle-group"][data-variant="outline"]
+  ) {
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+
+    > :is(
+      [data-slot="segmented-control-item"],
+      [data-slot="toggle-group-item"]
+    ) {
+      min-height: 40px;
+      border: 1px solid var(--input);
+      border-radius: 0;
+      background: var(--background);
+      color: var(--foreground);
+      box-shadow: none;
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):not(:first-child) {
+      border-inline-start-width: 0;
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):first-child {
+      border-start-start-radius: var(--atlas-control-radius);
+      border-end-start-radius: var(--atlas-control-radius);
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):last-child {
+      border-start-end-radius: var(--atlas-control-radius);
+      border-end-end-radius: var(--atlas-control-radius);
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):hover {
+      background: var(--accent);
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):is([aria-checked="true"], [aria-pressed="true"]) {
+      background: var(--secondary);
+      color: var(--foreground);
+    }
+
+    > :is(
+        [data-slot="segmented-control-item"],
+        [data-slot="toggle-group-item"]
+      ):focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: -3px;
+    }
+  }
 }
 
 @scope ([data-atlas-theme="ios"]) to ([data-atlas-theme]) {

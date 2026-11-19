@@ -121,6 +121,38 @@ test("the homepage and Toggle Group demo share the iOS segmented selection", asy
   ).toHaveCount(3);
 });
 
+test("Material connects segments and keeps their selection visible", async ({
+  page,
+}) => {
+  await page.goto("/#view=home&theme=material");
+  const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
+  const first = picker.getByRole("radio", { name: "iOS", exact: true });
+  const material = picker.getByRole("radio", { name: "Material", exact: true });
+  await expect(material).toBeChecked();
+  await expect(picker).toHaveCSS("column-gap", "0px");
+  await expect(first).toHaveCSS("border-top-left-radius", "999px");
+  await expect(first).toHaveCSS("border-top-right-radius", "0px");
+  await expect(material).toHaveCSS("border-left-width", "0px");
+  await expect(material).toHaveCSS("background-color", "rgb(211, 227, 253)");
+  await expect(material).toHaveCSS("box-shadow", "none");
+
+  await page.goto("/#component=toggle-group&theme=material");
+  const range = page.getByRole("radiogroup", { name: "选择时间范围" });
+  await expect(range.getByRole("radio", { name: "周" })).toHaveCSS(
+    "background-color",
+    "rgb(211, 227, 253)",
+  );
+  const tools = page.getByRole("toolbar", { name: "文本格式" });
+  const bold = tools.getByRole("button", { name: "切换加粗" });
+  const italic = tools.getByRole("button", { name: "切换斜体" });
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
+  await expect(italic).toHaveCSS("border-left-width", "0px");
+  await italic.click();
+  await expect(italic).toHaveAttribute("aria-pressed", "true");
+  await expect(italic).toHaveCSS("background-color", "rgb(211, 227, 253)");
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
+});
+
 test("homepage preview candidates expose five usable component interactions", async ({
   page,
 }) => {
