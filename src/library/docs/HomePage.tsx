@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { themes, type AtlasTheme } from "../themes";
 import { Button } from "../ui/button";
+import { HomeReferenceGuide } from "./HomeReferenceGuide";
 import { HomeStyleArtwork } from "./HomeStyleArtwork";
 import { HomeThemeSwitcher } from "./HomeThemeSwitcher";
 
@@ -122,6 +123,7 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           ))}
         </div>
       </section>
+      <HomeReferenceGuide theme={theme} />
     </main>
   );
 }

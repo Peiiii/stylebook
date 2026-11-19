@@ -309,6 +309,20 @@ test("copies declarative theme and component references from compact actions", a
     .getByRole("button", { name: "复制引用：Claude", exact: true })
     .click();
   await expect.poll(copied).toContain("类型：UI 风格\n标识：claude");
+
+  await page.goto("/#view=home&theme=ant");
+  const guide = page.getByRole("region", { name: "把组件带到 AI 会话" });
+  await expect(guide.getByText("预览风格：Ant Design（ant）")).toBeVisible();
+  await guide.getByRole("button", { name: "复制引用：Button" }).click();
+  await expect
+    .poll(copied)
+    .toContain("Stylebook · Button\n类型：UI 组件\n标识：button");
+  expect(await copied()).toContain("预览风格：Ant Design（ant）");
+  await page.setViewportSize({ width: 320, height: 720 });
+  await expect
+    .poll(() => page.locator("html").evaluate((el) => el.scrollWidth))
+    .toBe(320);
+  await expect(guide.getByText("AI 会话示意")).toBeVisible();
 });
 
 test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({
