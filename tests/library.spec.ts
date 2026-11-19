@@ -153,6 +153,91 @@ test("Material connects segments and keeps their selection visible", async ({
   await expect(bold).toHaveAttribute("aria-pressed", "true");
 });
 
+test("all eight themes style the shared segmented control on the homepage and in the catalog", async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+  const cases = [
+    {
+      id: "ios",
+      label: "iOS",
+      track: "rgb(240, 240, 242)",
+      selected: "rgb(255, 255, 255)",
+      radius: "9px",
+    },
+    {
+      id: "material",
+      label: "Material",
+      track: "rgba(0, 0, 0, 0)",
+      selected: "rgb(211, 227, 253)",
+      radius: "0px",
+    },
+    {
+      id: "fluent",
+      label: "Windows 11",
+      track: "rgba(0, 0, 0, 0)",
+      selected: "rgb(238, 244, 251)",
+      radius: "4px",
+    },
+    {
+      id: "ant",
+      label: "Ant Design",
+      track: "rgb(245, 245, 245)",
+      selected: "rgb(255, 255, 255)",
+      radius: "4px",
+    },
+    {
+      id: "chatgpt",
+      label: "ChatGPT",
+      track: "rgba(0, 0, 0, 0)",
+      selected: "rgb(235, 235, 235)",
+      radius: "999px",
+    },
+    {
+      id: "claude",
+      label: "Claude",
+      track: "rgb(244, 242, 236)",
+      selected: "rgb(237, 229, 217)",
+      radius: "10px",
+    },
+    {
+      id: "retro",
+      label: "复古",
+      track: "rgb(237, 223, 195)",
+      selected: "rgb(139, 62, 45)",
+      radius: "2.304px",
+    },
+    {
+      id: "shadcn",
+      label: "shadcn 基准",
+      track: /^oklch\(0\.97 /,
+      selected: /^oklch\(1 /,
+      radius: "8px",
+    },
+  ];
+
+  for (const { id, label, track, selected, radius } of cases) {
+    await page.goto(`/#view=home&theme=${id}`);
+    const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
+    const current = picker.getByRole("radio", { name: label, exact: true });
+    await expect(current).toBeChecked();
+    await expect(picker).toHaveCSS("background-color", track);
+    await expect(current).toHaveCSS("background-color", selected);
+    await expect(current).toHaveCSS("border-top-left-radius", radius);
+
+    await page.goto(`/#component=toggle-group&theme=${id}`);
+    const demo = page.getByRole("radiogroup", { name: "选择时间范围" });
+    await expect(demo).toHaveCSS("background-color", track);
+    await expect(
+      demo.getByRole("radio", { name: "周", exact: true }),
+    ).toHaveCSS("background-color", selected);
+    const formatting = page.getByRole("toolbar", { name: "文本格式" });
+    await expect(
+      formatting.getByRole("button", { name: "切换加粗" }),
+    ).toHaveCSS("background-color", id === "shadcn" ? track : selected);
+  }
+});
+
 test("homepage preview candidates expose five usable component interactions", async ({
   page,
 }) => {

@@ -26,7 +26,7 @@ export function SegmentedControl({
       type="single"
       spacing={1}
       data-slot="segmented-control"
-      className={cn("gap-1 rounded-full border bg-muted p-1.5", className)}
+      className={cn("gap-1", className)}
       onValueChange={(value) => {
         if (value) onValueChange(value);
       }}
@@ -43,7 +43,7 @@ export function SegmentedControlItem({
       {...props}
       data-slot="segmented-control-item"
       className={cn(
-        "gap-2 rounded-full border border-transparent px-3 text-sm text-foreground aria-checked:border-primary/35 aria-checked:bg-background aria-checked:text-primary aria-checked:shadow-sm focus-visible:ring-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+        "gap-2 px-3 text-sm focus-visible:ring-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
     />

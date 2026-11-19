@@ -94,3 +94,18 @@ ChatGPT 参考 [OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) 的�
 ### Windows 11 · Fluent 2
 
 风格 ID 为 `fluent`。参考 [Fluent 2 排版](https://fluent2.microsoft.design/typography) 和 [Windows 导航](https://learn.microsoft.com/en-us/windows/apps/design/controls/navigationview)。使用 Segoe 系系统字体、白色内容底、冷调侧栏与工具栏、选中短条、小圆角控件与底缘聚焦反馈。侧栏的色阶是网页层次表达，应用结构与控件沿用 Stylebook。菜单标识参考 [Windows 11 标志](https://commons.wikimedia.org/wiki/File:Windows_11_logo.svg) 的四格图形。
+
+## 分段控件主题核对
+
+首页风格切换与 Toggle Group 单选示例共用 `SegmentedControl`。选中填色也用于相应主题的描边多选组。这里核对的是分段控件在八套主题里的表现。
+
+| 风格 | 参考与落地 |
+| --- | --- |
+| iOS | [Apple 分段控件指南](https://developer.apple.com/design/human-interface-guidelines/segmented-controls)提供交互参考。浅灰底座、白色选中段、轻阴影。 |
+| Material | [Material 3 分段按钮](https://developer.android.com/develop/ui/compose/components/segmented-button)提供连接描边与选中状态参考。用 Stylebook 的蓝色方案呈现浅蓝选中段。 |
+| Windows 11 | [Fluent 2 Tablist](https://fluent2.microsoft.design/components/web/react/core/tablist/usage)提供横向选中指示的视觉参考。保留分段单选语义，使用小圆角、浅蓝选中和底部蓝线。 |
+| Ant Design | [Ant Segmented](https://ant.design/components/segmented/#design-token)提供参考。浅灰底座、紧凑内边距、白色选中项。 |
+| ChatGPT | [OpenAI 的模型选择交互](https://help.openai.com/en/articles/6825453-chatgpt-release-notes)是产品参考。Stylebook 自行适配透明底座、灰色胶囊选中和黑白灰层级。 |
+| Claude | [Anthropic 的样式选择交互](https://support.anthropic.com/en/articles/10181068-configuring-and-using-styles)是产品参考。Stylebook 自行适配暖白底座、纸色选中和深暖文字。 |
+| 复古 | Stylebook 自有主题。暖纸底、硬边框、陶土色选中。 |
+| shadcn 基准 | [shadcn Toggle Group](https://ui.shadcn.com/docs/components/radix/toggle-group)作为交互基准。选中分段使用中性浅灰底座、白色短圆角和轻阴影。 |
