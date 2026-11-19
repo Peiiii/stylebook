@@ -90,6 +90,58 @@ test("home introduces the catalog and keeps the live form while themes change", 
   ).toBeVisible();
 });
 
+test("homepage preview candidates expose five usable component interactions", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const candidate = page.getByRole("tablist", { name: "首页组件展示候选" });
+  await expect(candidate.getByRole("tab")).toHaveCount(5);
+  const review = candidate.getByRole("tab", { name: "A · 设计评审" });
+  await expect(review).toHaveAttribute("aria-selected", "true");
+  const project = page.getByRole("textbox", { name: "项目名称" });
+  await project.fill("评审草稿");
+
+  await candidate.getByRole("tab", { name: "B · 项目进度" }).click();
+  await page.getByRole("combobox", { name: "筛选项目状态" }).click();
+  await page.getByRole("option", { name: "已完成", exact: true }).click();
+  await expect(
+    page.getByRole("progressbar", { name: "设计规范完成进度" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("progressbar", { name: "品牌网站完成进度" }),
+  ).toHaveCount(0);
+
+  await candidate.getByRole("tab", { name: "C · 团队权限" }).click();
+  const role = page.getByRole("combobox", { name: "沈青的权限" });
+  await role.click();
+  await page.getByRole("option", { name: "仅查看" }).click();
+  await expect(role).toHaveText("仅查看");
+
+  await candidate.getByRole("tab", { name: "D · 消息收件箱" }).click();
+  await page.getByRole("button", { name: /迭代评审即将开始/ }).click();
+  await expect(page.getByText(/会议材料已放到项目文档/)).toBeVisible();
+  const markAll = page.getByRole("button", { name: "全部已读" });
+  await markAll.click();
+  await expect(markAll).toBeDisabled();
+
+  await candidate.getByRole("tab", { name: "E · 交付日历" }).click();
+  await page.getByRole("button", { name: /2026年11月24日/ }).click();
+  await expect(page.getByText("设计规范交付", { exact: true })).toBeVisible();
+  await page
+    .getByRole("radiogroup", { name: "选择界面风格" })
+    .getByRole("radio", { name: "Ant Design" })
+    .click();
+  await expect(page.getByText("设计规范交付", { exact: true })).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 720 });
+  await expect
+    .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
+    .toBe(320);
+
+  await review.click();
+  await expect(project).toHaveValue("评审草稿");
+  await expect(page.getByRole("tabpanel")).toHaveCount(1);
+});
+
 test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({
   page,
 }) => {
