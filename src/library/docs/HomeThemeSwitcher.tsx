@@ -1,123 +1,162 @@
-import { useEffect, useRef, useState } from "react";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { themes, type AtlasTheme } from "../themes";
 import { Button } from "../ui/button";
+import { cn } from "../ui/cn";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { ThemeIcon } from "./ThemePicker";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { ThemeIcon, ThemePicker } from "./ThemePicker";
 
-export function HomeThemeSwitcher({
-  theme,
-  onTheme,
-}: {
+type ThemeSelection = {
   theme: AtlasTheme;
   onTheme: (theme: AtlasTheme["id"]) => void;
+};
+
+const directions = [
+  {
+    name: "A · 文字下划线",
+    group: "gap-2",
+    option:
+      "relative rounded-none px-2 text-muted-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full data-[state=on]:bg-transparent data-[state=on]:text-primary data-[state=on]:after:bg-current",
+  },
+  {
+    name: "B · 分段按钮",
+    group: "gap-0.5 rounded-full bg-muted p-1",
+    option:
+      "h-8 rounded-full px-3 text-muted-foreground data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm",
+  },
+  {
+    name: "C · 品牌图标",
+    group: "gap-1",
+    option:
+      "size-10 rounded-xl p-0 aria-checked:bg-accent aria-checked:ring-1 aria-checked:ring-inset aria-checked:ring-primary/40 [&_img]:size-5 [&_svg]:size-5",
+    icons: true,
+  },
+] as const;
+
+function ComparisonRow({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
 }) {
-  const rail = useRef<HTMLDivElement>(null);
-  const [edges, setEdges] = useState({ back: false, forward: false });
+  return (
+    <div className="grid min-w-0 gap-1.5 px-1 py-3 sm:px-3 lg:grid-cols-[9rem_minmax(0,1fr)_9rem] lg:items-center lg:gap-3">
+      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+      <div className="min-w-0 overflow-x-auto px-1 py-1">
+        <div className="mx-auto w-max max-w-none">{children}</div>
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const track = rail.current;
-    if (!track) return;
+export function HomeThemeSwitcher({ theme, onTheme }: ThemeSelection) {
+  const index = themes.findIndex(({ id }) => id === theme.id);
 
-    const updateEdges = () => {
-      const back = track.scrollLeft > 1;
-      const forward =
-        track.scrollWidth - track.clientWidth - track.scrollLeft > 1;
-      setEdges((current) =>
-        current.back === back && current.forward === forward
-          ? current
-          : { back, forward },
-      );
-    };
+  function applyTheme(value: string) {
+    const next = themes.find(({ id }) => id === value);
+    if (next) onTheme(next.id);
+  }
 
-    updateEdges();
-    const observer = new ResizeObserver(updateEdges);
-    observer.observe(track);
-    track.addEventListener("scroll", updateEdges, { passive: true });
-    return () => {
-      observer.disconnect();
-      track.removeEventListener("scroll", updateEdges);
-    };
-  }, []);
-
-  function scrollRail(direction: -1 | 1) {
-    const track = rail.current;
-    if (track) track.scrollBy({ left: direction * track.clientWidth * 0.75 });
+  function step(direction: -1 | 1) {
+    const next = (index + direction + themes.length) % themes.length;
+    onTheme(themes[next].id);
   }
 
   return (
     <section
       aria-labelledby="home-styles"
-      className="mx-auto mb-9 max-w-5xl rounded-2xl border bg-background shadow-sm sm:mb-12"
+      className="mx-auto mb-9 max-w-5xl border-y py-3 sm:mb-12"
     >
-      <div className="flex min-h-12 items-center justify-between gap-2 px-3 pt-1 sm:px-4">
-        <h2 id="home-styles" className="text-sm font-semibold">
-          选择你的界面风格
-        </h2>
-        <div hidden={!edges.back && !edges.forward} className="space-x-1">
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            aria-label="向左浏览风格"
-            disabled={!edges.back}
-            onClick={() => scrollRail(-1)}
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            aria-label="向右浏览风格"
-            disabled={!edges.forward}
-            onClick={() => scrollRail(1)}
-          >
-            <ChevronRight />
-          </Button>
-        </div>
-      </div>
-      <ToggleGroup
-        ref={rail}
-        type="single"
-        value={theme.id}
-        onValueChange={(value) => {
-          const next = themes.find((entry) => entry.id === value);
-          if (next) onTheme(next.id);
-        }}
-        spacing={2}
-        aria-labelledby="home-styles"
-        className="no-scrollbar flex w-full snap-x snap-proximity items-stretch gap-2 overflow-x-auto scroll-px-3 px-3 pt-1 pb-3 motion-safe:scroll-smooth sm:scroll-px-4 sm:px-4 sm:pb-4"
+      <h2
+        id="home-styles"
+        className="px-1 pt-2 pb-2 text-base font-semibold sm:px-3"
       >
-        {themes.map(({ id, label, description }) => (
-          <ToggleGroupItem
-            key={id}
-            value={id}
-            aria-label={label}
-            title={description}
-            className="group/option h-auto w-[7.25rem] snap-start flex-col items-stretch gap-1.5 rounded-xl border bg-background p-1.5 text-xs font-medium transition-colors hover:border-muted-foreground/35 hover:bg-muted/40 data-[state=on]:border-primary data-[state=on]:bg-accent data-[state=on]:text-foreground"
+        风格切换器对照
+      </h2>
+      <div className="divide-y">
+        <TooltipProvider delayDuration={300}>
+          {directions.map((direction) => (
+            <ComparisonRow key={direction.name} title={direction.name}>
+              <ToggleGroup
+                type="single"
+                value={theme.id}
+                onValueChange={applyTheme}
+                spacing={1}
+                aria-label={direction.name}
+                className={cn("w-max", direction.group)}
+              >
+                {themes.map(({ id, label }) => {
+                  const icons = "icons" in direction;
+                  const option = (
+                    <ToggleGroupItem
+                      key={id}
+                      value={id}
+                      aria-label={label}
+                      className={cn("h-9 text-xs", direction.option)}
+                    >
+                      {icons ? <ThemeIcon id={id} /> : label}
+                    </ToggleGroupItem>
+                  );
+                  return icons ? (
+                    <Tooltip key={id}>
+                      <TooltipTrigger asChild>{option}</TooltipTrigger>
+                      <TooltipContent sideOffset={6}>{label}</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    option
+                  );
+                })}
+              </ToggleGroup>
+            </ComparisonRow>
+          ))}
+        </TooltipProvider>
+        <ComparisonRow title="D · 紧凑下拉">
+          <ThemePicker
+            theme={theme}
+            onTheme={applyTheme}
+            label="下拉切换界面风格"
+          />
+        </ComparisonRow>
+        <ComparisonRow title="E · 左右步进">
+          <div
+            aria-label="逐个切换界面风格"
+            role="group"
+            className="flex items-center gap-1 rounded-full border bg-card p-1 shadow-xs"
           >
-            <span
-              data-atlas-theme={id}
-              aria-hidden="true"
-              className="relative flex h-9 items-center justify-between gap-1.5 rounded-md border bg-card pr-6 pl-2"
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="上一个风格"
+              onClick={() => step(-1)}
             >
-              <span className="text-base leading-none text-foreground [font-family:var(--atlas-heading)]">
-                Aa
+              <ChevronLeft />
+            </Button>
+            <div className="flex min-w-30 items-center justify-between gap-2 px-1.5 text-xs">
+              <span className="font-medium">{theme.label}</span>
+              <span className="tabular-nums text-muted-foreground">
+                {index + 1} / {themes.length}
               </span>
-              <span className="flex items-center gap-1">
-                <span className="size-2.5 rounded-full border border-input bg-muted" />
-                <span className="h-2.5 w-4 rounded-(--atlas-control-radius) bg-primary" />
-              </span>
-              <Check className="absolute top-1 right-1 size-3 text-primary opacity-0 group-data-[state=on]/option:opacity-100" />
-            </span>
-            <span className="flex min-w-0 items-center gap-1 px-0.5 pb-0.5">
-              <ThemeIcon id={id} />
-              <span className="flex-1 truncate text-left">{label}</span>
-            </span>
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="下一个风格"
+              onClick={() => step(1)}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+        </ComparisonRow>
+      </div>
     </section>
   );
 }

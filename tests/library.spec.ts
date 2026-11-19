@@ -20,7 +20,7 @@ test("home introduces the catalog and keeps the live form while themes change", 
     /先看风格.*再做界面/,
   );
   const nav = page.getByRole("navigation", { name: "主导航" });
-  const picker = page.getByRole("radiogroup", { name: "选择你的界面风格" });
+  const picker = page.getByRole("radiogroup", { name: "A · 文字下划线" });
   const choices = picker.getByRole("radio");
   await expect(choices).toHaveCount(8);
   await expect(choices.first()).toHaveAccessibleName("iOS");
@@ -53,6 +53,32 @@ test("home introduces the catalog and keeps the live form while themes change", 
   );
   await expect(project).toHaveValue("首页演示");
   await expect(page.getByRole("status")).toContainText("首页演示");
+  const comparison = page.getByRole("region", { name: "风格切换器对照" });
+  await expect(comparison.getByRole("heading", { level: 3 })).toHaveCount(5);
+  const segmented = comparison.getByRole("radiogroup", {
+    name: "B · 分段按钮",
+  });
+  const icons = comparison.getByRole("radiogroup", { name: "C · 品牌图标" });
+  await expect(
+    segmented.getByRole("radio", { name: "Ant Design" }),
+  ).toBeChecked();
+  await segmented.getByRole("radio", { name: "Claude" }).click();
+  await expect(icons.getByRole("radio", { name: "Claude" })).toBeChecked();
+  await expect(icons.getByRole("radio", { name: "Claude" })).toHaveCSS(
+    "background-color",
+    "rgb(240, 238, 230)",
+  );
+  await icons.getByRole("radio", { name: "复古" }).click();
+  await expect(picker.getByRole("radio", { name: "复古" })).toBeChecked();
+  const dropdown = comparison.getByRole("button", { name: "下拉切换界面风格" });
+  await expect(dropdown).toHaveText("复古");
+  await dropdown.click();
+  await page.getByRole("menuitemradio", { name: "Ant Design" }).click();
+  await comparison.getByRole("button", { name: "下一个风格" }).click();
+  await expect(themeTrigger(page)).toHaveText("ChatGPT");
+  await comparison.getByRole("button", { name: "上一个风格" }).click();
+  await expect(ant).toBeChecked();
+  await expect(project).toHaveValue("首页演示");
   await page.getByRole("link", { name: "浏览组件总览" }).click();
   await expect(nav.getByRole("link", { name: "组件总览" })).toHaveAttribute(
     "aria-current",
@@ -65,11 +91,6 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect(themeTrigger(page)).toHaveText("Ant Design");
   await page.setViewportSize({ width: 320, height: 720 });
   await page.evaluate(() => window.scrollTo(0, 110));
-  const nextThemes = page.getByRole("button", { name: "向右浏览风格" });
-  const previousThemes = page.getByRole("button", { name: "向左浏览风格" });
-  await expect(previousThemes).toBeDisabled();
-  await nextThemes.click();
-  await expect(previousThemes).toBeEnabled();
   await picker.getByRole("radio", { name: "shadcn 基准" }).click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
@@ -78,7 +99,6 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect
     .poll(() => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(90);
-  await expect(nextThemes).toBeDisabled();
   await expect
     .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
     .toBe(320);

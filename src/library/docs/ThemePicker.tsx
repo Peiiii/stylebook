@@ -46,10 +46,12 @@ export function ThemePicker({
   theme,
   onTheme,
   themesHref,
+  label = "切换主题",
 }: {
   theme: AtlasTheme;
   onTheme: (value: string) => void;
-  themesHref: string;
+  themesHref?: string;
+  label?: string;
 }) {
   return (
     <DropdownMenu>
@@ -57,7 +59,7 @@ export function ThemePicker({
         <Button
           variant="outline"
           size="sm"
-          aria-label="切换主题"
+          aria-label={label}
           className="max-w-28 shrink-0 gap-1.5 px-2 min-[360px]:max-w-32 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
         >
           <ThemeIcon id={theme.id} />
@@ -85,10 +87,14 @@ export function ThemePicker({
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="h-10 cursor-pointer pl-8">
-          <a href={themesHref}>浏览全部主题</a>
-        </DropdownMenuItem>
+        {themesHref && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="h-10 cursor-pointer pl-8">
+              <a href={themesHref}>浏览全部主题</a>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
