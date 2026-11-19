@@ -12,7 +12,7 @@ async function selectTheme(page: Page, label: string) {
   await expect(themeTrigger(page)).toHaveText(label);
 }
 
-test("home introduces the catalog and keeps the live form while themes change", async ({
+test("home introduces the catalog and restyles the artwork while themes change", async ({
   page,
 }) => {
   await page.goto("/");
@@ -34,29 +34,24 @@ test("home introduces the catalog and keeps the live form while themes change", 
     "aria-current",
     "page",
   );
-  const project = page.getByRole("textbox", { name: "项目名称" });
-  await project.fill("首页演示");
-  await page.getByRole("combobox", { name: "评审时间" }).click();
-  await page.getByRole("option", { name: "周三 10:00" }).click();
-  await page.getByRole("switch", { name: "启用提醒" }).click();
-  await page.getByRole("button", { name: "确认评审" }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "周三 10:00 · 提醒已关闭",
-  );
-  const submit = page.getByRole("button", { name: "确认评审" });
-  await expect(submit).toHaveCSS("border-top-left-radius", "999px");
+  const artwork = page.getByRole("figure", { name: "同一套界面的多风格插图" });
+  await expect(artwork.locator("figcaption")).toContainText("iOS");
+  await expect(artwork).toHaveCount(1);
+  const sheet = artwork.locator('[data-artwork-sheet="current"]');
+  await expect(sheet).toHaveCSS("background-color", "rgb(245, 245, 247)");
+  await expect(sheet).toHaveCSS("border-top-left-radius", "16px");
   const ant = picker.getByRole("radio", { name: "Ant Design", exact: true });
   await ant.click();
   await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ant");
   await expect(ant).toBeChecked();
   await expect(themeTrigger(page)).toHaveText("Ant Design");
-  await expect(submit).toHaveCSS("border-top-left-radius", "6px");
+  await expect(artwork.locator("figcaption")).toContainText("Ant Design");
+  await expect(sheet).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(sheet).toHaveCSS("border-top-left-radius", "8px");
   await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
     "aria-current",
     "page",
   );
-  await expect(project).toHaveValue("首页演示");
-  await expect(page.getByRole("status")).toContainText("首页演示");
   await page.getByRole("link", { name: "浏览组件总览" }).click();
   await expect(nav.getByRole("link", { name: "组件总览" })).toHaveAttribute(
     "aria-current",
@@ -253,58 +248,6 @@ test("all eight themes style the shared segmented control on the homepage and in
       formatting.getByRole("button", { name: "切换加粗" }),
     ).toHaveCSS("background-color", id === "shadcn" ? track : selected);
   }
-});
-
-test("homepage preview candidates expose five usable component interactions", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const candidate = page.getByRole("tablist", { name: "首页组件展示候选" });
-  await expect(candidate.getByRole("tab")).toHaveCount(5);
-  const review = candidate.getByRole("tab", { name: "A · 设计评审" });
-  await expect(review).toHaveAttribute("aria-selected", "true");
-  const project = page.getByRole("textbox", { name: "项目名称" });
-  await project.fill("评审草稿");
-
-  await candidate.getByRole("tab", { name: "B · 项目进度" }).click();
-  await page.getByRole("combobox", { name: "筛选项目状态" }).click();
-  await page.getByRole("option", { name: "已完成", exact: true }).click();
-  await expect(
-    page.getByRole("progressbar", { name: "设计规范完成进度" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("progressbar", { name: "品牌网站完成进度" }),
-  ).toHaveCount(0);
-
-  await candidate.getByRole("tab", { name: "C · 团队权限" }).click();
-  const role = page.getByRole("combobox", { name: "沈青的权限" });
-  await role.click();
-  await page.getByRole("option", { name: "仅查看" }).click();
-  await expect(role).toHaveText("仅查看");
-
-  await candidate.getByRole("tab", { name: "D · 消息收件箱" }).click();
-  await page.getByRole("button", { name: /迭代评审即将开始/ }).click();
-  await expect(page.getByText(/会议材料已放到项目文档/)).toBeVisible();
-  const markAll = page.getByRole("button", { name: "全部已读" });
-  await markAll.click();
-  await expect(markAll).toBeDisabled();
-
-  await candidate.getByRole("tab", { name: "E · 交付日历" }).click();
-  await page.getByRole("button", { name: /2026年11月24日/ }).click();
-  await expect(page.getByText("设计规范交付", { exact: true })).toBeVisible();
-  await page
-    .getByRole("radiogroup", { name: "选择界面风格" })
-    .getByRole("radio", { name: "Ant Design" })
-    .click();
-  await expect(page.getByText("设计规范交付", { exact: true })).toBeVisible();
-  await page.setViewportSize({ width: 320, height: 720 });
-  await expect
-    .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
-    .toBe(320);
-
-  await review.click();
-  await expect(project).toHaveValue("评审草稿");
-  await expect(page.getByRole("tabpanel")).toHaveCount(1);
 });
 
 test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({
