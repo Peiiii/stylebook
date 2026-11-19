@@ -20,7 +20,8 @@ test("home introduces the catalog and keeps the live form while themes change", 
     /先看风格.*再做界面/,
   );
   const nav = page.getByRole("navigation", { name: "主导航" });
-  const picker = page.getByRole("radiogroup", { name: "A · 文字下划线" });
+  const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
+  await expect(page.getByRole("main").getByRole("radiogroup")).toHaveCount(1);
   const choices = picker.getByRole("radio");
   await expect(choices).toHaveCount(8);
   await expect(choices.first()).toHaveAccessibleName("iOS");
@@ -53,61 +54,6 @@ test("home introduces the catalog and keeps the live form while themes change", 
   );
   await expect(project).toHaveValue("首页演示");
   await expect(page.getByRole("status")).toContainText("首页演示");
-  const comparison = page.getByRole("region", { name: "风格切换器对照" });
-  await expect(comparison.getByRole("heading", { level: 3 })).toHaveCount(10);
-  const segmented = comparison.getByRole("radiogroup", {
-    name: "B · 分段按钮",
-  });
-  const icons = comparison.getByRole("radiogroup", { name: "C · 品牌图标" });
-  await expect(
-    segmented.getByRole("radio", { name: "Ant Design" }),
-  ).toBeChecked();
-  await segmented.getByRole("radio", { name: "Claude" }).click();
-  await expect(icons.getByRole("radio", { name: "Claude" })).toBeChecked();
-  await expect(icons.getByRole("radio", { name: "Claude" })).toHaveCSS(
-    "background-color",
-    "rgb(240, 238, 230)",
-  );
-  await icons.getByRole("radio", { name: "复古" }).click();
-  await expect(picker.getByRole("radio", { name: "复古" })).toBeChecked();
-  const dropdown = comparison.getByRole("button", { name: "下拉切换界面风格" });
-  await expect(dropdown).toHaveText("复古");
-  await dropdown.click();
-  await page.getByRole("menuitemradio", { name: "Ant Design" }).click();
-  await comparison.getByRole("button", { name: "下一个风格" }).click();
-  await expect(themeTrigger(page)).toHaveText("ChatGPT");
-  await comparison.getByRole("button", { name: "上一个风格" }).click();
-  await expect(ant).toBeChecked();
-  const hybrid = comparison.getByRole("radiogroup", { name: "F · 品牌分段" });
-  await expect(hybrid.getByRole("radio")).toHaveCount(8);
-  await hybrid.getByRole("radio", { name: "Windows 11" }).click();
-  const stacked = comparison.getByRole("radiogroup", {
-    name: "G · 图标与短标签",
-  });
-  await expect(
-    stacked.getByRole("radio", { name: "Windows 11" }),
-  ).toBeChecked();
-  await stacked.getByRole("radio", { name: "Material" }).click();
-  const expanding = comparison.getByRole("radiogroup", {
-    name: "H · 展开当前项",
-  });
-  await expect(expanding.getByText("Material", { exact: true })).toBeVisible();
-  await expanding.getByRole("radio", { name: "Claude" }).click();
-  await expect(expanding.getByText("Material", { exact: true })).toBeHidden();
-  await expect(expanding.getByText("Claude", { exact: true })).toBeVisible();
-  const outlined = comparison.getByRole("radiogroup", { name: "I · 独立描边" });
-  await outlined.getByRole("radio", { name: "复古" }).click();
-  await expect(themeTrigger(page)).toHaveText("复古");
-  await comparison
-    .getByRole("radiogroup", { name: "常用风格" })
-    .getByRole("radio", { name: "iOS" })
-    .click();
-  await expect(themeTrigger(page)).toHaveText("iOS");
-  await comparison.getByRole("button", { name: "快捷栏全部风格" }).click();
-  await expect(page.getByRole("menuitemradio")).toHaveCount(8);
-  await page.getByRole("menuitemradio", { name: "Ant Design" }).click();
-  await expect(ant).toBeChecked();
-  await expect(project).toHaveValue("首页演示");
   await page.getByRole("link", { name: "浏览组件总览" }).click();
   await expect(nav.getByRole("link", { name: "组件总览" })).toHaveAttribute(
     "aria-current",
@@ -120,7 +66,15 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect(themeTrigger(page)).toHaveText("Ant Design");
   await page.setViewportSize({ width: 320, height: 720 });
   await page.evaluate(() => window.scrollTo(0, 110));
-  await picker.getByRole("radio", { name: "shadcn 基准" }).click();
+  await expect
+    .poll(() =>
+      picker.evaluate((group) => {
+        const viewport = group.parentElement!;
+        return viewport.scrollWidth - viewport.clientWidth;
+      }),
+    )
+    .toBeGreaterThan(0);
+  await picker.getByRole("radio", { name: "shadcn 基准" }).press("Enter");
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
     "shadcn",

@@ -1,4 +1,4 @@
-import { BookOpen, ChevronDown, Ellipsis } from "lucide-react";
+import { BookOpen, ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -46,14 +46,10 @@ export function ThemePicker({
   theme,
   onTheme,
   themesHref,
-  label = "切换主题",
-  showCurrent = true,
 }: {
   theme: AtlasTheme;
   onTheme: (value: string) => void;
-  themesHref?: string;
-  label?: string;
-  showCurrent?: boolean;
+  themesHref: string;
 }) {
   return (
     <DropdownMenu>
@@ -61,13 +57,11 @@ export function ThemePicker({
         <Button
           variant="outline"
           size="sm"
-          aria-label={label}
+          aria-label="切换主题"
           className="max-w-28 shrink-0 gap-1.5 px-2 min-[360px]:max-w-32 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
         >
-          {showCurrent ? <ThemeIcon id={theme.id} /> : <Ellipsis />}
-          <span className="truncate">
-            {showCurrent ? theme.label : "全部风格"}
-          </span>
+          <ThemeIcon id={theme.id} />
+          <span className="truncate">{theme.label}</span>
           <ChevronDown className="size-3.5 opacity-65" />
         </Button>
       </DropdownMenuTrigger>
@@ -91,14 +85,10 @@ export function ThemePicker({
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
-        {themesHref && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="h-10 cursor-pointer pl-8">
-              <a href={themesHref}>浏览全部主题</a>
-            </DropdownMenuItem>
-          </>
-        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="h-10 cursor-pointer pl-8">
+          <a href={themesHref}>浏览全部主题</a>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
