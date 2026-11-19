@@ -547,6 +547,24 @@ html[data-atlas-theme] :is(h1, h2, h3),
 }
 
 @scope ([data-atlas-theme="ant"]) to ([data-atlas-theme]) {
+  [data-slot="main-navigation"] a:hover {
+    background: transparent;
+    color: var(--primary);
+  }
+
+  [data-docs-search] [data-slot="command-input-wrapper"]:hover {
+    border-color: #4096ff;
+  }
+
+  [data-docs-search] [data-slot="command-input-wrapper"]:focus-within {
+    border-color: #1677ff;
+  }
+
+  [data-docs-search] [data-slot="command-item"][data-selected="true"] {
+    background: var(--accent);
+    color: var(--primary);
+  }
+
   :is(
     [data-slot="input"],
     [data-slot="input-group"],

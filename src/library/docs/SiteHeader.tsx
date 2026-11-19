@@ -18,12 +18,14 @@ import type { AtlasTheme } from "../themes";
 
 export function SiteHeader({
   items,
+  activeView,
   groups,
   theme,
   themesHref,
   onTheme,
 }: {
   items: React.ComponentProps<typeof MainNav>["items"];
+  activeView: string;
   groups: DocGroup[];
   theme: AtlasTheme;
   themesHref: string;
@@ -49,6 +51,15 @@ export function SiteHeader({
               <SheetDescription className="sr-only">
                 浏览组件总览、主题和页面模板。
               </SheetDescription>
+              <SheetClose asChild>
+                <a
+                  href={items[0].href}
+                  aria-current={activeView === "home" ? "page" : undefined}
+                  className="rounded-md px-2 py-1 text-sm aria-[current=page]:bg-accent"
+                >
+                  首页
+                </a>
+              </SheetClose>
               {groups.map((group) => (
                 <div key={group.name} className="grid gap-1">
                   <h2 className="px-2 text-xs font-semibold text-muted-foreground">
@@ -84,6 +95,7 @@ export function SiteHeader({
           </a>
           <MainNav
             items={items}
+            active={activeView}
             className="hidden lg:flex"
             aria-label="主导航"
           />

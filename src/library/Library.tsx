@@ -12,6 +12,7 @@ import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
 import { scenes } from "./scenes";
 import { SceneViewer } from "./docs/SceneViewer";
+import { HomePage } from "./docs/HomePage";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
@@ -19,6 +20,7 @@ import { themes } from "./themes";
 import { Card, CardContent } from "./ui/card";
 
 const views = [
+  { id: "home", label: "首页" },
   { id: "components", label: "组件" },
   { id: "showcase", label: "组件总览" },
   { id: "scene", label: "场景总览" },
@@ -65,7 +67,10 @@ const blocks = Object.fromEntries(
 
 export function Library() {
   useSyncExternalStore(route.subscribe, route.snapshot);
-  const currentView = route.get("view", "components");
+  const currentView = route.get(
+    "view",
+    route.get("component") ? "components" : "home",
+  );
   const view =
     currentView === "templates"
       ? "blocks"
@@ -99,6 +104,7 @@ export function Library() {
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
     route.link({ view, theme, ...values });
+  const changeTheme = (value: string) => route.patch({ theme: value });
   const blockView = view === "blocks";
   const viewKey = `${view}:${blockView ? block.id : item.id}`;
   useEffect(() => {
@@ -202,12 +208,24 @@ export function Library() {
       <Toaster />
       <SiteHeader
         items={navItems}
+        activeView={view}
         groups={groups}
         theme={selectedTheme}
         themesHref={choose({ view: "themes" })}
-        onTheme={(value) => route.patch({ theme: value })}
+        onTheme={changeTheme}
       />
-      {blockView ? (
+      {view === "home" ? (
+        <HomePage
+          theme={selectedTheme}
+          onTheme={changeTheme}
+          href={choose}
+          counts={{
+            components: registry.components.length,
+            scenes: scenes.length,
+            blocks: registry.blocks.length,
+          }}
+        />
+      ) : blockView ? (
         <BlockViewer
           key={block.id}
           title={blockLabels[block.id].label}

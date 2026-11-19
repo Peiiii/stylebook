@@ -56,14 +56,15 @@ export function CommandMenu({ groups }: { groups: DocGroup[] }) {
         </Button>
       </DialogTrigger>
       <DialogContent
+        data-docs-search=""
         showCloseButton={false}
-        className="rounded-xl border-none bg-clip-padding p-2 shadow-2xl ring-4 ring-neutral-200/80"
+        className="rounded-xl bg-clip-padding p-2 shadow-2xl"
       >
         <DialogHeader className="sr-only">
           <DialogTitle>搜索文档</DialogTitle>
           <DialogDescription>查找组件、页面模板和主题预设。</DialogDescription>
         </DialogHeader>
-        <Command className="rounded-none bg-transparent **:data-[slot=command-input]:h-9! **:data-[slot=command-input]:py-0 **:data-[slot=command-input-wrapper]:mb-0 **:data-[slot=command-input-wrapper]:h-9! **:data-[slot=command-input-wrapper]:rounded-md **:data-[slot=command-input-wrapper]:border **:data-[slot=command-input-wrapper]:border-input **:data-[slot=command-input-wrapper]:bg-input/50">
+        <Command className="rounded-none bg-transparent **:data-[slot=command-input]:h-9! **:data-[slot=command-input]:py-0 **:data-[slot=command-input-wrapper]:mb-0 **:data-[slot=command-input-wrapper]:h-9! **:data-[slot=command-input-wrapper]:rounded-md **:data-[slot=command-input-wrapper]:border **:data-[slot=command-input-wrapper]:border-input **:data-[slot=command-input-wrapper]:bg-card">
           <CommandInput placeholder="搜索文档…" />
           <CommandList className="no-scrollbar min-h-60 scroll-pt-2 scroll-pb-1.5">
             <CommandEmpty className="py-12 text-center text-sm text-muted-foreground">
@@ -76,7 +77,7 @@ export function CommandMenu({ groups }: { groups: DocGroup[] }) {
                     key={page.id}
                     value={page.name}
                     keywords={[page.id, group.name, ...(page.keywords ?? [])]}
-                    className="h-9 rounded-md border border-transparent px-3! font-medium data-[selected=true]:border-input data-[selected=true]:bg-input/50"
+                    className="h-9 rounded-md px-3! font-medium"
                     onSelect={() => {
                       setOpen(false);
                       window.location.hash = page.href;

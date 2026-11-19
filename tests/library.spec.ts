@@ -12,10 +12,88 @@ async function selectTheme(page: Page, label: string) {
   await expect(themeTrigger(page)).toHaveText(label);
 }
 
-test("official docs structure, component interaction and theme", async ({
+test("home introduces the catalog and keeps the live form while themes change", async ({
   page,
 }) => {
   await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    /先看风格.*再做界面/,
+  );
+  const nav = page.getByRole("navigation", { name: "主导航" });
+  await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  const project = page.getByRole("textbox", { name: "项目名称" });
+  await project.fill("首页演示");
+  await page.getByRole("combobox", { name: "评审时间" }).click();
+  await page.getByRole("option", { name: "周三 10:00" }).click();
+  await page.getByRole("switch", { name: "启用提醒" }).click();
+  await page.getByRole("button", { name: "确认评审" }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "周三 10:00 · 提醒已关闭",
+  );
+  await page.getByRole("radio", { name: "Ant Design" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ant");
+  await expect(project).toHaveValue("首页演示");
+  await expect(page.getByRole("status")).toContainText("首页演示");
+  await page.getByRole("link", { name: "浏览组件总览" }).click();
+  await expect(nav.getByRole("link", { name: "组件总览" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.getByRole("link", { name: "Stylebook", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "先看风格",
+  );
+  await expect(themeTrigger(page)).toHaveText("Ant Design");
+  await page.setViewportSize({ width: 320, height: 720 });
+  await expect
+    .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
+    .toBe(320);
+  await expect(
+    page.getByRole("link", { name: /Bento · 设计手记/ }),
+  ).toBeVisible();
+});
+
+test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({
+  page,
+}) => {
+  await page.goto("/#view=themes&theme=ant");
+  const nav = page.getByRole("navigation", { name: "主导航" });
+  const active = nav.getByRole("link", { name: "主题", exact: true });
+  const neighbor = nav.getByRole("link", { name: "页面模板", exact: true });
+  await neighbor.hover();
+  await expect(active).toHaveAttribute("aria-current", "page");
+  const underline = (link: HTMLElement) =>
+    getComputedStyle(link, "::after").backgroundColor;
+  await expect.poll(() => active.evaluate(underline)).toBe("rgb(9, 88, 217)");
+  await expect(neighbor).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  expect(await neighbor.evaluate(underline)).toBe("rgba(0, 0, 0, 0)");
+
+  await page.getByRole("button", { name: "搜索文档" }).click();
+  const dialog = page.getByRole("dialog", { name: "搜索文档" });
+  const input = dialog.getByRole("combobox");
+  await expect(input).toBeFocused();
+  const field = dialog.locator('[data-slot="command-input-wrapper"]');
+  await expect(field).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(field).toHaveCSS("border-top-color", "rgb(22, 119, 255)");
+  const first = dialog.getByRole("option", { name: "Button", exact: true });
+  await expect(first).toHaveCSS("background-color", "rgb(230, 244, 255)");
+  await input.press("ArrowDown");
+  const second = dialog.getByRole("option", { name: "Input", exact: true });
+  await expect(second).toHaveCSS("background-color", "rgb(230, 244, 255)");
+  await expect(first).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await input.press("Enter");
+  await expect(
+    page.getByRole("heading", { name: "Input", exact: true }),
+  ).toBeVisible();
+});
+
+test("official docs structure, component interaction and theme", async ({
+  page,
+}) => {
+  await page.goto("/#component=button");
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(
     page.getByRole("heading", { name: "Button", exact: true }),

@@ -58,7 +58,7 @@ export function ThemePicker({
           variant="outline"
           size="sm"
           aria-label="切换主题"
-          className="max-w-32 shrink-0 gap-1.5 px-2 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
+          className="max-w-28 shrink-0 gap-1.5 px-2 min-[360px]:max-w-32 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
         >
           <ThemeIcon id={theme.id} />
           <span className="truncate">{theme.label}</span>
