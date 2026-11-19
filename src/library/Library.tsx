@@ -21,10 +21,10 @@ import { Card, CardContent } from "./ui/card";
 
 const views = [
   { id: "home", label: "首页" },
-  { id: "components", label: "组件" },
   { id: "showcase", label: "组件总览" },
   { id: "scene", label: "场景总览" },
   { id: "blocks", label: "页面模板" },
+  { id: "components", label: "组件" },
   { id: "themes", label: "主题" },
 ];
 const blockLabels: Record<string, { label: string; description: string }> = {
