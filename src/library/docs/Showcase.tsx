@@ -1,5 +1,14 @@
 import type { ReactNode } from "react";
 import { TooltipProvider } from "../ui/tooltip";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { ComponentPreview } from "./ComponentPreview";
 
 export type ShowcaseEntry = {
@@ -26,6 +35,29 @@ const wide = new Set([
   "table",
   "tabs",
 ]);
+
+function CommandPreview({ children }: { children: ReactNode }) {
+  // cmdk scrolls its first result into view on mount. Mount it after the
+  // user opens the preview so it cannot move the showcase on entry.
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          打开命令面板
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="gap-3 p-4">
+        <DialogHeader className="pr-7">
+          <DialogTitle>Command</DialogTitle>
+          <DialogDescription className="sr-only">
+            搜索并选择一条命令。
+          </DialogDescription>
+        </DialogHeader>
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function Showcase({
   theme,
@@ -104,7 +136,11 @@ export function Showcase({
                         </a>
                       </h3>
                       <ComponentPreview className="flex-1 px-3 pt-2 pb-3">
-                        {entry.preview}
+                        {entry.id === "command" ? (
+                          <CommandPreview>{entry.preview}</CommandPreview>
+                        ) : (
+                          entry.preview
+                        )}
                       </ComponentPreview>
                     </article>
                   ))}

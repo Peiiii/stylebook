@@ -449,15 +449,16 @@ test("showcase renders all components together and keeps one theme", async ({
   page,
 }) => {
   await page.goto("/");
-  await page
-    .getByRole("navigation", { name: "主导航" })
-    .getByRole("link", { name: "组件总览", exact: true })
-    .click();
+  await page.getByRole("link", { name: "浏览组件总览", exact: true }).click();
   const cards = page.locator("[data-showcase-component]");
   await expect(cards).toHaveCount(registry.components.length);
-  await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
+  await expect(page.getByText("正在加载预览", { exact: true })).toHaveCount(0, {
     timeout: 15000,
   });
+  await expect(
+    page.getByRole("heading", { name: "组件总览", exact: true }),
+  ).toBeInViewport();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
   await expect(cards.locator('[data-slot="preview"]')).toHaveCount(
     registry.components.length,
   );
@@ -496,6 +497,19 @@ test("showcase renders all components together and keeps one theme", async ({
     return ids.filter((id, index) => ids.indexOf(id) !== index);
   });
   expect(dupes).toEqual([]);
+  const command = cards
+    .filter({
+      has: page.getByRole("heading", { name: "Command", exact: true }),
+    })
+    .getByRole("button", { name: "打开命令面板" });
+  await command.click();
+  const commandDialog = page.getByRole("dialog", { name: "Command" });
+  await commandDialog.getByRole("combobox").fill("账单");
+  await expect(
+    commandDialog.getByRole("option", { name: /账单/ }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(command).toBeFocused();
   const toggle = cards
     .filter({ has: page.getByRole("heading", { name: "Switch", exact: true }) })
     .getByRole("switch");
@@ -517,7 +531,7 @@ test("showcase renders all components together and keeps one theme", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   await expect(cards).toHaveCount(registry.components.length);
-  await expect(page.getByText("正在加载…", { exact: true })).toHaveCount(0, {
+  await expect(page.getByText("正在加载预览", { exact: true })).toHaveCount(0, {
     timeout: 15000,
   });
   await expect(themeTrigger(page)).toHaveText("复古");
