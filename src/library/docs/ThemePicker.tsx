@@ -21,7 +21,7 @@ const themeLogos = {
   claude: "claude",
 } satisfies Record<Exclude<AtlasTheme["id"], "retro">, string>;
 
-function ThemeIcon({ id }: { id: AtlasTheme["id"] }) {
+export function ThemeIcon({ id }: { id: AtlasTheme["id"] }) {
   if (id === "retro") {
     return (
       <BookOpen

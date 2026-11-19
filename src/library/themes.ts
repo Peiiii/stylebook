@@ -1,18 +1,13 @@
 export const themes = [
   {
-    id: "shadcn",
-    label: "shadcn 默认",
-    description: "中性色、细边框与克制的阴影。",
+    id: "ios",
+    label: "iOS",
+    description: "白色内容画布、胶囊操作与轻透导航。",
   },
   {
     id: "material",
     label: "Material",
     description: "蓝色强调、中性表面与清晰的控件层级。",
-  },
-  {
-    id: "ios",
-    label: "iOS",
-    description: "白色内容画布、胶囊操作与轻透导航。",
   },
   {
     id: "fluent",
@@ -38,6 +33,11 @@ export const themes = [
     id: "retro",
     label: "复古",
     description: "纸张底色、衬线字体、粗边框与硬投影。",
+  },
+  {
+    id: "shadcn",
+    label: "shadcn 基准",
+    description: "中性色、细边框与克制的阴影。",
   },
 ] as const;
 

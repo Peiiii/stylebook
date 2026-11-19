@@ -20,6 +20,12 @@ test("home introduces the catalog and keeps the live form while themes change", 
     /先看风格.*再做界面/,
   );
   const nav = page.getByRole("navigation", { name: "主导航" });
+  const picker = page.getByRole("radiogroup", { name: "选择你的界面风格" });
+  const choices = picker.getByRole("radio");
+  await expect(choices).toHaveCount(8);
+  await expect(choices.first()).toHaveText("iOS");
+  await expect(choices.first()).toBeChecked();
+  await expect(choices.last()).toHaveText("shadcn 基准");
   await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -33,8 +39,18 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect(page.getByRole("status")).toContainText(
     "周三 10:00 · 提醒已关闭",
   );
-  await page.getByRole("radio", { name: "Ant Design" }).click();
+  const submit = page.getByRole("button", { name: "确认评审" });
+  await expect(submit).toHaveCSS("border-top-left-radius", "999px");
+  const ant = picker.getByRole("radio", { name: "Ant Design", exact: true });
+  await ant.click();
   await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ant");
+  await expect(ant).toBeChecked();
+  await expect(themeTrigger(page)).toHaveText("Ant Design");
+  await expect(submit).toHaveCSS("border-top-left-radius", "6px");
+  await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
   await expect(project).toHaveValue("首页演示");
   await expect(page.getByRole("status")).toContainText("首页演示");
   await page.getByRole("link", { name: "浏览组件总览" }).click();
@@ -48,6 +64,15 @@ test("home introduces the catalog and keeps the live form while themes change", 
   );
   await expect(themeTrigger(page)).toHaveText("Ant Design");
   await page.setViewportSize({ width: 320, height: 720 });
+  await page.evaluate(() => window.scrollTo(0, 110));
+  await picker.getByRole("radio", { name: "shadcn 基准" }).click();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "shadcn",
+  );
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(90);
   await expect
     .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
     .toBe(320);
@@ -101,7 +126,7 @@ test("official docs structure, component interaction and theme", async ({
   await expect(
     page.locator('[data-slot="sidebar"] a[aria-current="page"]'),
   ).toHaveText("Button");
-  await expect(themeTrigger(page)).toHaveText("shadcn 默认");
+  await expect(themeTrigger(page)).toHaveText("iOS");
   await selectTheme(page, "复古");
   await page.getByRole("link", { name: "Checkbox", exact: true }).click();
   await page.reload();
@@ -290,8 +315,11 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   const menu = page.getByRole("menu", { name: "切换主题" });
   await expect(menu.getByRole("menuitemradio")).toHaveCount(8);
   await expect(
-    menu.getByRole("menuitemradio", { name: "shadcn 默认" }),
+    menu.getByRole("menuitemradio", { name: "iOS" }),
   ).toHaveAttribute("aria-checked", "true");
+  await expect(menu.getByRole("menuitemradio").last()).toHaveText(
+    "shadcn 基准",
+  );
   const rect = await menu.boundingBox();
   expect(rect!.x).toBeGreaterThanOrEqual(0);
   expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
