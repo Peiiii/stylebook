@@ -1,11 +1,14 @@
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useRef, useState, type CSSProperties, type FormEvent } from "react";
 import {
   Bell,
   FolderKanban,
   Layers3,
+  Palette,
+  FileText,
+  Blocks,
+  UserRound,
+  Star,
   CalendarDays,
-  LayoutDashboard,
-  History,
   Users,
   Settings,
   MoreHorizontal,
@@ -23,6 +26,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "../ui/breadcrumb";
+import { NavProjects } from "../blocks/sidebar-07/components/nav-projects";
+import { TeamSwitcher } from "../blocks/sidebar-07/components/team-switcher";
 import { NavMain } from "../blocks/sidebar-07/components/nav-main";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
@@ -85,7 +90,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
@@ -98,6 +102,11 @@ import {
 } from "../ui/sidebar";
 
 const statuses = ["计划中", "进行中", "已完成"] as const;
+const teams = [
+  { name: "设计组", logo: Palette, plan: "品牌与界面设计" },
+  { name: "内容组", logo: FileText, plan: "内容策划与编辑" },
+  { name: "产品组", logo: Blocks, plan: "产品体验与交付" },
+];
 type Status = (typeof statuses)[number];
 type Project = {
   id: number;
@@ -169,11 +178,22 @@ const weeklyDelivery = [3, 5, 4, 7, 6, 9, 8];
 const initialActivity = [
   {
     owner: "林沐",
+    team: "设计组",
     action: "更新了「品牌网站改版」的交付进度",
     time: "今天 10:42",
   },
-  { owner: "许言", action: "完成了「活动素材归档」", time: "今天 09:15" },
-  { owner: "周宁", action: "创建了「十二月内容计划」", time: "昨天 16:30" },
+  {
+    owner: "许言",
+    team: "内容组",
+    action: "完成了「活动素材归档」",
+    time: "今天 09:15",
+  },
+  {
+    owner: "周宁",
+    team: "内容组",
+    action: "创建了「十二月内容计划」",
+    time: "昨天 16:30",
+  },
 ];
 
 const pages = [
@@ -181,84 +201,156 @@ const pages = [
     id: "overview",
     label: "项目工作台",
     nav: "总览",
-    icon: LayoutDashboard,
     description: "查看团队的项目、交付进度与近期动态。",
   },
   {
     id: "projects",
     label: "团队项目",
     nav: "项目",
-    icon: FolderKanban,
     description: "查找项目、查看详情和更新状态。",
   },
   {
     id: "delivery",
     label: "交付计划",
     nav: "交付",
-    icon: CalendarDays,
     description: "查看项目交付日期和待交付事项。",
   },
   {
     id: "activity",
     label: "团队活动",
     nav: "活动",
-    icon: History,
     description: "查看团队创建项目和推进交付的记录。",
   },
   {
     id: "settings",
     label: "工作室设置",
     nav: "设置",
-    icon: Settings,
     description: "管理工作室名称与交付提醒。",
+  },
+  {
+    id: "members",
+    label: "团队成员",
+    nav: "成员",
+    description: "查看团队分工与项目负责人。",
+  },
+  {
+    id: "notifications",
+    label: "通知中心",
+    nav: "通知",
+    description: "查看项目交付提醒。",
+  },
+  {
+    id: "profile",
+    label: "个人资料",
+    nav: "我的资料",
+    description: "查看你在工作室里的身份和偏好。",
   },
 ] as const;
 
 type WorkspacePage = (typeof pages)[number]["id"];
 
+type ProjectFilter = "全部" | Status | "收藏";
+type WorkspaceDestination = {
+  page: WorkspacePage;
+  filter?: ProjectFilter;
+  title?: string;
+};
+
 const workspaceGroups: {
   title: string;
   icon: typeof FolderKanban;
-  pages: WorkspacePage[];
+  items: WorkspaceDestination[];
 }[] = [
-  { title: "项目管理", icon: FolderKanban, pages: ["overview", "projects"] },
-  { title: "团队协作", icon: Users, pages: ["delivery", "activity"] },
+  {
+    title: "项目管理",
+    icon: FolderKanban,
+    items: [
+      { page: "overview" },
+      { page: "projects", filter: "全部" },
+      { page: "projects", filter: "计划中", title: "计划中的项目" },
+      { page: "projects", filter: "进行中", title: "进行中的项目" },
+      { page: "projects", filter: "已完成", title: "已完成项目" },
+    ],
+  },
+  {
+    title: "团队协作",
+    icon: CalendarDays,
+    items: [{ page: "delivery" }, { page: "activity" }],
+  },
+  {
+    title: "团队资源",
+    icon: Users,
+    items: [
+      { page: "members" },
+      { page: "projects", filter: "收藏", title: "收藏项目" },
+    ],
+  },
+  {
+    title: "工作室管理",
+    icon: Settings,
+    items: [
+      { page: "settings" },
+      { page: "notifications" },
+      { page: "profile" },
+    ],
+  },
 ];
+
+type ProjectAction = {
+  project: Project;
+  mode: "details" | "share";
+  trigger: HTMLButtonElement | null;
+};
 
 function WorkspaceSidebar({
   workspace,
   page,
+  filter,
+  teamIndex,
+  projectShortcuts,
   onNavigate,
+  onSelectTeam,
+  onProjectAction,
+  onUnpin,
   reminders,
   onRemindersChange,
 }: {
   workspace: string;
   page: WorkspacePage;
-  onNavigate: (page: WorkspacePage) => void;
+  filter: ProjectFilter;
+  teamIndex: number;
+  projectShortcuts: Project[];
+  onNavigate: (destination: WorkspaceDestination) => void;
+  onSelectTeam: (teamIndex: number) => void;
+  onProjectAction: (action: ProjectAction) => void;
+  onUnpin: (project: Project) => void;
   reminders: boolean;
   onRemindersChange: (value: boolean) => void;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
 
-  function navigate(target: WorkspacePage) {
-    onNavigate(target);
+  function closeDrawer() {
     if (isMobile) setOpenMobile(false);
   }
 
-  function renderPage({ id, nav, icon: Icon }: (typeof pages)[number]) {
+  function navigate(destination: WorkspaceDestination) {
+    onNavigate(destination);
+    closeDrawer();
+  }
+
+  function openProject(
+    project: Project,
+    mode: ProjectAction["mode"],
+    trigger: HTMLButtonElement | null,
+  ) {
+    closeDrawer();
+    onProjectAction({ project, mode, trigger: isMobile ? null : trigger });
+  }
+
+  function isCurrent(destination: WorkspaceDestination) {
     return (
-      <SidebarMenuItem key={id}>
-        <SidebarMenuButton
-          isActive={page === id}
-          aria-current={page === id ? "page" : undefined}
-          aria-label={nav}
-          tooltip={nav}
-          onClick={() => navigate(id)}
-        >
-          <Icon />
-          <span>{nav}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
+      page === destination.page &&
+      (destination.filter === undefined || filter === destination.filter)
     );
   }
 
@@ -269,51 +361,62 @@ function WorkspaceSidebar({
         className="flex min-h-0 flex-1 flex-col"
       >
         <SidebarHeader className="shrink-0">
-          <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2 px-1 py-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-              <div className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-                <Layers3 className="size-4" />
-              </div>
-              <strong className="min-w-0 flex-1 truncate text-sm group-data-[collapsible=icon]:sr-only">
-                {workspace}
-              </strong>
-              {isMobile && (
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="关闭工作室导航"
-                  onClick={() => setOpenMobile(false)}
-                >
-                  <X />
-                </Button>
-              )}
-            </SidebarMenuItem>
-          </SidebarMenu>
+          <div className="flex items-center gap-1">
+            <TeamSwitcher
+              teams={[
+                { name: workspace, plan: "全部团队", logo: Layers3 },
+                ...teams,
+              ]}
+              selection={{
+                index: teamIndex,
+                onChange: (index) => {
+                  onSelectTeam(index);
+                  closeDrawer();
+                },
+                onManage: () => navigate({ page: "members" }),
+              }}
+            />
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="关闭工作室导航"
+                onClick={closeDrawer}
+              >
+                <X />
+              </Button>
+            )}
+          </div>
         </SidebarHeader>
         <SidebarContent>
           <nav aria-label="工作室导航">
             <NavMain
               label="工作台"
-              items={workspaceGroups.map(
-                ({ title, icon, pages: groupPages }) => ({
-                  title,
-                  icon,
-                  isActive: groupPages.includes(page),
-                  items: pages
-                    .filter(({ id }) => groupPages.includes(id))
-                    .map(({ id, nav }) => ({
-                      title: nav,
-                      isActive: page === id,
-                      onSelect: () => navigate(id),
-                    })),
-                }),
-              )}
+              items={workspaceGroups.map(({ title, icon, items }) => ({
+                title,
+                icon,
+                isActive: items.some(isCurrent),
+                items: items.map((destination) => ({
+                  title:
+                    destination.title ??
+                    pages.find(({ id }) => id === destination.page)!.nav,
+                  isActive: isCurrent(destination),
+                  onSelect: () => navigate(destination),
+                })),
+              }))}
             />
-            <SidebarGroup className="group-data-[collapsible=icon]:py-1">
-              <SidebarMenu>
-                {pages.filter(({ id }) => id === "settings").map(renderPage)}
-              </SidebarMenu>
-            </SidebarGroup>
+            <NavProjects
+              label="项目快捷区"
+              projects={projectShortcuts.map((project) => ({
+                id: project.id,
+                name: project.name,
+                icon: Star,
+                onOpen: (trigger) => openProject(project, "details", trigger),
+                onShare: (trigger) => openProject(project, "share", trigger),
+                onUnpin: () => onUnpin(project),
+              }))}
+              onMore={() => navigate({ page: "projects", filter: "全部" })}
+            />
           </nav>
         </SidebarContent>
         <SidebarFooter className="shrink-0 border-t border-sidebar-border">
@@ -347,10 +450,25 @@ function WorkspaceSidebar({
                 >
                   <DropdownMenuLabel>林沐</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => navigate("settings")}>
+                  <DropdownMenuItem
+                    onSelect={() => navigate({ page: "profile" })}
+                  >
+                    <UserRound />
+                    我的资料
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => navigate({ page: "settings" })}
+                  >
                     <Settings />
                     工作室设置
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => navigate({ page: "notifications" })}
+                  >
+                    <Bell />
+                    通知中心
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuCheckboxItem
                     checked={reminders}
                     onCheckedChange={onRemindersChange}
@@ -368,6 +486,41 @@ function WorkspaceSidebar({
   );
 }
 
+function ProjectDetails({
+  project,
+  onCloseAutoFocus,
+}: {
+  project: Project;
+  onCloseAutoFocus?: (event: Event) => void;
+}) {
+  return (
+    <DialogContent onCloseAutoFocus={onCloseAutoFocus}>
+      <DialogHeader>
+        <DialogTitle className="wrap-anywhere">{project.name}</DialogTitle>
+        <DialogDescription>
+          {project.team} · {project.owner}负责
+        </DialogDescription>
+      </DialogHeader>
+      <p className="text-sm">交付日：{dueLabel(project.due)}</p>
+      <div className="flex items-center gap-3">
+        <Badge variant="secondary">{project.status}</Badge>
+        <Progress value={project.progress} aria-label="项目进度" />
+        <span className="text-sm">{project.progress}%</span>
+      </div>
+      {project.description && (
+        <p className="wrap-anywhere text-sm text-muted-foreground">
+          {project.description}
+        </p>
+      )}
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">关闭详情</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
 export function SceneShowcase() {
   const [page, setPage] = useState<WorkspacePage>("overview");
   const currentPage = pages.find((item) => item.id === page)!;
@@ -375,7 +528,12 @@ export function SceneShowcase() {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [reminders, setReminders] = useState(true);
   const [projects, setProjects] = useState(initialProjects);
-  const [filter, setFilter] = useState("全部");
+  const [filter, setFilter] = useState<ProjectFilter>("全部");
+  const [pinnedIds, setPinnedIds] = useState([1, 2, 3]);
+  const [teamIndex, setTeamIndex] = useState(0);
+  const [projectAction, setProjectAction] = useState<ProjectAction>();
+  const summaryField = useRef<HTMLTextAreaElement>(null);
+  const sidebarTrigger = useRef<HTMLButtonElement>(null);
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState("");
@@ -383,24 +541,64 @@ export function SceneShowcase() {
   const [description, setDescription] = useState("");
   const [activity, setActivity] = useState(initialActivity);
   const [unread, setUnread] = useState(true);
-  const visible = projects.filter(
+  const activeTeam = teams[teamIndex - 1]?.name;
+  const searchQuery = query.trim().toLowerCase();
+  const teamProjects = activeTeam
+    ? projects.filter((project) => project.team === activeTeam)
+    : projects;
+  const pinnedProjects = teamProjects.filter((project) =>
+    pinnedIds.includes(project.id),
+  );
+  const visible = teamProjects.filter(
     (project) =>
-      (filter === "全部" || project.status === filter) &&
+      (filter === "全部" ||
+        (filter === "收藏"
+          ? pinnedIds.includes(project.id)
+          : project.status === filter)) &&
       [project.name, project.team, project.owner].some((value) =>
-        value.toLowerCase().includes(query.trim().toLowerCase()),
+        value.toLowerCase().includes(searchQuery),
       ),
   );
-  const milestones = projects
+  const milestones = teamProjects
     .filter((project) => project.status !== "已完成" && project.due)
     .sort((a, b) => (a.due ?? "").localeCompare(b.due ?? ""));
   const scheduled = selectedDate
-    ? projects.filter(
+    ? teamProjects.filter(
         (project) =>
           project.due &&
           dueLabel(project.due) === deliveryDate.format(selectedDate) &&
           selectedDate.getFullYear() === Number(project.due.slice(0, 4)),
       )
     : milestones;
+  const teamActivity = activeTeam
+    ? activity.filter((entry) => entry.team === activeTeam)
+    : activity;
+
+  function navigate({
+    page: destination,
+    filter: projectFilter,
+  }: WorkspaceDestination) {
+    if (projectFilter) {
+      setFilter(projectFilter);
+      setQuery("");
+    }
+    setPage(destination);
+  }
+
+  function selectTeam(index: number) {
+    setTeamIndex(index);
+    setTeam(teams[index - 1]?.name ?? teams[0].name);
+    setQuery("");
+    setSelectedDate(undefined);
+  }
+
+  function togglePinned(project: Project) {
+    const pinned = pinnedIds.includes(project.id);
+    setPinnedIds((ids) =>
+      pinned ? ids.filter((id) => id !== project.id) : [...ids, project.id],
+    );
+    toast.success(pinned ? "已取消收藏" : "已收藏项目");
+  }
 
   function createProject(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -418,7 +616,12 @@ export function SceneShowcase() {
     };
     setProjects([project, ...projects]);
     setActivity((items) => [
-      { owner: "林沐", action: `创建了「${project.name}」`, time: "刚刚" },
+      {
+        owner: "林沐",
+        team: project.team,
+        action: `创建了「${project.name}」`,
+        time: "刚刚",
+      },
       ...items,
     ]);
     setQuery("");
@@ -426,7 +629,8 @@ export function SceneShowcase() {
     setCreating(false);
     setPage("projects");
     setName("");
-    setTeam("设计组");
+    if (activeTeam && team !== activeTeam) selectTeam(0);
+    else setTeam(activeTeam ?? teams[0].name);
     setDescription("");
     toast.success("项目已创建");
   }
@@ -451,6 +655,7 @@ export function SceneShowcase() {
     setActivity((items) => [
       {
         owner: "林沐",
+        team: project.team,
         action: `将「${project.name}」设为${status}`,
         time: "刚刚",
       },
@@ -459,18 +664,52 @@ export function SceneShowcase() {
     toast.success("项目状态已更新");
   }
 
+  const notificationSummary = (
+    <>
+      <p className="my-2 text-sm text-muted-foreground">
+        {unread && reminders
+          ? "品牌网站改版将在 11 月 20 日交付。"
+          : "没有未读通知。"}
+      </p>
+      {unread && reminders && (
+        <Button variant="secondary" size="sm" onClick={() => setUnread(false)}>
+          标为已读
+        </Button>
+      )}
+    </>
+  );
+
+  function restoreProjectFocus(event: Event) {
+    event.preventDefault();
+    const trigger = projectAction?.trigger;
+    (trigger?.isConnected && trigger.offsetWidth
+      ? trigger
+      : sidebarTrigger.current
+    )?.focus();
+  }
+
   return (
-    <SidebarProvider style={{ "--sidebar-width": "13rem" } as CSSProperties}>
+    <SidebarProvider style={{ "--sidebar-width": "15rem" } as CSSProperties}>
       <WorkspaceSidebar
         workspace={workspace}
         page={page}
-        onNavigate={setPage}
+        filter={filter}
+        teamIndex={teamIndex}
+        projectShortcuts={pinnedProjects.slice(0, 3)}
+        onNavigate={navigate}
+        onSelectTeam={selectTeam}
+        onProjectAction={setProjectAction}
+        onUnpin={togglePinned}
         reminders={reminders}
         onRemindersChange={setReminders}
       />
       <SidebarInset className="min-w-0 px-3 pb-3 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
         <div className="flex h-14 shrink-0 items-center gap-2 transition-[height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <SidebarTrigger aria-label="切换工作室侧栏" className="-ml-1" />
+          <SidebarTrigger
+            ref={sidebarTrigger}
+            aria-label="切换工作室侧栏"
+            className="-ml-1"
+          />
           <Separator
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
@@ -503,28 +742,21 @@ export function SceneShowcase() {
                   size="icon"
                   aria-label={unread && reminders ? "通知，有未读" : "通知"}
                 >
-                  <Bell />
-                  {unread && reminders && (
-                    <span className="size-1.5 rounded-full bg-primary" />
-                  )}
+                  <span className="relative grid place-items-center">
+                    <Bell aria-hidden="true" />
+                    {unread && reminders && (
+                      <span
+                        aria-hidden="true"
+                        data-slot="unread-indicator"
+                        className="pointer-events-none absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-primary ring-2 ring-background"
+                      />
+                    )}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end" className="max-w-[calc(100vw-2rem)]">
                 <h2 className="font-semibold">通知</h2>
-                <p className="my-2 text-sm text-muted-foreground">
-                  {unread && reminders
-                    ? "品牌网站改版将在 11 月 20 日交付。"
-                    : "没有未读通知。"}
-                </p>
-                {unread && reminders && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => setUnread(false)}
-                  >
-                    标为已读
-                  </Button>
-                )}
+                {notificationSummary}
               </PopoverContent>
             </Popover>
             <Dialog open={creating} onOpenChange={setCreating}>
@@ -559,7 +791,7 @@ export function SceneShowcase() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {["设计组", "内容组", "产品组"].map((value) => (
+                        {teams.map(({ name: value }) => (
                           <SelectItem key={value} value={value}>
                             {value}
                           </SelectItem>
@@ -601,12 +833,13 @@ export function SceneShowcase() {
             {[
               {
                 label: "全部项目",
-                value: projects.length,
+                value: teamProjects.length,
                 detail: "团队项目总数",
               },
               ...statuses.map((status) => ({
                 label: status,
-                value: projects.filter((item) => item.status === status).length,
+                value: teamProjects.filter((item) => item.status === status)
+                  .length,
                 detail: {
                   计划中: "等待排期或启动",
                   进行中: "正在推进",
@@ -634,7 +867,9 @@ export function SceneShowcase() {
             <Card className="gap-4">
               <CardHeader>
                 <CardTitle>交付趋势</CardTitle>
-                <CardDescription>本周每天完成的任务数</CardDescription>
+                <CardDescription>
+                  整个工作室本周每天完成的任务数
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
@@ -711,7 +946,7 @@ export function SceneShowcase() {
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 modifiers={{
-                  scheduled: projects.flatMap((project) =>
+                  scheduled: teamProjects.flatMap((project) =>
                     project.due ? [new Date(project.due + "T00:00:00")] : [],
                   ),
                 }}
@@ -764,6 +999,7 @@ export function SceneShowcase() {
               <div className="grid gap-1.5">
                 <CardTitle>团队项目</CardTitle>
                 <CardDescription>
+                  {activeTeam ? `${activeTeam} · ` : ""}
                   按状态浏览，或搜索项目与负责人。
                 </CardDescription>
               </div>
@@ -784,12 +1020,12 @@ export function SceneShowcase() {
                 type="single"
                 value={filter}
                 onValueChange={(value) => {
-                  if (value) setFilter(value);
+                  if (value) setFilter(value as ProjectFilter);
                 }}
                 aria-label="按状态筛选项目"
                 className="mb-2 max-w-full flex-wrap"
               >
-                {["全部", ...statuses].map((status) => (
+                {["全部", ...statuses, "收藏"].map((status) => (
                   <ToggleGroupItem
                     key={status}
                     value={status}
@@ -823,41 +1059,7 @@ export function SceneShowcase() {
                               {project.name}
                             </Button>
                           </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle className="wrap-anywhere">
-                                {project.name}
-                              </DialogTitle>
-                              <DialogDescription>
-                                {project.team} · {project.owner}负责
-                              </DialogDescription>
-                            </DialogHeader>
-                            <p className="text-sm">
-                              交付日：{dueLabel(project.due)}
-                            </p>
-                            <div className="flex items-center gap-3">
-                              <Badge variant="secondary">
-                                {project.status}
-                              </Badge>
-                              <Progress
-                                value={project.progress}
-                                aria-label="项目进度"
-                              />
-                              <span className="text-sm">
-                                {project.progress}%
-                              </span>
-                            </div>
-                            {project.description && (
-                              <p className="wrap-anywhere text-sm text-muted-foreground">
-                                {project.description}
-                              </p>
-                            )}
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button variant="outline">关闭详情</Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </DialogContent>
+                          <ProjectDetails project={project} />
                         </Dialog>
                         <p className="text-xs text-muted-foreground">
                           {project.team}
@@ -909,6 +1111,15 @@ export function SceneShowcase() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onSelect={() => togglePinned(project)}
+                            >
+                              <Star />
+                              {pinnedIds.includes(project.id)
+                                ? "取消收藏"
+                                : "收藏项目"}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             {statuses.map((status) => (
                               <DropdownMenuItem
                                 key={status}
@@ -946,29 +1157,151 @@ export function SceneShowcase() {
             </CardHeader>
             <CardContent>
               <ul className="divide-y">
-                {(page === "overview" ? activity.slice(0, 3) : activity).map(
-                  ({ owner, action, time }, index) => (
-                    <li
-                      key={`${action}-${index}`}
-                      className="flex flex-wrap items-center gap-3 py-3 first:pt-0 last:pb-0"
-                    >
-                      <Avatar>
-                        <AvatarFallback>{owner[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0 flex-1 text-sm">
-                        <strong className="font-medium">{owner}</strong>
-                        <p className="text-muted-foreground">{action}</p>
-                      </div>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        {time}
-                      </span>
-                    </li>
-                  ),
+                {teamActivity.length === 0 && (
+                  <li className="text-sm text-muted-foreground">
+                    暂无项目动态。
+                  </li>
                 )}
+                {(page === "overview"
+                  ? teamActivity.slice(0, 3)
+                  : teamActivity
+                ).map(({ owner, action, time }, index) => (
+                  <li
+                    key={`${action}-${index}`}
+                    className="flex flex-wrap items-center gap-3 py-3 first:pt-0 last:pb-0"
+                  >
+                    <Avatar>
+                      <AvatarFallback>{owner[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1 text-sm">
+                      <strong className="font-medium">{owner}</strong>
+                      <p className="text-muted-foreground">{action}</p>
+                    </div>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      {time}
+                    </span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
         )}
+        {page === "members" && (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {teams
+              .filter(({ name }) => !activeTeam || name === activeTeam)
+              .map(({ name, plan, logo: Icon }) => (
+                <Card key={name} className="gap-4">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Icon className="size-4" />
+                      {name}
+                    </CardTitle>
+                    <CardDescription>{plan}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="divide-y">
+                      {[
+                        ...new Set(
+                          projects
+                            .filter((project) => project.team === name)
+                            .map(({ owner }) => owner),
+                        ),
+                      ].map((owner) => (
+                        <li
+                          key={owner}
+                          className="flex items-center gap-2 py-2 text-sm"
+                        >
+                          <Avatar className="size-7">
+                            <AvatarFallback>{owner[0]}</AvatarFallback>
+                          </Avatar>
+                          <span>{owner}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        )}
+        {page === "notifications" && (
+          <Card className="max-w-2xl">
+            <CardHeader>
+              <CardTitle>项目提醒</CardTitle>
+            </CardHeader>
+            <CardContent>{notificationSummary}</CardContent>
+          </Card>
+        )}
+        {page === "profile" && (
+          <Card className="max-w-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarFallback>林</AvatarFallback>
+                </Avatar>
+                林沐
+              </CardTitle>
+              <CardDescription>{workspace} · 工作室管理员</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="outline"
+                onClick={() => navigate({ page: "settings" })}
+              >
+                管理交付提醒
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+        <Dialog
+          open={Boolean(projectAction)}
+          onOpenChange={(open) => {
+            if (!open) setProjectAction(undefined);
+          }}
+        >
+          {projectAction?.mode === "details" && (
+            <ProjectDetails
+              project={projectAction.project}
+              onCloseAutoFocus={restoreProjectFocus}
+            />
+          )}
+          {projectAction?.mode === "share" && (
+            <DialogContent onCloseAutoFocus={restoreProjectFocus}>
+              <DialogHeader>
+                <DialogTitle>分享项目</DialogTitle>
+                <DialogDescription>
+                  {projectAction.project.name}
+                </DialogDescription>
+              </DialogHeader>
+              <Textarea
+                ref={summaryField}
+                aria-label="项目摘要"
+                readOnly
+                value={`${projectAction.project.name}
+${projectAction.project.team} · ${projectAction.project.owner}
+${projectAction.project.status} · 交付日：${dueLabel(projectAction.project.due)}`}
+              />
+              <DialogFooter>
+                <Button
+                  onClick={async () => {
+                    const summary = summaryField.current;
+                    if (!summary) return;
+                    try {
+                      await navigator.clipboard.writeText(summary.value);
+                      toast.success("已复制项目摘要");
+                    } catch {
+                      summary.select();
+                      toast.info("可手动复制选中的摘要");
+                    }
+                  }}
+                >
+                  复制摘要
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          )}
+        </Dialog>
+
         {page === "settings" && (
           <Card className="max-w-2xl">
             <CardHeader>

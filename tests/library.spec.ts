@@ -326,6 +326,7 @@ test("scene showcase keeps workbench state while switching themes", async ({
   await collaboration.click();
   await nav.getByRole("button", { name: "活动", exact: true }).click();
   await expect(app.getByText("将「验收项目」设为已完成")).toBeVisible();
+  await nav.getByRole("button", { name: "工作室管理", exact: true }).click();
   await nav.getByRole("button", { name: "设置", exact: true }).click();
   await app.getByLabel("工作室名称").fill("新的工作室");
   await app.getByRole("button", { name: "保存资料" }).click();
@@ -387,6 +388,88 @@ test("scene showcase keeps workbench state while switching themes", async ({
       app.locator("html").evaluate((el) => el.scrollWidth - el.clientWidth),
     )
     .toBe(0);
+});
+
+test("workspace sidebar switches teams and manages project shortcuts", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/#view=scene&theme=ant");
+  const app = page.frameLocator("iframe");
+  const sidebar = app.locator('[data-slot="workspace-sidebar"]');
+  const nav = app.getByRole("navigation", { name: "工作室导航" });
+  const scope = sidebar.getByRole("button", { name: /切换团队/ });
+  for (const name of ["项目管理", "团队协作", "团队资源", "工作室管理"]) {
+    await expect(
+      nav.getByRole("button", { name, exact: true }),
+    ).toHaveAttribute("aria-expanded", name === "项目管理" ? "true" : "false");
+  }
+
+  await scope.click();
+  await app.getByRole("menuitemradio", { name: "内容组", exact: true }).click();
+  await expect(scope).toHaveAccessibleName("切换团队，当前：内容组");
+  await expect(
+    nav.getByRole("button", { name: "品牌网站改版", exact: true }),
+  ).toHaveCount(0);
+  const shortcut = nav.getByRole("button", {
+    name: "十二月内容计划",
+    exact: true,
+  });
+  await shortcut.click();
+  await expect(
+    app.getByRole("dialog", { name: "十二月内容计划" }),
+  ).toBeVisible();
+  await app.getByRole("button", { name: "关闭详情" }).click();
+  await expect(shortcut).toBeFocused();
+
+  const more = nav.getByRole("button", { name: "十二月内容计划的更多操作" });
+  await more.focus();
+  await more.press("Enter");
+  await app.getByRole("menuitem", { name: "分享项目" }).click();
+  await expect(app.getByRole("textbox", { name: "项目摘要" })).toHaveValue(
+    /内容组/,
+  );
+  await app.getByRole("button", { name: "复制摘要" }).click();
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toContain("十二月内容计划");
+  await app.getByRole("button", { name: "关闭", exact: true }).click();
+  await expect(more).toBeFocused();
+
+  await more.focus();
+  await more.press("Enter");
+  await app.getByRole("menuitem", { name: "取消收藏" }).click();
+  await expect(shortcut).toHaveCount(0);
+  await nav.getByRole("button", { name: "查看全部项目" }).click();
+  await expect(
+    app.getByRole("row").filter({ hasText: "十二月内容计划" }),
+  ).toBeVisible();
+  await expect(
+    app.getByRole("row").filter({ hasText: "品牌网站改版" }),
+  ).toHaveCount(0);
+  await app.getByRole("button", { name: "更新十二月内容计划的状态" }).click();
+  await app.getByRole("menuitem", { name: "收藏项目" }).click();
+  await expect(shortcut).toBeVisible();
+
+  await sidebar.getByRole("button", { name: "林沐的账户菜单" }).click();
+  await app.getByRole("menuitem", { name: "通知中心" }).click();
+  await expect(app.getByRole("heading", { name: "通知中心" })).toBeVisible();
+  await app.getByRole("button", { name: "标为已读" }).click();
+  await expect(app.locator('[data-slot="unread-indicator"]')).toHaveCount(0);
+
+  await page.getByRole("radio", { name: "手机预览" }).click();
+  const toggle = app.getByRole("button", { name: "切换工作室侧栏" });
+  await toggle.click();
+  await scope.click();
+  await app.getByRole("menuitemradio", { name: "产品组", exact: true }).click();
+  await expect(nav).toBeHidden();
+  await toggle.click();
+  await nav.getByRole("button", { name: "新手引导优化", exact: true }).click();
+  await expect(nav).toBeHidden();
+  await expect(app.getByRole("dialog", { name: "新手引导优化" })).toBeVisible();
+  await app.getByRole("button", { name: "关闭详情" }).click();
+  await expect(toggle).toBeFocused();
 });
 
 test("bento case can be selected, themed, and opened on its own", async ({
