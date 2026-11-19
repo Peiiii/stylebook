@@ -623,6 +623,7 @@
       "files": [
         "examples/toggle-group-demo.tsx",
         "ui/toggle-group.tsx",
+        "ui/segmented-control.tsx",
         "ui/cn.ts",
         "ui/toggle.tsx"
       ],

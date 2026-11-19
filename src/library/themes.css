@@ -387,6 +387,23 @@ html[data-atlas-theme] :is(h1, h2, h3),
     background: #fff;
   }
 
+  [data-slot="segmented-control"] {
+    border-color: transparent;
+    border-radius: 12px;
+    background: #f0f0f2;
+  }
+
+  [data-slot="segmented-control-item"] {
+    border-radius: 9px;
+  }
+
+  [data-slot="segmented-control-item"][aria-checked="true"] {
+    border-color: transparent;
+    background: #fff;
+    color: var(--foreground);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+  }
+
   [data-slot="dropdown-menu-item"],
   [data-slot="dropdown-menu-radio-item"] {
     border-radius: 10px;

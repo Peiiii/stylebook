@@ -90,6 +90,37 @@ test("home introduces the catalog and keeps the live form while themes change", 
   ).toBeVisible();
 });
 
+test("the homepage and Toggle Group demo share the iOS segmented selection", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
+  await expect(picker).toHaveAttribute("data-slot", "segmented-control");
+  await expect(picker).toHaveCSS("background-color", "rgb(240, 240, 242)");
+  const ios = picker.getByRole("radio", { name: "iOS", exact: true });
+  await expect(ios).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(ios).toHaveCSS("border-top-color", "rgba(0, 0, 0, 0)");
+  await expect(ios).toHaveCSS("color", "rgb(28, 28, 30)");
+
+  await page.goto("/#component=toggle-group&theme=ios");
+  const range = page.getByRole("radiogroup", { name: "选择时间范围" });
+  await expect(range).toHaveAttribute("data-slot", "segmented-control");
+  const week = range.getByRole("radio", { name: "周", exact: true });
+  await expect(week).toBeChecked();
+  await week.press("ArrowRight");
+  const month = range.getByRole("radio", { name: "月", exact: true });
+  await expect(month).toBeFocused();
+  await expect(month).toHaveCSS("outline-width", "2px");
+  await page.keyboard.press("Space");
+  await expect(month).toBeChecked();
+  await expect(month).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await page.keyboard.press("Space");
+  await expect(month).toBeChecked();
+  await expect(
+    page.getByRole("toolbar", { name: "文本格式" }).getByRole("button"),
+  ).toHaveCount(3);
+});
+
 test("homepage preview candidates expose five usable component interactions", async ({
   page,
 }) => {
