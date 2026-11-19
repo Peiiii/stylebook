@@ -23,9 +23,9 @@ test("home introduces the catalog and keeps the live form while themes change", 
   const picker = page.getByRole("radiogroup", { name: "选择你的界面风格" });
   const choices = picker.getByRole("radio");
   await expect(choices).toHaveCount(8);
-  await expect(choices.first()).toHaveText("iOS");
+  await expect(choices.first()).toHaveAccessibleName("iOS");
   await expect(choices.first()).toBeChecked();
-  await expect(choices.last()).toHaveText("shadcn 基准");
+  await expect(choices.last()).toHaveAccessibleName("shadcn 基准");
   await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -65,6 +65,11 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect(themeTrigger(page)).toHaveText("Ant Design");
   await page.setViewportSize({ width: 320, height: 720 });
   await page.evaluate(() => window.scrollTo(0, 110));
+  const nextThemes = page.getByRole("button", { name: "向右浏览风格" });
+  const previousThemes = page.getByRole("button", { name: "向左浏览风格" });
+  await expect(previousThemes).toBeDisabled();
+  await nextThemes.click();
+  await expect(previousThemes).toBeEnabled();
   await picker.getByRole("radio", { name: "shadcn 基准" }).click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-atlas-theme",
@@ -73,6 +78,7 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect
     .poll(() => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(90);
+  await expect(nextThemes).toBeDisabled();
   await expect
     .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
     .toBe(320);
