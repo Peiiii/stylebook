@@ -10,29 +10,37 @@ export function HomeThemeSwitcher({
   onTheme: (theme: AtlasTheme["id"]) => void;
 }) {
   return (
-    <div className="mx-auto mb-9 max-w-5xl overflow-x-auto px-1 py-1 sm:mb-12">
-      <ToggleGroup
-        type="single"
-        value={theme.id}
-        onValueChange={(value) => {
-          const next = themes.find(({ id }) => id === value);
-          if (next) onTheme(next.id);
-        }}
-        spacing={1}
-        aria-label="选择界面风格"
-        className="mx-auto w-max gap-0.5 rounded-full bg-muted p-1"
+    <div className="mx-auto w-full min-w-0 max-w-6xl md:col-span-2 md:row-start-2">
+      <h2
+        id="home-theme-label"
+        className="mb-2 text-center text-base font-semibold"
       >
-        {themes.map(({ id, label }) => (
-          <ToggleGroupItem
-            key={id}
-            value={id}
-            className="h-8 gap-1.5 rounded-full px-2.5 text-xs text-muted-foreground aria-checked:bg-background aria-checked:text-foreground aria-checked:shadow-sm"
-          >
-            <ThemeIcon id={id} />
-            {label}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+        选择界面风格
+      </h2>
+      <div className="overflow-x-auto px-1 py-1">
+        <ToggleGroup
+          type="single"
+          value={theme.id}
+          onValueChange={(value) => {
+            const next = themes.find(({ id }) => id === value);
+            if (next) onTheme(next.id);
+          }}
+          spacing={1}
+          aria-labelledby="home-theme-label"
+          className="mx-auto w-max gap-1 rounded-full border bg-muted p-1.5"
+        >
+          {themes.map(({ id, label }) => (
+            <ToggleGroupItem
+              key={id}
+              value={id}
+              className="h-11 min-w-11 gap-2 rounded-full border border-transparent px-3.5 text-sm text-foreground aria-checked:border-primary/35 aria-checked:bg-background aria-checked:text-primary aria-checked:shadow-sm sm:h-12 sm:px-4 [&_img]:size-5 [&_svg]:size-5"
+            >
+              <ThemeIcon id={id} />
+              {label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
     </div>
   );
 }

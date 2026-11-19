@@ -40,7 +40,7 @@ function ThemePreview({ theme }: Pick<HomePageProps, "theme">) {
   return (
     <figure
       aria-label="设计评审交互预览"
-      className="min-w-0 overflow-hidden rounded-2xl border bg-card shadow-lg shadow-black/5"
+      className="min-w-0 overflow-hidden rounded-2xl border bg-card shadow-lg shadow-black/5 md:col-start-2 md:row-start-1"
     >
       <figcaption className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3 sm:px-5">
         <span className="flex items-center gap-2 text-sm font-medium">
@@ -165,9 +165,9 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
     <main className="mx-auto min-w-0 max-w-7xl px-4 sm:px-8 lg:px-12">
       <section
         aria-labelledby="home-title"
-        className="grid items-center gap-8 py-8 sm:py-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 lg:pt-16 lg:pb-11"
+        className="grid items-center gap-7 py-8 sm:py-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-y-9 lg:gap-x-16 lg:pt-14 lg:pb-11"
       >
-        <div className="min-w-0">
+        <div className="min-w-0 md:col-start-1 md:row-start-1">
           <h1
             id="home-title"
             className="grid gap-1 text-[clamp(2.5rem,5.2vw,4.375rem)] leading-[1.1] font-semibold tracking-tight"
@@ -206,10 +206,9 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
             ))}
           </dl>
         </div>
+        <HomeThemeSwitcher theme={theme} onTheme={onTheme} />
         <ThemePreview theme={theme} />
       </section>
-
-      <HomeThemeSwitcher theme={theme} onTheme={onTheme} />
 
       <section aria-labelledby="home-cases" className="border-t py-8 sm:py-11">
         <h2
