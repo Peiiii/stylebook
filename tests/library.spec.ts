@@ -54,7 +54,7 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await expect(project).toHaveValue("首页演示");
   await expect(page.getByRole("status")).toContainText("首页演示");
   const comparison = page.getByRole("region", { name: "风格切换器对照" });
-  await expect(comparison.getByRole("heading", { level: 3 })).toHaveCount(5);
+  await expect(comparison.getByRole("heading", { level: 3 })).toHaveCount(10);
   const segmented = comparison.getByRole("radiogroup", {
     name: "B · 分段按钮",
   });
@@ -77,6 +77,35 @@ test("home introduces the catalog and keeps the live form while themes change", 
   await comparison.getByRole("button", { name: "下一个风格" }).click();
   await expect(themeTrigger(page)).toHaveText("ChatGPT");
   await comparison.getByRole("button", { name: "上一个风格" }).click();
+  await expect(ant).toBeChecked();
+  const hybrid = comparison.getByRole("radiogroup", { name: "F · 品牌分段" });
+  await expect(hybrid.getByRole("radio")).toHaveCount(8);
+  await hybrid.getByRole("radio", { name: "Windows 11" }).click();
+  const stacked = comparison.getByRole("radiogroup", {
+    name: "G · 图标与短标签",
+  });
+  await expect(
+    stacked.getByRole("radio", { name: "Windows 11" }),
+  ).toBeChecked();
+  await stacked.getByRole("radio", { name: "Material" }).click();
+  const expanding = comparison.getByRole("radiogroup", {
+    name: "H · 展开当前项",
+  });
+  await expect(expanding.getByText("Material", { exact: true })).toBeVisible();
+  await expanding.getByRole("radio", { name: "Claude" }).click();
+  await expect(expanding.getByText("Material", { exact: true })).toBeHidden();
+  await expect(expanding.getByText("Claude", { exact: true })).toBeVisible();
+  const outlined = comparison.getByRole("radiogroup", { name: "I · 独立描边" });
+  await outlined.getByRole("radio", { name: "复古" }).click();
+  await expect(themeTrigger(page)).toHaveText("复古");
+  await comparison
+    .getByRole("radiogroup", { name: "常用风格" })
+    .getByRole("radio", { name: "iOS" })
+    .click();
+  await expect(themeTrigger(page)).toHaveText("iOS");
+  await comparison.getByRole("button", { name: "快捷栏全部风格" }).click();
+  await expect(page.getByRole("menuitemradio")).toHaveCount(8);
+  await page.getByRole("menuitemradio", { name: "Ant Design" }).click();
   await expect(ant).toBeChecked();
   await expect(project).toHaveValue("首页演示");
   await page.getByRole("link", { name: "浏览组件总览" }).click();

@@ -1,4 +1,4 @@
-import { BookOpen, ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown, Ellipsis } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -47,11 +47,13 @@ export function ThemePicker({
   onTheme,
   themesHref,
   label = "切换主题",
+  showCurrent = true,
 }: {
   theme: AtlasTheme;
   onTheme: (value: string) => void;
   themesHref?: string;
   label?: string;
+  showCurrent?: boolean;
 }) {
   return (
     <DropdownMenu>
@@ -62,8 +64,10 @@ export function ThemePicker({
           aria-label={label}
           className="max-w-28 shrink-0 gap-1.5 px-2 min-[360px]:max-w-32 sm:max-w-44 sm:px-2.5 data-[state=open]:bg-accent"
         >
-          <ThemeIcon id={theme.id} />
-          <span className="truncate">{theme.label}</span>
+          {showCurrent ? <ThemeIcon id={theme.id} /> : <Ellipsis />}
+          <span className="truncate">
+            {showCurrent ? theme.label : "全部风格"}
+          </span>
           <ChevronDown className="size-3.5 opacity-65" />
         </Button>
       </DropdownMenuTrigger>
