@@ -15,6 +15,7 @@
   --atlas-segment-padding: 0.25rem;
   --atlas-segment-item-radius: var(--atlas-control-radius);
   --atlas-segment-selected: var(--background);
+  --atlas-segment-selected-border: transparent;
   --atlas-segment-selected-text: var(--foreground);
   --atlas-segment-selected-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 }
@@ -243,6 +244,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
 }
 
 [data-slot="segmented-control-item"][aria-checked="true"] {
+  border-color: var(--atlas-segment-selected-border);
   background: var(--atlas-segment-selected);
   color: var(--atlas-segment-selected-text);
   box-shadow: var(--atlas-segment-selected-shadow);
@@ -287,8 +289,10 @@ html[data-atlas-theme] :is(h1, h2, h3),
 [data-atlas-theme="retro"] {
   --atlas-segment-track-border: var(--input);
   --atlas-segment-border-width: var(--atlas-border-width);
-  --atlas-segment-selected: var(--primary);
-  --atlas-segment-selected-text: var(--primary-foreground);
+  --atlas-segment-item-radius: 4px;
+  --atlas-segment-selected: var(--card);
+  --atlas-segment-selected-border: var(--primary);
+  --atlas-segment-selected-text: var(--foreground);
   --atlas-segment-selected-shadow: none;
 }
 

@@ -23,12 +23,7 @@ const themeLogos = {
 
 export function ThemeIcon({ id }: { id: AtlasTheme["id"] }) {
   if (id === "retro") {
-    return (
-      <BookOpen
-        className="size-4 shrink-0 text-muted-foreground"
-        aria-hidden="true"
-      />
-    );
+    return <BookOpen className="size-4 shrink-0" aria-hidden="true" />;
   }
 
   return (

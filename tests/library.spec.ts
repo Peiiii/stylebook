@@ -16,6 +16,9 @@ test("home introduces the catalog and keeps the live form while themes change", 
   page,
 }) => {
   await page.goto("/");
+  await expect(
+    page.getByRole("link", { name: "GitHub" }).locator("svg"),
+  ).toHaveCSS("width", "20px");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     /先看风格.*再做界面/,
   );
@@ -204,8 +207,8 @@ test("all eight themes style the shared segmented control on the homepage and in
       id: "retro",
       label: "复古",
       track: "rgb(237, 223, 195)",
-      selected: "rgb(139, 62, 45)",
-      radius: "2.304px",
+      selected: "rgb(255, 246, 229)",
+      radius: "4px",
     },
     {
       id: "shadcn",
@@ -224,6 +227,20 @@ test("all eight themes style the shared segmented control on the homepage and in
     await expect(picker).toHaveCSS("background-color", track);
     await expect(current).toHaveCSS("background-color", selected);
     await expect(current).toHaveCSS("border-top-left-radius", radius);
+    if (id === "retro") {
+      await expect(current).toHaveCSS("border-top-color", "rgb(139, 62, 45)");
+      const stroke = current.locator("svg");
+      await expect(stroke).toHaveCSS("stroke", "rgb(55, 41, 33)");
+      await expect(current).toHaveCSS("color", "rgb(55, 41, 33)");
+      const offset = await current.evaluate((segment) => {
+        const icon = segment.querySelector("svg")!.getBoundingClientRect();
+        const text = segment.querySelector("span")!.getBoundingClientRect();
+        return Math.abs(
+          icon.top + icon.height / 2 - text.top - text.height / 2,
+        );
+      });
+      expect(offset).toBeLessThan(1);
+    }
 
     await page.goto(`/#component=toggle-group&theme=${id}`);
     const demo = page.getByRole("radiogroup", { name: "选择时间范围" });

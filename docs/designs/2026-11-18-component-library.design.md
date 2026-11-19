@@ -107,5 +107,5 @@ ChatGPT 参考 [OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) 的�
 | Ant Design | [Ant Segmented](https://ant.design/components/segmented/#design-token)提供参考。浅灰底座、紧凑内边距、白色选中项。 |
 | ChatGPT | [OpenAI 的模型选择交互](https://help.openai.com/en/articles/6825453-chatgpt-release-notes)是产品参考。Stylebook 自行适配透明底座、灰色胶囊选中和黑白灰层级。 |
 | Claude | [Anthropic 的样式选择交互](https://support.anthropic.com/en/articles/10181068-configuring-and-using-styles)是产品参考。Stylebook 自行适配暖白底座、纸色选中和深暖文字。 |
-| 复古 | Stylebook 自有主题。暖纸底、硬边框、陶土色选中。 |
+| 复古 | Stylebook 自有主题。暖纸底、硬边框、浅纸选中项与细陶土色描边。 |
 | shadcn 基准 | [shadcn Toggle Group](https://ui.shadcn.com/docs/components/radix/toggle-group)作为交互基准。选中分段使用中性浅灰底座、白色短圆角和轻阴影。 |

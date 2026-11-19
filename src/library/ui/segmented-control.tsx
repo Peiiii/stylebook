@@ -43,7 +43,7 @@ export function SegmentedControlItem({
       {...props}
       data-slot="segmented-control-item"
       className={cn(
-        "gap-2 px-3 text-sm focus-visible:ring-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+        "items-center gap-2 px-3 text-sm leading-none focus-visible:ring-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
     />

@@ -114,7 +114,7 @@ export function SiteHeader({
               asChild
               variant="ghost"
               size="icon-sm"
-              className="hidden min-[360px]:inline-flex"
+              className="hidden min-[360px]:inline-flex sm:size-9"
             >
               <a
                 href="https://github.com/Peiiii/stylebook"
@@ -122,7 +122,7 @@ export function SiteHeader({
                 target="_blank"
                 rel="noreferrer"
               >
-                <IconBrandGithub />
+                <IconBrandGithub className="size-5" aria-hidden="true" />
               </a>
             </Button>
           </div>

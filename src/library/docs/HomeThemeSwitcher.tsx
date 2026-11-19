@@ -37,7 +37,7 @@ export function HomeThemeSwitcher({
               className="h-11 min-w-11 px-3.5 sm:h-12 sm:px-4 [&_img]:size-5 [&_svg]:size-5"
             >
               <ThemeIcon id={id} />
-              {label}
+              <span className="leading-none">{label}</span>
             </SegmentedControlItem>
           ))}
         </SegmentedControl>
