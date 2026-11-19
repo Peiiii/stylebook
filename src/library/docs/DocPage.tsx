@@ -9,6 +9,7 @@ type PageLink = { href: string; name: string };
 export function DocPage({
   title,
   description,
+  actions,
   previous,
   next,
   sections,
@@ -16,6 +17,7 @@ export function DocPage({
 }: {
   title: string;
   description?: string;
+  actions?: ReactNode;
   previous?: PageLink;
   next?: PageLink;
   sections: { id: string; label: string }[];
@@ -32,6 +34,7 @@ export function DocPage({
                 {title}
               </h1>
               <div className="docs-nav flex shrink-0 items-center gap-2">
+                {actions}
                 {previous && (
                   <Button
                     asChild

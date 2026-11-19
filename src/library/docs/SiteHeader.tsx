@@ -1,4 +1,5 @@
 import { Menu } from "lucide-react";
+import { repositoryUrl } from "../references";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -117,7 +118,7 @@ export function SiteHeader({
               className="hidden min-[360px]:inline-flex sm:size-9"
             >
               <a
-                href="https://github.com/Peiiii/stylebook"
+                href={repositoryUrl}
                 aria-label="GitHub"
                 target="_blank"
                 rel="noreferrer"

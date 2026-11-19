@@ -250,6 +250,67 @@ test("all eight themes style the shared segmented control on the homepage and in
   }
 });
 
+test("copies declarative theme and component references from compact actions", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const copied = () => page.evaluate(() => navigator.clipboard.readText());
+  await page.goto("/#view=showcase&theme=ant");
+  await page
+    .getByRole("button", { name: "复制引用：Ant Design", exact: true })
+    .click();
+  await expect
+    .poll(copied)
+    .toContain("Stylebook · Ant Design\n类型：UI 风格\n标识：ant");
+  expect(await copied()).toContain('源码定位：data-atlas-theme="ant"');
+
+  const card = page.locator('[data-showcase-component="button"]');
+  const action = card.getByRole("button", {
+    name: "复制引用：Button",
+    exact: true,
+  });
+  const reveal = card.locator(".reference-reveal");
+  await page.mouse.move(1, 1);
+  await expect(reveal).toHaveCSS("opacity", "0");
+  await card.hover();
+  await expect(reveal).toHaveCSS("opacity", "1");
+  await page.mouse.move(1, 1);
+  await action.focus();
+  await expect(reveal).toHaveCSS("opacity", "1");
+  await action.press("Enter");
+  await expect
+    .poll(copied)
+    .toContain("Stylebook · Button\n类型：UI 组件\n标识：button");
+  expect(await copied()).toContain("预览风格：Ant Design（ant）");
+  expect(await copied()).toContain(
+    "https://github.com/Peiiii/stylebook/blob/main/src/library/ui/button.tsx",
+  );
+
+  await card.getByRole("link", { name: "Button", exact: true }).click();
+  const source = page.getByRole("link", {
+    name: "查看源码：Button",
+    exact: true,
+  });
+  await expect(source).toHaveAttribute(
+    "href",
+    "https://github.com/Peiiii/stylebook/blob/main/src/library/ui/button.tsx",
+  );
+  await page
+    .getByRole("button", { name: "复制引用：Button", exact: true })
+    .click();
+  await expect
+    .poll(copied)
+    .toContain(
+      "关联文件：https://github.com/Peiiii/stylebook/blob/main/src/library/ui/cn.ts",
+    );
+  await page.goto("/#view=themes");
+  await page
+    .getByRole("button", { name: "复制引用：Claude", exact: true })
+    .click();
+  await expect.poll(copied).toContain("类型：UI 风格\n标识：claude");
+});
+
 test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({
   page,
 }) => {

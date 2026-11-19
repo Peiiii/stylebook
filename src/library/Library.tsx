@@ -17,6 +17,8 @@ import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
 import { themes } from "./themes";
+import { componentReference, themeReference } from "./references";
+import { ReferenceActions } from "./docs/ReferenceActions";
 import { Card, CardContent } from "./ui/card";
 
 const views = [
@@ -129,6 +131,7 @@ export function Library() {
       .map((entry) => ({
         id: entry.id,
         name: entry.title,
+        reference: componentReference(entry, selectedTheme),
         keywords: [entry.zh.title],
         href: choose({ view: "components", component: entry.id }),
         active: view === "components" && item.id === entry.id,
@@ -253,6 +256,7 @@ export function Library() {
       ) : view === "showcase" ? (
         <Showcase
           theme={selectedTheme.label}
+          themeCitation={themeReference(selectedTheme)}
           groups={componentGroups.map((group, index) => ({
             id: `showcase-group-${index}`,
             name: group.name,
@@ -282,9 +286,16 @@ export function Library() {
                   <section
                     key={entry.id}
                     data-atlas-theme={entry.id}
-                    className="style-specimen min-w-0 border bg-background p-4 text-foreground"
+                    className="style-specimen reference-surface min-w-0 border bg-background p-4 text-foreground"
                   >
-                    <h2 className="text-base font-semibold">{entry.label}</h2>
+                    <div className="flex items-center justify-between gap-2">
+                      <h2 className="text-base font-semibold">{entry.label}</h2>
+                      <ReferenceActions
+                        reference={themeReference(entry)}
+                        showSource
+                        className="reference-reveal"
+                      />
+                    </div>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {entry.description}
                     </p>
@@ -312,6 +323,12 @@ export function Library() {
             <DocPage
               title={item.title}
               description={item.zh.description}
+              actions={
+                <ReferenceActions
+                  reference={componentReference(item, selectedTheme)}
+                  showSource
+                />
+              }
               previous={listing[index - 1]}
               next={listing[index + 1]}
               sections={[{ id: "preview", label: "预览" }]}

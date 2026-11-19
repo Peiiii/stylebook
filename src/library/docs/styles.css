@@ -115,3 +115,9 @@
     display: block;
   }
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .reference-surface:not(:hover, :focus-within) .reference-reveal {
+    opacity: 0;
+  }
+}

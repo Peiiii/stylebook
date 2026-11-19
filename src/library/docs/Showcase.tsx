@@ -9,6 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import type { StylebookReference } from "../references";
+import { ReferenceActions } from "./ReferenceActions";
 import { ComponentPreview } from "./ComponentPreview";
 
 export type ShowcaseEntry = {
@@ -16,6 +18,7 @@ export type ShowcaseEntry = {
   name: string;
   href: string;
   preview: ReactNode;
+  reference: StylebookReference;
 };
 
 const wide = new Set([
@@ -61,9 +64,11 @@ function CommandPreview({ children }: { children: ReactNode }) {
 
 export function Showcase({
   theme,
+  themeCitation,
   groups,
 }: {
   theme: string;
+  themeCitation: StylebookReference;
   groups: { id: string; name: string; entries: ShowcaseEntry[] }[];
 }) {
   return (
@@ -71,11 +76,14 @@ export function Showcase({
       <main className="container-wrapper px-4 pt-6 pb-12 md:px-8">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">组件总览</h1>
-          <p className="text-sm text-muted-foreground">
-            {theme} ·{" "}
-            {groups.reduce((total, group) => total + group.entries.length, 0)}{" "}
-            个组件
-          </p>
+          <div className="flex items-center gap-1">
+            <p className="text-sm text-muted-foreground">
+              {theme} ·{" "}
+              {groups.reduce((total, group) => total + group.entries.length, 0)}{" "}
+              个组件
+            </p>
+            <ReferenceActions reference={themeCitation} />
+          </div>
         </div>
         <nav
           aria-label="组件分组"
@@ -125,16 +133,22 @@ export function Showcase({
                     <article
                       key={entry.id}
                       data-showcase-component={entry.id}
-                      className="showcase-card"
+                      className="showcase-card reference-surface"
                     >
-                      <h3 className="px-3 pt-2 text-xs font-medium">
-                        <a
-                          href={entry.href}
-                          className="rounded-sm hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          {entry.name}
-                        </a>
-                      </h3>
+                      <div className="relative pr-9">
+                        <h3 className="px-3 pt-2 text-xs font-medium">
+                          <a
+                            href={entry.href}
+                            className="rounded-sm hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {entry.name}
+                          </a>
+                        </h3>
+                        <ReferenceActions
+                          reference={entry.reference}
+                          className="reference-reveal absolute top-0 right-1"
+                        />
+                      </div>
                       <ComponentPreview className="flex-1 px-3 pt-2 pb-3">
                         {entry.id === "command" ? (
                           <CommandPreview>{entry.preview}</CommandPreview>
