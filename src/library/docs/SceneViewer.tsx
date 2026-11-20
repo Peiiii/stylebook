@@ -13,7 +13,8 @@ export function SceneViewer({
   cases: { label: string; href: string; active: boolean }[];
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
-  const [initialHref] = useState(href);
+  const previewHref = `${import.meta.env.BASE_URL}scene.html${href}`;
+  const [initialHref] = useState(previewHref);
   const [width, setWidth] = useState("desktop");
 
   useEffect(() => {
@@ -22,7 +23,9 @@ export function SceneViewer({
 
     function syncTheme() {
       const location = preview?.contentWindow?.location;
-      if (location?.hash && location.hash !== href) location.replace(href);
+      if (location?.hash && location.hash !== href) {
+        location.replace(new URL(href, location.href));
+      }
     }
 
     syncTheme();
@@ -68,7 +71,7 @@ export function SceneViewer({
               </ToggleGroupItem>
             </ToggleGroup>
             <Button variant="ghost" size="sm" asChild>
-              <a href={href} target="_blank" rel="noreferrer">
+              <a href={previewHref} target="_blank" rel="noreferrer">
                 <ExternalLink />
                 独立打开
               </a>

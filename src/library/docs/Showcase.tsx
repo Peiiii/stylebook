@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, useRef, type ReactNode } from "react";
 import { TooltipProvider } from "../ui/tooltip";
 import { Button } from "../ui/button";
 import {
@@ -62,6 +62,100 @@ function CommandPreview({ children }: { children: ReactNode }) {
   );
 }
 
+type ShowcaseGroup = { id: string; name: string; entries: ShowcaseEntry[] };
+
+function GroupSequence({
+  groups,
+  onSectionReady,
+}: {
+  groups: ShowcaseGroup[];
+  onSectionReady: (section: HTMLElement | null) => void;
+}) {
+  const [group, ...rest] = groups;
+  if (!group) return null;
+  // One boundary per group that also wraps the groups after it: a group
+  // appears whole and never before the groups above it, so slower demos such
+  // as Calendar cannot push cards that are already on screen.
+  return (
+    <Suspense
+      fallback={
+        <div role="status" className="min-h-svh">
+          <span className="sr-only">正在加载预览</span>
+        </div>
+      }
+    >
+      <ShowcaseSection group={group} onSectionReady={onSectionReady} />
+      <GroupSequence groups={rest} onSectionReady={onSectionReady} />
+    </Suspense>
+  );
+}
+
+function ShowcaseSection({
+  group,
+  onSectionReady,
+}: {
+  group: ShowcaseGroup;
+  onSectionReady: (section: HTMLElement | null) => void;
+}) {
+  return (
+    <section
+      ref={onSectionReady}
+      id={group.id}
+      tabIndex={-1}
+      aria-labelledby={group.id + "-title"}
+      className="mt-5 scroll-mt-18"
+    >
+      <h2 id={group.id + "-title"} className="mb-2 text-sm font-semibold">
+        {group.name}
+      </h2>
+      {[false, true].map((isWide) => {
+        const entries = group.entries.filter(
+          (entry) => wide.has(entry.id) === isWide,
+        );
+        if (!entries.length) return null;
+        return (
+          <div
+            key={String(isWide)}
+            className={
+              isWide ? "showcase-grid showcase-grid-wide" : "showcase-grid"
+            }
+          >
+            {entries.map((entry) => (
+              <article
+                key={entry.id}
+                data-showcase-component={entry.id}
+                className="showcase-card reference-surface"
+              >
+                <div className="relative pr-9">
+                  <h3 className="px-3 pt-2 text-xs font-medium">
+                    <a
+                      href={entry.href}
+                      className="rounded-sm hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {entry.name}
+                    </a>
+                  </h3>
+                  <ReferenceActions
+                    reference={entry.reference}
+                    className="reference-reveal absolute top-0 right-1"
+                  />
+                </div>
+                <ComponentPreview className="flex-1 px-3 pt-2 pb-3">
+                  {entry.id === "command" ? (
+                    <CommandPreview>{entry.preview}</CommandPreview>
+                  ) : (
+                    entry.preview
+                  )}
+                </ComponentPreview>
+              </article>
+            ))}
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
 export function Showcase({
   theme,
   themeCitation,
@@ -69,8 +163,15 @@ export function Showcase({
 }: {
   theme: string;
   themeCitation: StylebookReference;
-  groups: { id: string; name: string; entries: ShowcaseEntry[] }[];
+  groups: ShowcaseGroup[];
 }) {
+  const pendingGroup = useRef<string | null>(null);
+  function revealSection(section: HTMLElement) {
+    pendingGroup.current = null;
+    section.focus({ preventScroll: true });
+    section.scrollIntoView();
+  }
+
   return (
     <TooltipProvider>
       <main className="container-wrapper px-4 pt-6 pb-12 md:px-8">
@@ -96,73 +197,22 @@ export function Showcase({
               className="rounded-md border px-2.5 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => {
                 const section = document.getElementById(group.id);
-                section?.focus({ preventScroll: true });
-                section?.scrollIntoView();
+                if (section) revealSection(section);
+                else pendingGroup.current = group.id;
               }}
             >
               {group.name}
             </button>
           ))}
         </nav>
-        {groups.map((group) => (
-          <section
-            key={group.id}
-            id={group.id}
-            tabIndex={-1}
-            aria-labelledby={group.id + "-title"}
-            className="mt-5 scroll-mt-18"
-          >
-            <h2 id={group.id + "-title"} className="mb-2 text-sm font-semibold">
-              {group.name}
-            </h2>
-            {[false, true].map((isWide) => {
-              const entries = group.entries.filter(
-                (entry) => wide.has(entry.id) === isWide,
-              );
-              if (!entries.length) return null;
-              return (
-                <div
-                  key={String(isWide)}
-                  className={
-                    isWide
-                      ? "showcase-grid showcase-grid-wide"
-                      : "showcase-grid"
-                  }
-                >
-                  {entries.map((entry) => (
-                    <article
-                      key={entry.id}
-                      data-showcase-component={entry.id}
-                      className="showcase-card reference-surface"
-                    >
-                      <div className="relative pr-9">
-                        <h3 className="px-3 pt-2 text-xs font-medium">
-                          <a
-                            href={entry.href}
-                            className="rounded-sm hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-                          >
-                            {entry.name}
-                          </a>
-                        </h3>
-                        <ReferenceActions
-                          reference={entry.reference}
-                          className="reference-reveal absolute top-0 right-1"
-                        />
-                      </div>
-                      <ComponentPreview className="flex-1 px-3 pt-2 pb-3">
-                        {entry.id === "command" ? (
-                          <CommandPreview>{entry.preview}</CommandPreview>
-                        ) : (
-                          entry.preview
-                        )}
-                      </ComponentPreview>
-                    </article>
-                  ))}
-                </div>
-              );
-            })}
-          </section>
-        ))}
+        <GroupSequence
+          groups={groups}
+          onSectionReady={(section) => {
+            if (section && section.id === pendingGroup.current) {
+              revealSection(section);
+            }
+          }}
+        />
       </main>
     </TooltipProvider>
   );

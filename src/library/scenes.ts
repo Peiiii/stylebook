@@ -20,3 +20,7 @@ export const scenes = [
     ),
   },
 ] as const;
+
+export function resolveScene(id: string) {
+  return scenes.find((entry) => entry.id === id) ?? scenes[0];
+}

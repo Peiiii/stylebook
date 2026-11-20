@@ -42,3 +42,8 @@ export const themes = [
 ] as const;
 
 export type AtlasTheme = (typeof themes)[number];
+
+export function resolveTheme(id: string) {
+  const requested = id === "glass" ? "ios" : id;
+  return themes.find((entry) => entry.id === requested) ?? themes[0];
+}

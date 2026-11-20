@@ -877,3 +877,74 @@ test("bento case can be selected, themed, and opened on its own", async ({
     "claude",
   );
 });
+test("mobile navigation puts the six main destinations in the first viewport", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/#theme=material");
+  await page.getByRole("button", { name: "打开导航" }).click();
+  const drawer = page.getByRole("dialog");
+  const nav = drawer.getByRole("navigation", { name: "主导航" });
+  const links = nav.getByRole("link");
+  await expect(links).toHaveText([
+    "首页",
+    "组件总览",
+    "场景总览",
+    "页面模板",
+    "组件",
+    "主题",
+  ]);
+  for (const link of await links.all()) await expect(link).toBeInViewport();
+  await nav.getByRole("link", { name: "组件总览" }).click();
+  await expect(drawer).toBeHidden();
+  await expect(page.getByRole("heading", { name: "组件总览" })).toBeVisible();
+  await expect(themeTrigger(page)).toHaveText("Material");
+});
+
+test("search applies a theme without adding a back step and opens applications", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("navigation", { name: "主导航" })
+    .getByRole("link", { name: "主题", exact: true })
+    .click();
+  const historyLength = await page.evaluate(() => history.length);
+  async function search(query: string, result: string) {
+    await page.getByRole("button", { name: "搜索文档" }).click();
+    const dialog = page.getByRole("dialog", { name: "搜索文档" });
+    await dialog.getByRole("combobox").fill(query);
+    await dialog.getByRole("option", { name: result, exact: true }).click();
+    await expect(dialog).toBeHidden();
+  }
+  await search("Material", "Material");
+  await expect(page).toHaveURL(/view=themes&theme=material/);
+  expect(await page.evaluate(() => history.length)).toBe(historyLength);
+  await page.goBack();
+  await expect.poll(() => new URL(page.url()).hash).toBe("");
+  await page.goForward();
+  await expect(page).toHaveURL(/view=themes&theme=material/);
+  const sheets = page.locator("[data-theme-specimen] [data-artwork-sheet]");
+  await expect(sheets).toHaveCount(8);
+  const appearances = await sheets.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const css = getComputedStyle(node);
+      const accent = getComputedStyle(node.querySelector(".bg-primary")!);
+      return [
+        css.backgroundColor,
+        css.borderRadius,
+        accent.backgroundColor,
+      ].join("|");
+    }),
+  );
+  expect(new Set(appearances).size).toBeGreaterThanOrEqual(7);
+  await search("bento", "Bento · 设计手记");
+  const preview = page.frameLocator("iframe");
+  await expect(
+    preview.getByRole("heading", { name: "从日常里找设计灵感" }),
+  ).toBeVisible();
+  await expect(preview.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "material",
+  );
+});

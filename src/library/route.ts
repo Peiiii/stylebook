@@ -22,8 +22,10 @@ class LibraryRoute {
     return "#" + query.toString();
   };
 
-  patch = (values: Record<string, string | null>) => {
-    window.location.hash = this.link(values);
+  // Rewrites the current entry so a setting such as the theme stays in the
+  // shareable URL without adding a Back step.
+  replace = (values: Record<string, string | null>) => {
+    window.location.replace(this.link(values));
   };
 }
 

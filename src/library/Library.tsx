@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect, useSyncExternalStore } from "react";
 import { ThemeProvider } from "next-themes";
 import { route } from "./route";
 import registry from "./registry.json";
-import { Button } from "./ui/button";
 import { Toaster } from "./ui/sonner";
 import { SiteHeader } from "./docs/SiteHeader";
 import DocsLayout from "./docs/DocsLayout";
@@ -10,16 +9,17 @@ import { DocPage } from "./docs/DocPage";
 import { BlockViewer } from "./docs/BlockViewer";
 import { ComponentPreview } from "./docs/ComponentPreview";
 import { Showcase } from "./docs/Showcase";
-import { scenes } from "./scenes";
+import { resolveScene, scenes } from "./scenes";
 import { SceneViewer } from "./docs/SceneViewer";
 import { HomePage } from "./docs/HomePage";
+import { PreviewPending, SceneFrame, useDocumentTheme } from "./SceneFrame";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
-import { themes } from "./themes";
+import { resolveTheme, themes } from "./themes";
 import { componentReference, themeReference } from "./references";
 import { ReferenceActions } from "./docs/ReferenceActions";
-import { Card, CardContent } from "./ui/card";
+import { ThemeSpecimen } from "./docs/ThemeSpecimen";
 
 const views = [
   { id: "home", label: "首页" },
@@ -47,13 +47,6 @@ const blockModules = import.meta.glob<{ default: React.ComponentType }>(
   "./blocks/*/page.tsx",
 );
 
-function PreviewPending() {
-  return (
-    <span className="sr-only" role="status">
-      正在加载预览
-    </span>
-  );
-}
 const examples = Object.fromEntries(
   registry.components.map((item) => [
     item.id,
@@ -92,32 +85,28 @@ export function Library() {
   const item =
     registry.components.find((entry) => entry.id === route.get("component")) ??
     registry.components[0];
-  const selectedTheme =
-    themes.find(
-      (entry) =>
-        entry.id ===
-        (route.get("theme") === "glass" ? "ios" : route.get("theme")),
-    ) ?? themes[0];
+  const selectedTheme = resolveTheme(route.get("theme"));
   const theme = selectedTheme.id;
-  const scene =
-    scenes.find((entry) => entry.id === route.get("scene")) ?? scenes[0];
-  const ScenePreview = scene.Preview;
+  const scene = resolveScene(route.get("scene"));
   const Block = blocks[block.id];
   const Example = examples[item.id];
   const choose = (values: Record<string, string>) =>
     route.link({ view, theme, ...values });
-  const changeTheme = (value: string) => route.patch({ theme: value });
+  const changeTheme = (value: string) => route.replace({ theme: value });
   const blockView = view === "blocks";
   const viewKey = `${view}:${blockView ? block.id : item.id}`;
-  useEffect(() => {
-    document.documentElement.dataset.atlasTheme = theme;
-    return () => {
-      delete document.documentElement.dataset.atlasTheme;
-    };
-  }, [theme]);
+  useDocumentTheme(theme);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [viewKey]);
+  useEffect(() => {
+    // Fetch every demo at once; Showcase reveals them group by group.
+    if (view !== "showcase") return;
+    for (const load of Object.values(exampleModules)) {
+      // The lazy demo still owns errors when the module is actually rendered.
+      void load().catch(() => {});
+    }
+  }, [view]);
   const navItems = views.map((entry) => ({
     ...entry,
     href: choose({ view: entry.id }),
@@ -173,15 +162,20 @@ export function Library() {
       ],
     },
   ];
-  if (view === "scene-full")
-    return (
-      <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
-        <Toaster />
-        <Suspense fallback={<PreviewPending />}>
-          <ScenePreview key={scene.id} />
-        </Suspense>
-      </ThemeProvider>
-    );
+  const searchGroups = [
+    ...groups,
+    {
+      name: "应用案例",
+      pages: scenes.map((entry) => ({
+        id: `scene-${entry.id}`,
+        name: entry.label,
+        keywords: [entry.id, "案例", "场景"],
+        href: choose({ view: "scene", scene: entry.id }),
+        active: view === "scene" && scene.id === entry.id,
+      })),
+    },
+  ];
+  if (view === "scene-full") return <SceneFrame />;
 
   if (view === "full")
     return (
@@ -213,6 +207,7 @@ export function Library() {
         items={navItems}
         activeView={view}
         groups={groups}
+        searchGroups={searchGroups}
         theme={selectedTheme}
         themesHref={choose({ view: "themes" })}
         onTheme={changeTheme}
@@ -262,14 +257,7 @@ export function Library() {
             name: group.name,
             entries: group.pages.map((page) => {
               const Demo = examples[page.id];
-              return {
-                ...page,
-                preview: (
-                  <Suspense fallback={<PreviewPending />}>
-                    <Demo />
-                  </Suspense>
-                ),
-              };
+              return { ...page, preview: <Demo /> };
             }),
           }))}
         />
@@ -278,44 +266,19 @@ export function Library() {
           {view === "themes" ? (
             <DocPage
               title="主题"
-              description="为同一套 shadcn 组件切换不同视觉风格。"
+              description="同一套整页样张按各风格渲染，可并排比较配色、圆角与层级。"
               sections={[]}
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 {themes.map((entry) => (
-                  <section
+                  <ThemeSpecimen
                     key={entry.id}
-                    data-atlas-theme={entry.id}
-                    className="style-specimen reference-surface min-w-0 border bg-background p-4 text-foreground"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <h2 className="text-base font-semibold">{entry.label}</h2>
-                      <ReferenceActions
-                        reference={themeReference(entry)}
-                        showSource
-                        className="reference-reveal"
-                      />
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {entry.description}
-                    </p>
-                    <Card className="mt-3 py-3">
-                      <CardContent className="flex flex-wrap items-center gap-2 px-3">
-                        <Button asChild size="sm">
-                          <a
-                            href={choose({ view: "showcase", theme: entry.id })}
-                          >
-                            查看组件总览
-                          </a>
-                        </Button>
-                        <Button asChild size="sm" variant="outline">
-                          <a href={choose({ view: "scene", theme: entry.id })}>
-                            查看场景总览
-                          </a>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </section>
+                    theme={entry}
+                    current={entry.id === theme}
+                    reference={themeReference(entry)}
+                    showcaseHref={choose({ view: "showcase", theme: entry.id })}
+                    sceneHref={choose({ view: "scene", theme: entry.id })}
+                  />
                 ))}
               </div>
             </DocPage>
