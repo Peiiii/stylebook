@@ -35,19 +35,24 @@ export const themes = [
     description: "纸张底色、衬线字体、粗边框与硬投影。",
   },
   {
-    id: "polaris",
-    label: "北辰",
-    description: "深海墨蓝仪表台，层叠表面、冷青信号色与等宽数字。",
-  },
-  {
     id: "editorial",
     label: "墨刊",
-    description: "近白纸面、墨黑正文、朱红选中标记与报刊式细线。",
+    description: "新闻纸底、铅字衬线标题、单线报头与朱砂印记。",
   },
   {
-    id: "celadon",
-    label: "青瓷",
-    description: "矿物淡青底、松绿主操作与釉面般的圆润分层。",
+    id: "aurora",
+    label: "极光",
+    description: "极光渐变底上的磨砂玻璃表面与流光主操作。",
+  },
+  {
+    id: "clay",
+    label: "软陶",
+    description: "圆润黏土体块、内凹输入槽与可按下的珊瑚色按钮。",
+  },
+  {
+    id: "pop",
+    label: "波普",
+    description: "粗墨描边、硬投影、明黄高光与海报点阵底。",
   },
   {
     id: "shadcn",

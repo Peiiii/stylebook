@@ -1,9 +1,10 @@
 import {
-  Amphora,
   BookOpen,
   ChevronDown,
-  Compass,
+  Cloud,
   Newspaper,
+  Sparkles,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -21,9 +22,10 @@ import { themes, type AtlasTheme } from "../themes";
 // Original styles use a Lucide symbol that inherits the surrounding text color.
 const themeSymbols = {
   retro: BookOpen,
-  polaris: Compass,
   editorial: Newspaper,
-  celadon: Amphora,
+  aurora: Sparkles,
+  clay: Cloud,
+  pop: Zap,
 } satisfies Partial<Record<AtlasTheme["id"], LucideIcon>>;
 
 const themeLogos = {

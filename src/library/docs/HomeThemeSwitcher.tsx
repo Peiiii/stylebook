@@ -30,7 +30,7 @@ export function HomeThemeSwitcher({
   }, [theme.id]);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-6xl md:col-span-2 md:row-start-2">
+    <div className="mx-auto w-full min-w-0 md:col-span-2 md:row-start-2">
       <h2
         id="home-theme-label"
         className="mb-2 text-center text-base font-semibold"
@@ -51,7 +51,7 @@ export function HomeThemeSwitcher({
             <SegmentedControlItem
               key={id}
               value={id}
-              className="h-11 min-w-11 px-3.5 sm:h-12 sm:px-4 xl:px-2.5 [&_img]:size-5 [&_svg]:size-5"
+              className="h-11 min-w-11 px-3.5 sm:h-12 sm:px-4 xl:gap-1.5 xl:px-2 [&_img]:size-5 [&_svg]:size-5"
             >
               <ThemeIcon id={id} />
               <span className="leading-none">{label}</span>
