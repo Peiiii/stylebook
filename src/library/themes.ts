@@ -35,6 +35,21 @@ export const themes = [
     description: "纸张底色、衬线字体、粗边框与硬投影。",
   },
   {
+    id: "polaris",
+    label: "北辰",
+    description: "深海墨蓝仪表台，层叠表面、冷青信号色与等宽数字。",
+  },
+  {
+    id: "editorial",
+    label: "墨刊",
+    description: "近白纸面、墨黑正文、朱红选中标记与报刊式细线。",
+  },
+  {
+    id: "celadon",
+    label: "青瓷",
+    description: "矿物淡青底、松绿主操作与釉面般的圆润分层。",
+  },
+  {
     id: "shadcn",
     label: "shadcn 基准",
     description: "中性色、细边框与克制的阴影。",

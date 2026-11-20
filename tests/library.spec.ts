@@ -1,6 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import registry from "../src/library/registry.json" with { type: "json" };
 
+// The Windows clipboard can convert plain-text newlines to CRLF.
+const copiedReference = (page: Page) =>
+  page.evaluate(async () =>
+    (await navigator.clipboard.readText()).replaceAll("\r\n", "\n"),
+  );
+
 const themeTrigger = (page: Page) =>
   page.getByRole("button", { name: "切换主题", exact: true });
 
@@ -26,7 +32,7 @@ test("home introduces the catalog and restyles the artwork while themes change",
   const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
   await expect(page.getByRole("main").getByRole("radiogroup")).toHaveCount(1);
   const choices = picker.getByRole("radio");
-  await expect(choices).toHaveCount(8);
+  await expect(choices).toHaveCount(11);
   await expect(choices.first()).toHaveAccessibleName("iOS");
   await expect(choices.first()).toBeChecked();
   await expect(choices.last()).toHaveAccessibleName("shadcn 基准");
@@ -151,7 +157,7 @@ test("Material connects segments and keeps their selection visible", async ({
   await expect(bold).toHaveAttribute("aria-pressed", "true");
 });
 
-test("all eight themes style the shared segmented control on the homepage and in the catalog", async ({
+test("all eleven themes style the shared segmented control on the homepage and in the catalog", async ({
   page,
 }) => {
   test.setTimeout(60_000);
@@ -206,6 +212,27 @@ test("all eight themes style the shared segmented control on the homepage and in
       radius: "4px",
     },
     {
+      id: "polaris",
+      label: "北辰",
+      track: "rgb(13, 22, 38)",
+      selected: "rgb(33, 52, 80)",
+      radius: "6px",
+    },
+    {
+      id: "editorial",
+      label: "墨刊",
+      track: "rgba(0, 0, 0, 0)",
+      selected: "rgba(0, 0, 0, 0)",
+      radius: "0px",
+    },
+    {
+      id: "celadon",
+      label: "青瓷",
+      track: "rgb(223, 234, 229)",
+      selected: "rgb(251, 253, 252)",
+      radius: "10px",
+    },
+    {
       id: "shadcn",
       label: "shadcn 基准",
       track: /^oklch\(0\.97 /,
@@ -255,7 +282,7 @@ test("copies declarative theme and component references from compact actions", a
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  const copied = () => page.evaluate(() => navigator.clipboard.readText());
+  const copied = () => copiedReference(page);
   await page.goto("/#view=showcase&theme=ant");
   await page
     .getByRole("button", { name: "复制引用：Ant Design", exact: true })
@@ -571,7 +598,7 @@ test("theme menu exposes all presets and updates the block iframe", async ({
   await trigger.focus();
   await page.keyboard.press("Enter");
   const menu = page.getByRole("menu", { name: "切换主题" });
-  await expect(menu.getByRole("menuitemradio")).toHaveCount(8);
+  await expect(menu.getByRole("menuitemradio")).toHaveCount(11);
   await expect(
     menu.getByRole("menuitemradio", { name: "iOS" }),
   ).toHaveAttribute("aria-checked", "true");
@@ -925,7 +952,7 @@ test("search applies a theme without adding a back step and opens applications",
   await page.goForward();
   await expect(page).toHaveURL(/view=themes&theme=material/);
   const sheets = page.locator("[data-theme-specimen] [data-artwork-sheet]");
-  await expect(sheets).toHaveCount(8);
+  await expect(sheets).toHaveCount(11);
   const appearances = await sheets.evaluateAll((nodes) =>
     nodes.map((node) => {
       const css = getComputedStyle(node);
@@ -937,7 +964,7 @@ test("search applies a theme without adding a back step and opens applications",
       ].join("|");
     }),
   );
-  expect(new Set(appearances).size).toBeGreaterThanOrEqual(7);
+  expect(new Set(appearances).size).toBeGreaterThanOrEqual(10);
   await search("bento", "Bento · 设计手记");
   const preview = page.frameLocator("iframe");
   await expect(
@@ -947,4 +974,113 @@ test("search applies a theme without adding a back step and opens applications",
     "data-atlas-theme",
     "material",
   );
+});
+
+test("the three original themes switch, persist, style both scenes, and copy references", async ({
+  page,
+  context,
+}) => {
+  test.setTimeout(90_000);
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const copied = () => copiedReference(page);
+  const cases = [
+    {
+      id: "polaris",
+      label: "北辰",
+      background: "rgb(11, 18, 32)",
+      primary: "rgb(47, 208, 224)",
+      cardRadius: "10px",
+    },
+    {
+      id: "editorial",
+      label: "墨刊",
+      background: "rgb(251, 250, 248)",
+      primary: "rgb(20, 20, 20)",
+      cardRadius: "0px",
+    },
+    {
+      id: "celadon",
+      label: "青瓷",
+      background: "rgb(237, 243, 240)",
+      primary: "rgb(36, 88, 74)",
+      cardRadius: "18px",
+    },
+  ];
+  const fonts = new Set<string>();
+  for (const { id, label, background, primary, cardRadius } of cases) {
+    await page.goto("/#view=scene&scene=workspace");
+    await selectTheme(page, label);
+    await page.reload();
+    await expect(themeTrigger(page)).toHaveText(label);
+    await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", id);
+
+    const app = page.frameLocator("iframe");
+    await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", id);
+    await expect(app.locator("html")).toHaveCSS(
+      "color-scheme",
+      id === "polaris" ? "dark" : "light",
+    );
+    await expect(app.locator("body")).toHaveCSS("background-color", background);
+    await expect(app.getByRole("button", { name: "新建项目" })).toHaveCSS(
+      "background-color",
+      primary,
+    );
+    await expect(app.locator('[data-slot="card"]').first()).toHaveCSS(
+      "border-top-left-radius",
+      cardRadius,
+    );
+    fonts.add(
+      await app
+        .getByRole("heading", { name: "项目工作台" })
+        .evaluate((node) => getComputedStyle(node).fontFamily),
+    );
+
+    await page
+      .getByRole("link", { name: "Bento · 设计手记", exact: true })
+      .click();
+    await expect(
+      app.getByRole("heading", { name: "从日常里找设计灵感" }),
+    ).toBeVisible();
+    await expect(app.locator("html")).toHaveAttribute("data-atlas-theme", id);
+    await expect(app.getByRole("button", { name: "订阅更新" })).toHaveCSS(
+      "background-color",
+      primary,
+    );
+
+    await page.goto(`/#view=showcase&theme=${id}`);
+    await page
+      .getByRole("button", { name: `复制引用：${label}`, exact: true })
+      .click();
+    await expect
+      .poll(copied)
+      .toContain(`Stylebook · ${label}\n类型：UI 风格\n标识：${id}`);
+    expect(await copied()).toContain(`源码定位：data-atlas-theme="${id}"`);
+    expect(await copied()).toContain(`#view=showcase&theme=${id}`);
+
+    await page.goto(`/#component=dialog&theme=${id}`);
+    const open = page.getByRole("button", { name: "打开对话框" });
+    await open.waitFor();
+    await page.keyboard.press("Tab");
+    await open.focus();
+    await expect(open).toHaveCSS("outline-width", "2px");
+    await expect(open).toHaveCSS("outline-style", "solid");
+    await expect(open).toHaveCSS("box-shadow", "none");
+    await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog", { name: "编辑个人资料" });
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(open).toBeFocused();
+  }
+  expect(fonts.size).toBe(3);
+
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/#view=home&theme=editorial");
+  const picker = page.getByRole("radiogroup", { name: "选择界面风格" });
+  await expect(picker.getByRole("radio", { name: "墨刊" })).toBeChecked();
+  await expect(picker.getByRole("radio", { name: "墨刊" })).toBeInViewport({
+    ratio: 1,
+  });
+  await expect
+    .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
+    .toBe(320);
 });

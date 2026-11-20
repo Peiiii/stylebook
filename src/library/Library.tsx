@@ -179,7 +179,12 @@ export function Library() {
 
   if (view === "full")
     return (
-      <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
+      <ThemeProvider
+        forcedTheme="light"
+        attribute="class"
+        enableSystem={false}
+        enableColorScheme={false}
+      >
         <main
           data-slot="block-preview"
           onSubmit={(event) => event.preventDefault()}
@@ -201,7 +206,12 @@ export function Library() {
   const listing = componentGroups.flatMap((group) => group.pages);
   const index = listing.findIndex((entry) => entry.id === item.id);
   return (
-    <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
+    <ThemeProvider
+      forcedTheme="light"
+      attribute="class"
+      enableSystem={false}
+      enableColorScheme={false}
+    >
       <Toaster />
       <SiteHeader
         items={navItems}

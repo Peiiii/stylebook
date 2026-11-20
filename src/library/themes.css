@@ -1,4 +1,9 @@
 /* Theme tokens flow through the existing shadcn component implementations. */
+
+:root {
+  color-scheme: light;
+}
+
 [data-atlas-theme] {
   --atlas-font: var(--font-sans);
   --atlas-heading: var(--atlas-font);
@@ -1054,5 +1059,758 @@ html[data-atlas-theme] :is(h1, h2, h3),
   :is([data-slot="dropdown-menu-content"], [data-slot="select-content"], [data-slot="popover-content"]) {
     border-radius: var(--atlas-control-radius);
     background: var(--popover);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Original styles: 北辰 polaris (dark console), 墨刊 editorial (print
+ * publication), 青瓷 celadon (glazed mineral surfaces). Tokens first, then
+ * theme-scoped treatments for shared slots, so every page and scene that
+ * renders the shared components picks them up.
+ * ------------------------------------------------------------------------ */
+
+[data-atlas-theme="polaris"] {
+  color-scheme: dark;
+  --radius: 0.5rem;
+  --atlas-font:
+    "Bahnschrift", "DIN Alternate", "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", system-ui, sans-serif;
+  --atlas-heading: var(--atlas-font);
+  --atlas-mono:
+    "Cascadia Mono", "JetBrains Mono", "SF Mono", Consolas, ui-monospace,
+    monospace;
+  --atlas-control-radius: 6px;
+  --atlas-surface-radius: 10px;
+  --atlas-surface-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 4%), 0 1px 2px rgb(0 0 0 / 35%),
+    0 14px 30px -18px rgb(0 0 0 / 70%);
+  --atlas-popup-shadow:
+    0 0 0 1px rgb(120 160 210 / 8%), 0 20px 48px -10px rgb(0 0 0 / 70%);
+  --atlas-signal: #8beef6;
+  --background: #0b1220;
+  --foreground: #e6edf6;
+  --card: #111b2c;
+  --popover: #16233a;
+  --primary: #2fd0e0;
+  --primary-foreground: #04161d;
+  --secondary: #1c2c45;
+  --muted: #172539;
+  --muted-foreground: #97a8bf;
+  --accent: #213450;
+  --border: #233752;
+  --input: #4f6b8c;
+  --destructive: #ff6b78;
+  --destructive-foreground: #2a0509;
+  --surface: #111b2c;
+  --code-highlight: #1c2c45;
+  --code-number: #7b8ea8;
+}
+
+/* Light styles nested inside a polaris page keep their own control rendering. */
+[data-atlas-theme="polaris"]
+  [data-atlas-theme]:not([data-atlas-theme="polaris"]) {
+  color-scheme: light;
+}
+
+[data-atlas-theme="editorial"] {
+  --radius: 0.125rem;
+  --atlas-font:
+    "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --atlas-heading:
+    "Source Han Serif SC", "Noto Serif SC", "Noto Serif CJK SC", "Songti SC",
+    "STSong", "Times New Roman", serif;
+  --atlas-control-radius: 2px;
+  --atlas-surface-radius: 0px;
+  --atlas-popup-shadow: 0 16px 36px -14px rgb(18 18 18 / 28%);
+  --atlas-mark: #c2321f;
+  --background: #fbfaf8;
+  --foreground: #121212;
+  --card: #fff;
+  --popover: #fff;
+  --primary: #141414;
+  --primary-foreground: #fff;
+  --secondary: #f0eee9;
+  --muted: #f3f2ee;
+  --muted-foreground: #57544e;
+  --accent: #f0eee9;
+  --border: #dcd8d0;
+  --input: #8b877e;
+  --destructive: #b42318;
+}
+
+[data-atlas-theme="celadon"] {
+  --radius: 0.875rem;
+  --atlas-font:
+    "Candara", "Optima", "Gill Sans", "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --atlas-heading:
+    "Palatino Linotype", "Book Antiqua", Palatino, "Noto Serif SC",
+    "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --atlas-control-radius: 10px;
+  --atlas-surface-radius: 18px;
+  --atlas-surface-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 90%), 0 1px 2px rgb(27 62 52 / 6%),
+    0 12px 26px -16px rgb(27 62 52 / 26%);
+  --atlas-popup-shadow:
+    inset 0 1px 0 #fff, 0 2px 6px rgb(27 62 52 / 8%),
+    0 20px 44px -14px rgb(27 62 52 / 30%);
+  --background: #edf3f0;
+  --foreground: #1b2a26;
+  --card: #f8fbf9;
+  --popover: #fbfdfc;
+  --primary: #24584a;
+  --primary-foreground: #fff;
+  --secondary: #d9e9e1;
+  --muted: #e2ece7;
+  --muted-foreground: #4a5d57;
+  --accent: #dcebe4;
+  --border: #c9dbd2;
+  --input: #6d8a7f;
+  --destructive: #b3261e;
+}
+
+/* The doubled attribute outranks the shared derived tokens above. */
+[data-atlas-theme="polaris"][data-atlas-theme] {
+  --sidebar: #0d1626;
+  --sidebar-accent: #1a2a42;
+  --sidebar-border: #1e3049;
+  --chart-1: #2fd0e0;
+  --chart-2: #7c9cff;
+  --chart-3: #f2b84b;
+  --chart-4: #5fdca0;
+  --chart-5: #c792ff;
+  --atlas-segment-track: #0d1626;
+  --atlas-segment-track-border: var(--border);
+  --atlas-segment-track-radius: 8px;
+  --atlas-segment-padding: 3px;
+  --atlas-segment-item-radius: 6px;
+  --atlas-segment-selected: var(--accent);
+  --atlas-segment-selected-border: rgb(47 208 224 / 45%);
+  --atlas-segment-selected-text: var(--atlas-signal);
+  --atlas-segment-selected-shadow: 0 0 14px -4px rgb(47 208 224 / 45%);
+}
+
+[data-atlas-theme="editorial"][data-atlas-theme] {
+  --ring: var(--atlas-mark);
+  --sidebar: #f6f5f1;
+  --sidebar-ring: var(--atlas-mark);
+  --chart-1: #141414;
+  --chart-2: #c2321f;
+  --chart-3: #8a867d;
+  --chart-4: #c9c4b8;
+  --chart-5: #2f4a6d;
+  --atlas-segment-track: transparent;
+  --atlas-segment-track-border: var(--foreground);
+  --atlas-segment-track-radius: 0px;
+  --atlas-segment-padding: 0px;
+  --atlas-segment-item-radius: 0px;
+  --atlas-segment-selected: transparent;
+  --atlas-segment-selected-text: var(--atlas-mark);
+  --atlas-segment-selected-shadow: inset 0 -3px 0 var(--atlas-mark);
+}
+
+[data-atlas-theme="celadon"][data-atlas-theme] {
+  --sidebar: #e4eee9;
+  --sidebar-accent: #d3e6dc;
+  --chart-1: #24584a;
+  --chart-2: #5e9e8a;
+  --chart-3: #a3cbbb;
+  --chart-4: #b8873f;
+  --chart-5: #4f6f8f;
+  --atlas-segment-track: #dfeae5;
+  --atlas-segment-track-border: #cfe0d7;
+  --atlas-segment-track-radius: 14px;
+  --atlas-segment-item-radius: 10px;
+  --atlas-segment-selected: #fbfdfc;
+  --atlas-segment-selected-border: #bcd3c9;
+  --atlas-segment-selected-text: #1d4a3e;
+  --atlas-segment-selected-shadow:
+    inset 0 1px 0 #fff, 0 1px 3px rgb(27 62 52 / 16%);
+}
+
+/* 北辰: blueprint grid and a faint signal glow on the page canvas only. */
+html[data-atlas-theme="polaris"] body {
+  background-image:
+    radial-gradient(
+      ellipse 70% 40% at 50% -8%,
+      rgb(47 208 224 / 9%),
+      transparent 70%
+    ),
+    linear-gradient(rgb(120 160 210 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(120 160 210 / 5%) 1px, transparent 1px);
+  background-repeat: no-repeat, repeat, repeat;
+  background-size:
+    100% 100vh,
+    32px 32px,
+    32px 32px;
+}
+
+@scope ([data-atlas-theme="polaris"]) to ([data-atlas-theme]) {
+  [data-slot="sidebar-inset"] {
+    background-image:
+      linear-gradient(rgb(120 160 210 / 4%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(120 160 210 / 4%) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  header.sticky {
+    border-bottom: 1px solid var(--border);
+    background: rgb(11 18 32 / 88%);
+    backdrop-filter: blur(14px);
+  }
+
+  :is(h1, h2, h3, [data-slot="card-title"]) {
+    letter-spacing: 0.01em;
+  }
+
+  :is(.tabular-nums, kbd, code) {
+    font-family: var(--atlas-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: -0.02em;
+  }
+
+  img[data-monochrome-logo] {
+    filter: invert(1);
+  }
+
+  [data-slot="card"] {
+    border-color: var(--border);
+    background-image: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 3%),
+      transparent 120px
+    );
+  }
+
+  [data-variant="default"][data-size] {
+    font-weight: 600;
+    box-shadow:
+      0 0 0 1px rgb(47 208 224 / 55%),
+      0 6px 18px -8px rgb(47 208 224 / 70%);
+  }
+
+  [data-variant="outline"][data-size] {
+    border-color: #3d5578;
+    background-color: #131f33;
+    box-shadow: none;
+  }
+
+  [data-variant="outline"][data-size]:hover {
+    background-color: var(--accent);
+  }
+
+  :is([data-slot="button"], [data-slot="badge"])[data-variant="destructive"] {
+    color: var(--destructive-foreground);
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"]
+  ) {
+    background-color: rgb(4 10 20 / 45%);
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%);
+  }
+
+  [data-slot="input-group"] [data-slot="input-group-control"] {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  :is(
+    [data-slot="dialog-content"],
+    [data-slot="alert-dialog-content"],
+    [data-slot="sheet-content"]
+  ) {
+    border-color: #2b4163;
+    background-color: var(--popover);
+  }
+
+  :is(
+    [data-slot="dropdown-menu-content"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"]
+  ) {
+    border-color: #2b4163;
+  }
+
+  :is(
+    [data-slot="dialog-overlay"],
+    [data-slot="alert-dialog-overlay"],
+    [data-slot="sheet-overlay"]
+  ) {
+    background: rgb(2 6 14 / 72%);
+    backdrop-filter: blur(2px);
+  }
+
+  [data-slot="switch"][data-state="unchecked"] [data-slot="switch-thumb"] {
+    background: #c9d5e4;
+  }
+
+  [data-slot="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+    background: var(--primary-foreground);
+  }
+
+  [data-slot="slider-track"] {
+    background: #26395a;
+  }
+
+  [data-slot="tabs-list"][data-variant="default"] {
+    border: 1px solid var(--border);
+    background: #0d1626;
+  }
+
+  [data-slot="tabs-trigger"][data-state="active"] {
+    background: var(--accent);
+    color: var(--atlas-signal);
+    box-shadow: inset 0 0 0 1px rgb(47 208 224 / 38%);
+  }
+
+  [data-slot="table-head"] {
+    height: 36px;
+    background: #0d1626;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+
+  [data-slot="table-row"]:hover {
+    background: rgb(47 208 224 / 5%);
+  }
+
+  [data-project-status="计划中"] {
+    color: #f6c76b;
+    background: rgb(242 184 75 / 12%);
+    border-color: rgb(242 184 75 / 38%);
+  }
+
+  [data-project-status="进行中"] {
+    color: var(--atlas-signal);
+    background: rgb(47 208 224 / 12%);
+    border-color: rgb(47 208 224 / 40%);
+  }
+
+  [data-project-status="已完成"] {
+    color: #79e3b0;
+    background: rgb(95 220 160 / 12%);
+    border-color: rgb(95 220 160 / 36%);
+  }
+
+  :is(
+    [data-slot="sidebar-menu-button"],
+    [data-slot="sidebar-menu-sub-button"]
+  )[data-active="true"] {
+    border-color: rgb(47 208 224 / 30%);
+    background: rgb(47 208 224 / 10%);
+    color: var(--atlas-signal);
+    box-shadow: inset 2px 0 0 var(--primary);
+  }
+}
+
+/* 墨刊: print rules, near-square corners, ink actions and vermilion marks. */
+@scope ([data-atlas-theme="editorial"]) to ([data-atlas-theme]) {
+  header.sticky {
+    border-bottom: 3px double var(--foreground);
+  }
+
+  :is(
+    h1,
+    h2,
+    h3,
+    [data-slot="card-title"],
+    [data-slot="dialog-title"],
+    [data-slot="alert-dialog-title"]
+  ) {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  :is([data-slot="dialog-title"], [data-slot="alert-dialog-title"]) {
+    font-family: var(--atlas-heading);
+  }
+
+  h1 {
+    letter-spacing: -0.025em;
+  }
+
+  [data-slot="main-navigation"] a[aria-current="page"],
+  [data-slot="main-navigation"] a[aria-current="page"]:hover {
+    color: var(--atlas-mark);
+  }
+
+  [data-slot="card"] {
+    border-color: var(--border);
+    border-top: 2px solid var(--foreground);
+  }
+
+  [data-variant][data-size]:not([data-variant="link"], [data-variant="ghost"]) {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  [data-variant="outline"][data-size] {
+    border-color: var(--foreground);
+    background-color: var(--card);
+    box-shadow: none;
+  }
+
+  [data-variant="outline"][data-size]:hover {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"]
+  ) {
+    background-color: var(--card);
+    box-shadow: none;
+  }
+
+  [data-slot="input-group"] [data-slot="input-group-control"] {
+    background-color: transparent;
+  }
+
+  :is(
+    [data-slot="checkbox"],
+    [data-slot="switch"],
+    [data-slot="switch-thumb"],
+    [data-slot="progress"],
+    [data-slot="progress-indicator"],
+    [data-slot="slider-track"],
+    [data-slot="slider-range"]
+  ) {
+    border-radius: 1px;
+  }
+
+  [data-slot="progress"] {
+    background: #e4e1d9;
+  }
+
+  :is(
+    [data-slot="dialog-content"],
+    [data-slot="alert-dialog-content"],
+    [data-slot="dropdown-menu-content"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"]
+  ) {
+    border-color: var(--foreground);
+    border-radius: var(--atlas-control-radius);
+  }
+
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    border-top-width: 4px;
+  }
+
+  [data-slot="badge"] {
+    border-radius: 0;
+    letter-spacing: 0.04em;
+  }
+
+  [data-slot="badge"][data-variant="secondary"] {
+    border-color: var(--atlas-mark);
+    background: transparent;
+    color: var(--atlas-mark);
+  }
+
+  [data-slot="badge"][data-variant="outline"] {
+    border-color: var(--foreground);
+  }
+
+  [data-project-status="计划中"] {
+    border-color: var(--foreground);
+    background: transparent;
+    color: var(--foreground);
+  }
+
+  [data-project-status="进行中"] {
+    border-color: var(--atlas-mark);
+    background: #fbefec;
+    color: var(--atlas-mark);
+  }
+
+  [data-project-status="已完成"] {
+    border-color: transparent;
+    background: var(--secondary);
+    color: var(--muted-foreground);
+  }
+
+  [data-slot="tabs-list"][data-variant="default"] {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  [data-slot="tabs-trigger"] {
+    border-radius: 0;
+  }
+
+  [data-slot="tabs-trigger"][data-state="active"] {
+    background: transparent;
+    color: var(--foreground);
+    font-weight: 700;
+    box-shadow: inset 0 -2px 0 var(--atlas-mark);
+  }
+
+  [data-slot="table-head"] {
+    border-bottom: 2px solid var(--foreground);
+    color: var(--foreground);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  [data-slot="table-row"]:hover {
+    background: #f6f4ef;
+  }
+
+  :is(
+    [data-slot="sidebar-menu-button"],
+    [data-slot="sidebar-menu-sub-button"]
+  )[data-active="true"] {
+    border-color: transparent;
+    border-radius: 0;
+    background: var(--accent);
+    color: var(--foreground);
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--atlas-mark);
+  }
+
+  [data-slot="segmented-control"] {
+    border-inline-width: 0;
+  }
+
+  [data-slot="segmented-control-item"][aria-checked="true"],
+  [data-slot="toggle-group"][data-variant="outline"]
+    > [data-slot="toggle-group-item"]:is(
+      [aria-checked="true"],
+      [aria-pressed="true"]
+    ) {
+    font-weight: 700;
+    box-shadow: var(--atlas-segment-selected-shadow);
+  }
+}
+
+/* 青瓷: glaze highlights, soft inner wells and pine-green selection. */
+@scope ([data-atlas-theme="celadon"]) to ([data-atlas-theme]) {
+  :is(
+    h1,
+    h2,
+    h3,
+    [data-slot="card-title"],
+    [data-slot="dialog-title"],
+    [data-slot="alert-dialog-title"]
+  ) {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  :is([data-slot="dialog-title"], [data-slot="alert-dialog-title"]) {
+    font-family: var(--atlas-heading);
+  }
+
+  header.sticky {
+    border-bottom: 1px solid var(--border);
+  }
+
+  [data-slot="main-navigation"] a[aria-current="page"] {
+    border-radius: var(--atlas-control-radius);
+    background: var(--accent);
+  }
+
+  [data-slot="main-navigation"] a[aria-current="page"]::after {
+    opacity: 0;
+  }
+
+  [data-slot="card"] {
+    border-color: #cfe0d7;
+    background-image: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 70%),
+      rgb(255 255 255 / 0%) 55%
+    );
+  }
+
+  [data-slot="segmented-control"] {
+    box-shadow: inset 0 1px 2px rgb(27 62 52 / 10%);
+  }
+
+  [data-variant="default"][data-size] {
+    letter-spacing: 0.02em;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 16%),
+      0 1px 2px rgb(20 60 50 / 25%),
+      0 6px 14px -8px rgb(36 88 74 / 60%);
+  }
+
+  [data-variant="outline"][data-size] {
+    border-color: #b9cfc5;
+    background-color: #fbfdfc;
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 1px 2px rgb(27 62 52 / 6%);
+  }
+
+  [data-variant="outline"][data-size]:hover {
+    background-color: var(--accent);
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="input-group"],
+    [data-slot="select-trigger"]
+  ) {
+    background-color: #fbfdfc;
+    box-shadow: inset 0 1px 2px rgb(27 62 52 / 8%);
+  }
+
+  [data-slot="input-group"] [data-slot="input-group-control"] {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  [data-slot="checkbox"] {
+    border-radius: 5px;
+  }
+
+  :is(
+    [data-slot="dialog-content"],
+    [data-slot="alert-dialog-content"],
+    [data-slot="dropdown-menu-content"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"]
+  ) {
+    border-color: var(--border);
+    background-color: var(--popover);
+  }
+
+  :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+    border-radius: var(--atlas-surface-radius);
+  }
+
+  :is(
+    [data-slot="dropdown-menu-content"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"]
+  ) {
+    border-radius: 14px;
+  }
+
+  :is(
+    [data-slot="dialog-overlay"],
+    [data-slot="alert-dialog-overlay"],
+    [data-slot="sheet-overlay"]
+  ) {
+    background: rgb(20 44 38 / 32%);
+    backdrop-filter: blur(3px);
+  }
+
+  [data-slot="progress"] {
+    background: #d6e5de;
+  }
+
+  [data-slot="tabs-list"][data-variant="default"] {
+    border-radius: 12px;
+    background: #dfeae5;
+    box-shadow: inset 0 1px 2px rgb(27 62 52 / 10%);
+  }
+
+  [data-slot="tabs-trigger"] {
+    border-radius: 9px;
+  }
+
+  [data-slot="tabs-trigger"][data-state="active"] {
+    background: #fbfdfc;
+    color: #1d4a3e;
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 1px 3px rgb(27 62 52 / 16%);
+  }
+
+  [data-slot="table-head"] {
+    background: #e6efea;
+    color: var(--muted-foreground);
+    font-weight: 600;
+  }
+
+  [data-slot="table-row"]:hover {
+    background: #eef5f1;
+  }
+
+  [data-slot="badge"] {
+    border-radius: 8px;
+  }
+
+  [data-project-status="计划中"] {
+    border-color: #e6d3ac;
+    background: #f4ead6;
+    color: #7a5414;
+  }
+
+  [data-project-status="进行中"] {
+    border-color: #b4d5c6;
+    background: #d3e8de;
+    color: #1d4a3e;
+  }
+
+  [data-project-status="已完成"] {
+    border-color: #ccdad3;
+    background: #e3ebe7;
+    color: #44574f;
+  }
+
+  :is(
+    [data-slot="sidebar-menu-button"],
+    [data-slot="sidebar-menu-sub-button"]
+  )[data-active="true"] {
+    border-color: #bcd3c9;
+    border-radius: var(--atlas-control-radius);
+    background: #cfe4da;
+    color: #1d4a3e;
+    font-weight: 600;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 70%),
+      0 1px 2px rgb(27 62 52 / 10%);
+  }
+}
+
+@scope (:is(
+  [data-atlas-theme="polaris"],
+  [data-atlas-theme="editorial"],
+  [data-atlas-theme="celadon"]
+)) to ([data-atlas-theme]) {
+  [data-variant][data-size]:is(
+    [data-variant="default"],
+    [data-variant="outline"]
+  ):not(
+    [data-slot="segmented-control-item"],
+    [data-slot="toggle-group-item"]
+  ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ):not([data-slot="input-group-control"]):focus-within {
+    border-color: var(--input);
+    background-color: color-mix(in srgb, var(--card) 65%, var(--accent));
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ):is([aria-invalid="true"], :has([aria-invalid="true"])):focus-within {
+    border-color: var(--destructive);
   }
 }

@@ -5,7 +5,7 @@ import { ReferenceActions } from "./ReferenceActions";
 import { ThemeIcon } from "./ThemePicker";
 
 // One card on the themes page: the homepage page thumbnail rendered in the
-// card's own theme, so the eight styles can be compared side by side.
+// card's own theme, so every style can be compared side by side.
 export function ThemeSpecimen({
   theme,
   current,

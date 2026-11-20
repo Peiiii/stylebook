@@ -1,4 +1,11 @@
-import { BookOpen, ChevronDown } from "lucide-react";
+import {
+  Amphora,
+  BookOpen,
+  ChevronDown,
+  Compass,
+  Newspaper,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -11,6 +18,14 @@ import {
 } from "../ui/dropdown-menu";
 import { themes, type AtlasTheme } from "../themes";
 
+// Original styles use a Lucide symbol that inherits the surrounding text color.
+const themeSymbols = {
+  retro: BookOpen,
+  polaris: Compass,
+  editorial: Newspaper,
+  celadon: Amphora,
+} satisfies Partial<Record<AtlasTheme["id"], LucideIcon>>;
+
 const themeLogos = {
   shadcn: "shadcn",
   material: "material",
@@ -19,19 +34,27 @@ const themeLogos = {
   ant: "ant",
   chatgpt: "chatgpt",
   claude: "claude",
-} satisfies Record<Exclude<AtlasTheme["id"], "retro">, string>;
+} satisfies Record<
+  Exclude<AtlasTheme["id"], keyof typeof themeSymbols>,
+  string
+>;
+
+// Single-color brand marks that dark themes render light.
+const monochromeLogos = new Set<AtlasTheme["id"]>(["ios", "shadcn", "chatgpt"]);
 
 export function ThemeIcon({ id }: { id: AtlasTheme["id"] }) {
-  if (id === "retro") {
-    return <BookOpen className="size-4 shrink-0" aria-hidden="true" />;
+  if (id in themeSymbols) {
+    const Mark = themeSymbols[id as keyof typeof themeSymbols];
+    return <Mark className="size-4 shrink-0" aria-hidden="true" />;
   }
 
   return (
     <img
-      src={`${import.meta.env.BASE_URL}theme-icons/${themeLogos[id]}.svg`}
+      src={`${import.meta.env.BASE_URL}theme-icons/${themeLogos[id as keyof typeof themeLogos]}.svg`}
       alt=""
       width={16}
       height={16}
+      data-monochrome-logo={monochromeLogos.has(id) || undefined}
       className="size-4 shrink-0 object-contain [color-scheme:light]"
     />
   );

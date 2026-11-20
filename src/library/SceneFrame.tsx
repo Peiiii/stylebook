@@ -33,7 +33,12 @@ export function SceneFrame() {
   const ScenePreview = scene.Preview;
   useDocumentTheme(resolveTheme(route.get("theme")).id);
   return (
-    <ThemeProvider forcedTheme="light" attribute="class" enableSystem={false}>
+    <ThemeProvider
+      forcedTheme="light"
+      attribute="class"
+      enableSystem={false}
+      enableColorScheme={false}
+    >
       <Toaster />
       <Suspense fallback={<PreviewPending />}>
         <ScenePreview key={scene.id} />
