@@ -52,36 +52,3 @@ export function LayoutSheet({
     </div>
   );
 }
-
-export function HomeStyleArtwork({ theme }: { theme: AtlasTheme }) {
-  const references = (["retro", "material", "claude"] as const).filter(
-    (id) => id !== theme.id,
-  );
-
-  return (
-    <figure
-      aria-label="同一套界面的多风格插图"
-      className="@container mx-auto w-full min-w-0 max-w-[34rem] md:col-start-2 md:row-start-1"
-    >
-      <div
-        aria-hidden="true"
-        className="relative isolate aspect-[1.72] overflow-hidden rounded-2xl bg-[radial-gradient(ellipse_at_50%_47%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_70%)]"
-      >
-        <LayoutSheet
-          theme={references[0]}
-          className="top-[13%] left-[6%] -rotate-12"
-        />
-        <LayoutSheet
-          theme={references[1]}
-          className="top-[12%] right-[5%] rotate-11"
-        />
-        <LayoutSheet className="top-[14%] left-[18.5%]" />
-      </div>
-      <figcaption className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-        <span aria-hidden="true" className="size-1.5 rounded-full bg-primary" />
-        当前风格{" "}
-        <span className="font-medium text-foreground">{theme.label}</span>
-      </figcaption>
-    </figure>
-  );
-}

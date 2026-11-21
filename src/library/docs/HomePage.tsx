@@ -8,7 +8,6 @@ import {
 import { themes, type AtlasTheme } from "../themes";
 import { Button } from "../ui/button";
 import { HomeReferenceGuide } from "./HomeReferenceGuide";
-import { HomeStyleArtwork } from "./HomeStyleArtwork";
 import { HomeThemeSwitcher } from "./HomeThemeSwitcher";
 
 type HomePageProps = {
@@ -54,12 +53,12 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
             id="home-title"
             className="text-[clamp(1.75rem,3.1vw,2.625rem)] leading-[1.2] font-semibold tracking-tight"
           >
-            <span className="inline-block">先看风格，</span>
-            <span className="inline-block">再做界面。</span>
+            <span className="inline-block">把喜欢的界面风格，</span>
+            <span className="inline-block">用到自己的项目里。</span>
           </h1>
           <p className="mt-4 max-w-[27rem] text-base leading-relaxed text-muted-foreground">
-            在同一套 shadcn/ui
-            组件和完整应用案例上切换风格。亲手试过按钮、表单和导航，再选定你的界面方向。
+            在线试选整套风格或单个组件，复制带有开源源码链接的引用，发给你的 AI
+            编程工具。
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
             <Button asChild>
@@ -89,7 +88,7 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           </dl>
         </div>
         <HomeThemeSwitcher theme={theme} onTheme={onTheme} />
-        <HomeStyleArtwork theme={theme} />
+        <HomeReferenceGuide theme={theme} />
       </section>
 
       <section aria-labelledby="home-cases" className="pb-8 sm:pb-11">
@@ -123,7 +122,6 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           ))}
         </div>
       </section>
-      <HomeReferenceGuide theme={theme} />
     </main>
   );
 }
