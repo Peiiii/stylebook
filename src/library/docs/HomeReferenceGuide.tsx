@@ -1,13 +1,19 @@
 import { ArrowRight, MessageSquare } from "lucide-react";
 import registry from "../registry.json";
-import { componentReference, repositoryUrl } from "../references";
+import { componentReference } from "../references";
 import type { AtlasTheme } from "../themes";
 import { buttonVariants } from "../ui/button";
 import { ReferenceActions } from "./ReferenceActions";
 
 const example = registry.components.find(({ id }) => id === "button");
 
-export function HomeReferenceGuide({ theme }: { theme: AtlasTheme }) {
+export function HomeReferenceGuide({
+  theme,
+  tutorialHref,
+}: {
+  theme: AtlasTheme;
+  tutorialHref: string;
+}) {
   if (!example) return null;
   const reference = componentReference(example, theme);
 
@@ -21,10 +27,10 @@ export function HomeReferenceGuide({ theme }: { theme: AtlasTheme }) {
           把组件带到 AI 会话
         </h2>
         <a
-          href={`${repositoryUrl}/tree/main/skills/stylebook`}
+          href={tutorialHref}
           className="rounded-sm text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring"
         >
-          Stylebook Skill
+          接入教程
         </a>
       </div>
       <figure className="mx-auto grid max-w-4xl gap-3 rounded-(--atlas-surface-radius) bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--primary)_10%,transparent),transparent_78%)] p-2 sm:gap-4 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1.25fr)] md:items-stretch">

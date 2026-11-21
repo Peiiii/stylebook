@@ -123,7 +123,10 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           ))}
         </div>
       </section>
-      <HomeReferenceGuide theme={theme} />
+      <HomeReferenceGuide
+        theme={theme}
+        tutorialHref={href({ view: "adopt" })}
+      />
     </main>
   );
 }

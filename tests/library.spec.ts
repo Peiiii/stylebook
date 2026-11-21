@@ -352,11 +352,8 @@ test("copies declarative theme and component references from compact actions", a
   await page.goto("/#view=home&theme=ant");
   const guide = page.getByRole("region", { name: "把组件带到 AI 会话" });
   await expect(
-    guide.getByRole("link", { name: "Stylebook Skill", exact: true }),
-  ).toHaveAttribute(
-    "href",
-    "https://github.com/Peiiii/stylebook/tree/main/skills/stylebook",
-  );
+    guide.getByRole("link", { name: "接入教程", exact: true }),
+  ).toHaveAttribute("href", /view=adopt/);
   await expect(guide.getByText("预览风格：Ant Design（ant）")).toBeVisible();
   await guide.getByRole("button", { name: "复制引用：Button" }).click();
   await expect
@@ -1164,14 +1161,25 @@ test("the four original themes switch, persist, style both scenes, and copy refe
 
 test("the adoption tutorial runs the multi-theme example without changing the catalog theme", async ({
   page,
+  context,
 }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/#theme=material");
   const nav = page.getByRole("navigation", { name: "主导航" });
   await nav.getByRole("link", { name: "接入教程" }).click();
   await expect(page.getByRole("heading", { name: "接入教程" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "预览模板" })).toHaveAttribute(
-    "href",
-    "#view=blocks&template=sidebar-07&theme=ant",
+  await expect(
+    page.getByRole("link", { name: "看 Ant Design 示例" }),
+  ).toHaveAttribute("href", "#view=blocks&template=sidebar-07&theme=ant");
+
+  const tutorial = page.getByRole("main");
+  await expect(tutorial.locator('a[href*="github"]')).toHaveCount(0);
+  await tutorial.getByRole("button", { name: "复制给 AI" }).click();
+  await expect
+    .poll(() => copiedReference(page))
+    .toContain("/skills/stylebook/SKILL.md");
+  expect(await copiedReference(page)).toContain(
+    "为当前项目接入 Stylebook Skill",
   );
 
   const preview = page.frameLocator('iframe[title="多主题接入示例"]');

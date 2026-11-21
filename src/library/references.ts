@@ -3,6 +3,12 @@ import type { AtlasTheme } from "./themes";
 export const repositoryUrl = "https://github.com/Peiiii/stylebook";
 const previewUrl = "https://stylebook.peiiii.com/";
 export const adoptionGuideUrl = `${repositoryUrl}/blob/main/docs/adopt-stylebook.md`;
+export const stylebookSetupPrompt = [
+  "请为当前项目接入 Stylebook Skill，方便我之后用 Stylebook 的风格或组件。",
+  `请先读取 Skill 源文件 https://raw.githubusercontent.com/Peiiii/stylebook/main/skills/stylebook/SKILL.md（出处：${repositoryUrl}/tree/main/skills/stylebook）。`,
+  "如果你的工具支持项目级 Skill，请按它的方式加入当前项目。若不支持，请把这份文件作为本次对话的参考说明。",
+  "准备好后告诉我。等我发来具体风格、组件或页面需求，再修改应用。",
+].join("\n");
 
 function sourceLink(file: string) {
   return `${repositoryUrl}/blob/main/${file}`;
