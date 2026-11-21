@@ -12,16 +12,13 @@ import { Showcase } from "./docs/Showcase";
 import { resolveScene, scenes } from "./scenes";
 import { SceneViewer } from "./docs/SceneViewer";
 import { HomePage } from "./docs/HomePage";
+import { AdoptionPage } from "./docs/AdoptionPage";
 import { PreviewPending, SceneFrame, useDocumentTheme } from "./SceneFrame";
 import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
 import { resolveTheme, themes } from "./themes";
-import {
-  adoptionGuideUrl,
-  componentReference,
-  themeReference,
-} from "./references";
+import { componentReference, themeReference } from "./references";
 import { ReferenceActions } from "./docs/ReferenceActions";
 import { ThemeSpecimen } from "./docs/ThemeSpecimen";
 
@@ -32,6 +29,7 @@ const views = [
   { id: "blocks", label: "页面模板" },
   { id: "components", label: "组件" },
   { id: "themes", label: "主题" },
+  { id: "adopt", label: "接入教程" },
 ];
 const blockLabels: Record<string, { label: string; description: string }> = {
   "login-01": { label: "登录页", description: "包含表单与登录操作的页面。" },
@@ -163,6 +161,13 @@ export function Library() {
           href: choose({ view: "scene" }),
           active: view === "scene",
         },
+        {
+          id: "adopt",
+          name: "接入教程",
+          href: choose({ view: "adopt" }),
+          active: view === "adopt",
+          keywords: ["多主题", "采用指南", "Skill"],
+        },
       ],
     },
   ];
@@ -237,6 +242,8 @@ export function Library() {
             blocks: registry.blocks.length,
           }}
         />
+      ) : view === "adopt" ? (
+        <AdoptionPage themesHref={choose({ view: "themes" })} />
       ) : blockView ? (
         <BlockViewer
           key={block.id}
@@ -284,10 +291,10 @@ export function Library() {
               sections={[]}
               actions={
                 <a
-                  href={adoptionGuideUrl}
+                  href={choose({ view: "adopt" })}
                   className="text-sm text-foreground underline decoration-border underline-offset-4 hover:decoration-current"
                 >
-                  采用指南
+                  接入教程
                 </a>
               }
             >

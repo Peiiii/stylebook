@@ -5,5 +5,9 @@ import tailwind from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwind()],
   base: "./",
-  build: { rolldownOptions: { input: ["index.html", "scene.html"] } },
+  build: {
+    rolldownOptions: {
+      input: ["index.html", "scene.html", "adoption-example.html"],
+    },
+  },
 });

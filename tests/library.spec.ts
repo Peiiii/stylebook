@@ -951,7 +951,7 @@ test("bento case can be selected, themed, and opened on its own", async ({
     "claude",
   );
 });
-test("mobile navigation puts the six main destinations in the first viewport", async ({
+test("mobile navigation puts the main destinations in the first viewport", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 720 });
@@ -967,6 +967,7 @@ test("mobile navigation puts the six main destinations in the first viewport", a
     "页面模板",
     "组件",
     "主题",
+    "接入教程",
   ]);
   for (const link of await links.all()) await expect(link).toBeInViewport();
   await nav.getByRole("link", { name: "组件总览" }).click();
@@ -1159,4 +1160,47 @@ test("the four original themes switch, persist, style both scenes, and copy refe
   await expect
     .poll(() => page.locator("html").evaluate((root) => root.scrollWidth))
     .toBe(320);
+});
+
+test("the adoption tutorial runs the multi-theme example without changing the catalog theme", async ({
+  page,
+}) => {
+  await page.goto("/#theme=material");
+  const nav = page.getByRole("navigation", { name: "主导航" });
+  await nav.getByRole("link", { name: "接入教程" }).click();
+  await expect(page.getByRole("heading", { name: "接入教程" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "预览模板" })).toHaveAttribute(
+    "href",
+    "#view=blocks&template=sidebar-07&theme=ant",
+  );
+
+  const preview = page.frameLocator('iframe[title="多主题接入示例"]');
+  const select = preview.getByRole("combobox", { name: "界面风格" });
+  await expect(select.getByRole("option")).toHaveText([
+    "iOS",
+    "Ant Design",
+    "墨刊",
+  ]);
+  await expect(select).toHaveValue("ios");
+  const input = preview.getByRole("textbox", { name: "显示名称" });
+  await input.fill("测试账户");
+  await select.selectOption("ant");
+  await expect(input).toHaveValue("测试账户");
+  await expect(preview.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "ant",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-atlas-theme",
+    "material",
+  );
+
+  await page.reload();
+  await expect(select).toHaveValue("ant");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await preview.getByRole("button", { name: "展开或收起侧栏" }).click();
+  await expect(preview.getByRole("dialog", { name: "侧栏" })).toHaveCSS(
+    "background-color",
+    "rgb(0, 21, 41)",
+  );
 });

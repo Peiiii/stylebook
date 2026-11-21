@@ -72,6 +72,25 @@ createRoot(document.getElementById("root")!).render(<SidebarPage />);
 
 移植样式到另一个组件实现时，核对它的实际 slot 和状态属性。保留或映射 `data-sidebar="menu-button"`、`data-sidebar="menu-sub-button"` 和选中状态。使用 Radix 的 `asChild` 包装菜单项时，这两个标记仍可识别菜单项。场景专用的项目状态、报表布局等规则可以按目标业务单独取舍。
 
+## 从单主题扩展到多主题
+
+先按上面的步骤准备项目，依赖和基础 CSS 共用一次。然后复制 [themes.ts](../src/library/themes.ts) 到 `src/library/`，以及 [多主题示例](../src/library/examples/multi-theme-adoption.tsx) 到 `src/library/examples/`。把 `index.html` 中的主题属性改成 `data-atlas-theme="ios"`。在 `src/main.tsx` 将原来的页面导入和渲染替换为这个示例。
+
+```tsx
+import { createRoot } from "react-dom/client";
+import MultiThemeAdoption from "./library/examples/multi-theme-adoption";
+import "./library/theme.css";
+import "./library/themes.css";
+
+createRoot(document.getElementById("root")!).render(<MultiThemeAdoption />);
+```
+
+应用的可选项由示例里的 `themeIds` 决定，第一项是默认值。用项目自己的 `storageKey` 保存偏好，避免多个应用共享域名时互相覆盖。示例只保存允许的主题 ID，切换时更新应用根元素。继续使用同一套组件和样式文件，浮层也会跟随根元素的主题。
+
+在已有应用中，保留你的页面和组件。把同样的允许清单、偏好读取与根元素更新放进现有设置逻辑。将初始 HTML 的 `data-atlas-theme` 改成你的默认主题。
+
+运行 `npx vite`。切到 Ant Design，刷新后核对选择是否保留，再缩窄窗口并展开侧栏，确认抽屉继承了当前风格。也可以先在 [接入教程](https://stylebook.peiiii.com/#view=adopt) 在线试用。
+
 ## 在目标项目验收
 
 - 打开同风格模板，在同样的视口宽度和状态下比较。核对正文与标题的字号层级、导航与内容的关系、列表密度、表面、圆角和边框。

@@ -72,7 +72,7 @@ export function SiteHeader({
             >
               <SheetTitle className="px-3">Stylebook</SheetTitle>
               <SheetDescription className="sr-only">
-                浏览首页、组件总览、场景、页面模板、组件和主题。
+                浏览首页、组件总览、场景、页面模板、组件、主题和接入教程。
               </SheetDescription>
               <nav aria-label="主导航" className="grid gap-0.5">
                 {items.map((item) => (
