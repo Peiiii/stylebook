@@ -344,6 +344,12 @@ test("copies declarative theme and component references from compact actions", a
 
   await page.goto("/#view=home&theme=ant");
   const guide = page.getByRole("region", { name: "把组件带到 AI 会话" });
+  await expect(
+    guide.getByRole("link", { name: "Stylebook Skill", exact: true }),
+  ).toHaveAttribute(
+    "href",
+    "https://github.com/Peiiii/stylebook/tree/main/skills/stylebook",
+  );
   await expect(guide.getByText("预览风格：Ant Design（ant）")).toBeVisible();
   await guide.getByRole("button", { name: "复制引用：Button" }).click();
   await expect
