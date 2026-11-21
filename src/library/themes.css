@@ -65,6 +65,8 @@
   --accent: #e8f2ff;
   --border: #e5e5ea;
   --input: #e5e5ea;
+  --atlas-field-edge: #898991;
+  --atlas-grouped-background: #f2f2f7;
 }
 
 [data-atlas-theme="retro"] {
@@ -109,6 +111,7 @@
   --accent: #e6f4ff;
   --border: #f0f0f0;
   --input: #d9d9d9;
+  --atlas-field-edge: #858585;
 }
 
 [data-atlas-theme="chatgpt"] {
@@ -128,6 +131,7 @@
   --accent: #ebebeb;
   --border: #e5e5e5;
   --input: #d6d6d6;
+  --atlas-field-edge: #858585;
 }
 
 [data-atlas-theme="claude"] {
@@ -149,6 +153,7 @@
   --accent: #f0eee6;
   --border: #e8e6dc;
   --input: #d4d0c4;
+  --atlas-field-edge: #898173;
 }
 
 [data-atlas-theme="fluent"] {
@@ -446,18 +451,16 @@ html[data-atlas-theme] :is(h1, h2, h3),
     box-shadow: none;
   }
 
-  [data-slot="input"],
-  [data-slot="textarea"],
-  [data-slot="select-trigger"] {
-    border: 1px solid transparent;
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ) {
+    border: 1px solid var(--atlas-field-edge);
     border-radius: 12px;
     background: var(--secondary);
     box-shadow: none;
-  }
-
-  [data-slot="input"]:focus-visible,
-  [data-slot="textarea"]:focus-visible {
-    border-color: var(--primary);
   }
 
   [data-slot="card"] {
@@ -591,11 +594,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
 
   .showcase-card {
     border-color: transparent;
-    border-radius: 0;
-  }
-
-  .showcase-card > h3 {
-    color: var(--muted-foreground);
+    background-color: #fff;
   }
 
   [aria-label="组件分组"] button {
@@ -687,12 +686,8 @@ html[data-atlas-theme] :is(h1, h2, h3),
     box-shadow: none;
   }
 
-  :is(
-    [data-slot="input"],
-    [data-slot="textarea"],
-    [data-slot="select-trigger"]
-  ):focus-visible:not([aria-invalid="true"]) {
-    border-color: transparent;
+  [data-slot="input-group-control"] {
+    background: transparent;
   }
 
   [data-slot="input-group"]:focus-within {
@@ -700,8 +695,23 @@ html[data-atlas-theme] :is(h1, h2, h3),
     box-shadow: none;
   }
 
-  [data-slot="input-group"]:focus-within:not(:has([aria-invalid="true"])) {
-    border-color: var(--input);
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ):focus-within:not([aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-color: var(--atlas-field-edge);
+    background-color: #e8edf5;
+  }
+
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ):is([aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-color: var(--destructive);
   }
 }
 
@@ -740,8 +750,8 @@ html[data-atlas-theme] :is(h1, h2, h3),
     [data-slot="select-trigger"],
     [data-slot="textarea"]
   ):focus-within {
-    outline: 2px solid var(--ring);
-    outline-offset: -2px;
+    border-color: var(--ring);
+    outline: none;
     box-shadow: none;
   }
 
@@ -1172,6 +1182,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
   --border: rgb(88 80 170 / 15%);
   --input: rgb(88 80 170 / 24%);
   --destructive: #e11d48;
+  --atlas-field-edge: #7d719d;
 }
 
 [data-atlas-theme="clay"] {
@@ -1211,6 +1222,7 @@ html[data-atlas-theme] :is(h1, h2, h3),
   --border: #d3d9ea;
   --input: #c3cbe2;
   --destructive: #e5484d;
+  --atlas-field-edge: #727d96;
 }
 
 [data-atlas-theme="pop"] {
@@ -1454,7 +1466,7 @@ html[data-atlas-theme="pop"] body,
   }
 
   [data-slot="textarea"] {
-    border-color: var(--border);
+    border-color: var(--input);
     border-top-color: var(--foreground);
     background-color: var(--card);
     box-shadow: none;
@@ -2616,5 +2628,45 @@ html[data-atlas-theme="pop"] body,
 
   [data-slot="segmented-control-item"][aria-checked="true"] {
     font-weight: 800;
+  }
+}
+
+/* Grouped catalog content uses the iOS grouped hierarchy. */
+html[data-atlas-theme="ios"] body:has([data-slot="component-showcase"]) {
+  background-color: var(--atlas-grouped-background);
+}
+
+@scope (:is(
+  [data-atlas-theme="ant"],
+  [data-atlas-theme="chatgpt"],
+  [data-atlas-theme="claude"],
+  [data-atlas-theme="aurora"],
+  [data-atlas-theme="clay"],
+  [data-atlas-theme="shadcn"]
+)) to ([data-atlas-theme]) {
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-slot="input-group"]
+  ):not(:focus-within, [aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-color: var(--atlas-field-edge, #858585);
+  }
+}
+
+@scope (:is(
+  [data-atlas-theme="ios"],
+  [data-atlas-theme="ant"],
+  [data-atlas-theme="chatgpt"],
+  [data-atlas-theme="claude"],
+  [data-atlas-theme="aurora"],
+  [data-atlas-theme="clay"],
+  [data-atlas-theme="shadcn"]
+)) to ([data-atlas-theme]) {
+  :is(
+    [data-slot="checkbox"],
+    [data-slot="radio-group-item"]
+  )[data-state="unchecked"]:not([aria-invalid="true"], :focus-visible) {
+    border-color: var(--atlas-field-edge, #858585);
   }
 }

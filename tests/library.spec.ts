@@ -1212,3 +1212,42 @@ test("the adoption tutorial runs the multi-theme example without changing the ca
     "rgb(0, 21, 41)",
   );
 });
+
+test("iOS showcase separates cards and fields with a single focus boundary", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#view=showcase&theme=ios");
+  const card = page.locator('[data-showcase-component="input"]');
+  const input = card.getByRole("textbox");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(242, 242, 247)",
+  );
+  await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(card).toHaveCSS("border-top-left-radius", "16px");
+  await expect(
+    page.locator('[data-showcase-component="label"]').getByRole("checkbox"),
+  ).toHaveCSS("border-top-color", "rgb(137, 137, 145)");
+  await expect(input).toHaveCSS("border-top-color", "rgb(137, 137, 145)");
+  await input.fill("输入内容");
+  await expect(input).toHaveCSS("background-color", "rgb(232, 237, 245)");
+  await expect(input).toHaveCSS("border-top-color", "rgb(137, 137, 145)");
+  await expect(input).toHaveCSS("box-shadow", "none");
+  await expect(input).toHaveCSS("outline-style", "none");
+
+  const inputGroup = page
+    .locator('[data-showcase-component="input-group"]')
+    .locator('[data-slot="input-group"]')
+    .first();
+  await inputGroup.getByRole("textbox").focus();
+  await expect(inputGroup).toHaveCSS("background-color", "rgb(232, 237, 245)");
+  await expect(inputGroup).toHaveCSS("box-shadow", "none");
+
+  await page.goto("/#view=showcase&theme=ant");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+  await expect(input).toHaveCSS("border-top-color", "rgb(133, 133, 133)");
+});

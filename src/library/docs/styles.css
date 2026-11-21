@@ -28,8 +28,9 @@
   flex-direction: column;
   min-width: 0;
   min-height: 8rem;
-  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
-  border-radius: 8px;
+  border: var(--atlas-border-width) solid var(--border);
+  border-radius: var(--atlas-surface-radius);
+  background-color: var(--card);
   color: var(--foreground);
 }
 
