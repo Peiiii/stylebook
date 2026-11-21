@@ -2,6 +2,7 @@ import type { AtlasTheme } from "./themes";
 
 export const repositoryUrl = "https://github.com/Peiiii/stylebook";
 const previewUrl = "https://stylebook.peiiii.com/";
+export const adoptionGuideUrl = `${repositoryUrl}/blob/main/docs/adopt-stylebook.md`;
 
 function sourceLink(file: string) {
   return `${repositoryUrl}/blob/main/${file}`;
@@ -15,6 +16,7 @@ export type StylebookReference = {
 
 export function themeReference(theme: AtlasTheme): StylebookReference {
   const sourceHref = sourceLink("src/library/themes.css");
+  const { adoption } = theme;
   return {
     name: theme.label,
     sourceHref,
@@ -27,6 +29,12 @@ export function themeReference(theme: AtlasTheme): StylebookReference {
       `开源仓库：${repositoryUrl}`,
       `主题源码：${sourceHref}`,
       `源码定位：data-atlas-theme="${theme.id}"`,
+      `适用场景：${adoption.use}`,
+      `推荐模板：${previewUrl}#view=blocks&template=${adoption.template}&theme=${theme.id}`,
+      `排版与空间：${adoption.layout}`,
+      `组件组合：${adoption.components}`,
+      `避免：${adoption.avoid}`,
+      `采用指南：${adoptionGuideUrl}`,
     ].join("\n"),
   };
 }

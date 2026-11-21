@@ -60,6 +60,7 @@ const data = {
         {
           title: "历史记录",
           url: "#",
+          isActive: true,
         },
         {
           title: "收藏",

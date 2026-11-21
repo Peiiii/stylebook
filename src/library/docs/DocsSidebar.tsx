@@ -40,6 +40,7 @@ export function DocsSidebar({ groups }: { groups: DocGroup[] }) {
   }, [currentPage]);
   return (
     <Sidebar
+      data-sidebar="catalog"
       className="sticky top-[calc(var(--header-height)+0.6rem)] z-30 hidden h-[calc(100svh-var(--header-height)-0.6rem)] overflow-hidden overscroll-none bg-transparent [--sidebar-menu-width:--spacing(56)] lg:flex"
       collapsible="none"
     >

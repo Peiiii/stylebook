@@ -17,6 +17,8 @@ npm run dev
 
 ## 在其他项目中使用
 
+[采用指南](docs/adopt-stylebook.md)覆盖模板选择、从零接入、侧栏使用契约和目标项目验收。
+
 - 在 Stylebook 选中一套风格或一个组件，点击「复制引用」，把引用和你的用途一起发给 AI 编程工具。
 - 经常用 Stylebook 时，可以将 [Stylebook Skill](skills/stylebook/SKILL.md) 所在的 `stylebook` 文件夹加入目标项目或工具的 Skill 目录。使用时附上预览链接、风格 ID 或复制的引用，再说明用在哪个页面。也可以直接把 Skill 文件链接发给能读取网页的编程工具。
 - 对外 Skill 随仓库维护。主题标识、引用格式或源码路径变更时，检查 Skill 和下面的源码入口。主题与组件清单沿用现有源码。

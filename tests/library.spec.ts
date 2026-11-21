@@ -295,7 +295,14 @@ test("copies declarative theme and component references from compact actions", a
   await expect
     .poll(copied)
     .toContain("Stylebook · Ant Design\n类型：UI 风格\n标识：ant");
-  expect(await copied()).toContain('源码定位：data-atlas-theme="ant"');
+  const antReference = await copied();
+  expect(antReference).toContain('源码定位：data-atlas-theme="ant"');
+  expect(antReference).toContain("排版与空间：紧凑行高");
+  expect(antReference).toContain("组件组合：深色 Sidebar");
+  expect(antReference).toContain(
+    "#view=blocks&template=dashboard-01&theme=ant",
+  );
+  expect(antReference).toContain("/docs/adopt-stylebook.md");
 
   const card = page.locator('[data-showcase-component="button"]');
   const action = card.getByRole("button", {
@@ -499,6 +506,35 @@ test("mobile navigation reaches a Block and preserves the selected theme", async
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
+});
+
+test("Ant Design styles the standard Sidebar on desktop and mobile", async ({
+  page,
+}) => {
+  await page.goto("/#view=full&template=sidebar-07&theme=ant");
+  const sidebar = page.locator('[data-sidebar="sidebar"]');
+  await expect(sidebar).toHaveCSS("background-color", "rgb(0, 21, 41)");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+  const current = sidebar.getByRole("link", { name: "历史记录" });
+  await expect(current).toHaveAttribute("aria-current", "page");
+  await expect(current).toHaveCSS("background-color", "rgb(9, 88, 217)");
+  const group = sidebar.getByRole("button", { name: "试验场" });
+  await expect(group).toHaveCSS("color", "rgb(217, 226, 235)");
+  await group.hover();
+  await expect(group).toHaveCSS("background-color", "rgb(23, 52, 83)");
+  await page.keyboard.press("Tab");
+  await group.focus();
+  await expect(group).toHaveCSS("outline-style", "solid");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "展开或收起侧栏" }).click();
+  await expect(page.getByRole("dialog", { name: "侧栏" })).toHaveCSS(
+    "background-color",
+    "rgb(0, 21, 41)",
+  );
 });
 
 test("showcase renders all components together and keeps one theme", async ({
@@ -964,6 +1000,18 @@ test("search applies a theme without adding a back step and opens applications",
   await expect(page).toHaveURL(/view=themes&theme=material/);
   const sheets = page.locator("[data-theme-specimen] [data-artwork-sheet]");
   await expect(sheets).toHaveCount(12);
+  const themeCards = page.locator("[data-theme-specimen]");
+  await expect(themeCards.getByText("采用要点", { exact: true })).toHaveCount(
+    12,
+  );
+  const antCard = themeCards.filter({
+    has: page.getByRole("heading", { name: "Ant Design" }),
+  });
+  await antCard.getByText("采用要点", { exact: true }).click();
+  await expect(antCard.getByText(/紧凑行高/)).toBeVisible();
+  await expect(
+    antCard.getByRole("link", { name: "推荐模板 · 仪表盘" }),
+  ).toHaveAttribute("href", /template=dashboard-01/);
   const appearances = await sheets.evaluateAll((nodes) =>
     nodes.map((node) => {
       const css = getComputedStyle(node);

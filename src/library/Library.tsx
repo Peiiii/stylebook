@@ -17,7 +17,11 @@ import "./theme.css";
 import "./docs/styles.css";
 import "./themes.css";
 import { resolveTheme, themes } from "./themes";
-import { componentReference, themeReference } from "./references";
+import {
+  adoptionGuideUrl,
+  componentReference,
+  themeReference,
+} from "./references";
 import { ReferenceActions } from "./docs/ReferenceActions";
 import { ThemeSpecimen } from "./docs/ThemeSpecimen";
 
@@ -278,6 +282,14 @@ export function Library() {
               title="主题"
               description="同一套整页样张按各风格渲染，可并排比较配色、圆角与层级。"
               sections={[]}
+              actions={
+                <a
+                  href={adoptionGuideUrl}
+                  className="text-sm text-foreground underline decoration-border underline-offset-4 hover:decoration-current"
+                >
+                  采用指南
+                </a>
+              }
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 {themes.map((entry) => (
@@ -288,6 +300,14 @@ export function Library() {
                     reference={themeReference(entry)}
                     showcaseHref={choose({ view: "showcase", theme: entry.id })}
                     sceneHref={choose({ view: "scene", theme: entry.id })}
+                    template={{
+                      label: blockLabels[entry.adoption.template].label,
+                      href: choose({
+                        view: "blocks",
+                        template: entry.adoption.template,
+                        theme: entry.id,
+                      }),
+                    }}
                   />
                 ))}
               </div>
