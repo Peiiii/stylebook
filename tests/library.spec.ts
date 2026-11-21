@@ -18,7 +18,7 @@ async function selectTheme(page: Page, label: string) {
   await expect(themeTrigger(page)).toHaveText(label);
 }
 
-test("home shows how to use a reference and reflects the selected theme", async ({
+test("home explains project use and previews the selected theme", async ({
   page,
 }) => {
   await page.goto("/");
@@ -40,19 +40,18 @@ test("home shows how to use a reference and reflects the selected theme", async 
     "aria-current",
     "page",
   );
-  const guide = page.getByRole("figure", { name: "把组件带到 AI 会话" });
-  await expect(guide.locator("figcaption")).toContainText("iOS");
-  await expect(guide).toBeInViewport();
-  await expect(guide).toHaveCount(1);
-  await expect(guide.getByText("发给 AI", { exact: true })).toBeVisible();
-  await expect(guide.getByText("预览风格：iOS（ios）")).toBeVisible();
+  const artwork = page.getByRole("figure", { name: "同一套界面的多风格插图" });
+  await expect(artwork).toBeInViewport();
+  await expect(artwork.locator("figcaption")).toContainText("iOS");
+  const sheet = artwork.locator('[data-artwork-sheet="current"]');
+  await expect(sheet).toHaveCSS("background-color", "rgb(245, 245, 247)");
   const ant = picker.getByRole("radio", { name: "Ant Design", exact: true });
   await ant.click();
   await expect(page.locator("html")).toHaveAttribute("data-atlas-theme", "ant");
   await expect(ant).toBeChecked();
   await expect(themeTrigger(page)).toHaveText("Ant Design");
-  await expect(guide.locator("figcaption")).toContainText("Ant Design");
-  await expect(guide.getByText("预览风格：Ant Design（ant）")).toBeVisible();
+  await expect(artwork.locator("figcaption")).toContainText("Ant Design");
+  await expect(sheet).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await expect(nav.getByRole("link", { name: "首页" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -344,7 +343,7 @@ test("copies declarative theme and component references from compact actions", a
   await expect.poll(copied).toContain("类型：UI 风格\n标识：claude");
 
   await page.goto("/#view=home&theme=ant");
-  const guide = page.getByRole("figure", { name: "把组件带到 AI 会话" });
+  const guide = page.getByRole("region", { name: "把组件带到 AI 会话" });
   await expect(guide.getByText("预览风格：Ant Design（ant）")).toBeVisible();
   await guide.getByRole("button", { name: "复制引用：Button" }).click();
   await expect
@@ -355,7 +354,7 @@ test("copies declarative theme and component references from compact actions", a
   await expect
     .poll(() => page.locator("html").evaluate((el) => el.scrollWidth))
     .toBe(320);
-  await expect(guide.getByText("发给 AI", { exact: true })).toBeVisible();
+  await expect(guide.getByText("AI 会话示意")).toBeVisible();
 });
 
 test("Ant Design distinguishes navigation, search input, and the keyboard highlight", async ({

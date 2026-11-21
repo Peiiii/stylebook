@@ -8,6 +8,7 @@ import {
 import { themes, type AtlasTheme } from "../themes";
 import { Button } from "../ui/button";
 import { HomeReferenceGuide } from "./HomeReferenceGuide";
+import { HomeStyleArtwork } from "./HomeStyleArtwork";
 import { HomeThemeSwitcher } from "./HomeThemeSwitcher";
 
 type HomePageProps = {
@@ -88,7 +89,7 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           </dl>
         </div>
         <HomeThemeSwitcher theme={theme} onTheme={onTheme} />
-        <HomeReferenceGuide theme={theme} />
+        <HomeStyleArtwork theme={theme} />
       </section>
 
       <section aria-labelledby="home-cases" className="pb-8 sm:pb-11">
@@ -122,6 +123,7 @@ export function HomePage({ theme, onTheme, href, counts }: HomePageProps) {
           ))}
         </div>
       </section>
+      <HomeReferenceGuide theme={theme} />
     </main>
   );
 }
