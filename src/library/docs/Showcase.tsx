@@ -174,10 +174,7 @@ export function Showcase({
 
   return (
     <TooltipProvider>
-      <main
-        data-slot="component-showcase"
-        className="container-wrapper px-4 pt-6 pb-12 md:px-8"
-      >
+      <main className="container-wrapper px-4 pt-6 pb-12 md:px-8">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">组件总览</h1>
           <div className="flex items-center gap-1">

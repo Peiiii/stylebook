@@ -28,9 +28,8 @@
   flex-direction: column;
   min-width: 0;
   min-height: 8rem;
-  border: var(--atlas-border-width) solid var(--border);
-  border-radius: var(--atlas-surface-radius);
-  background-color: var(--card);
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  border-radius: 8px;
   color: var(--foreground);
 }
 
@@ -120,5 +119,28 @@
 @media (hover: hover) and (pointer: fine) {
   .reference-surface:not(:hover, :focus-within) .reference-reveal {
     opacity: 0;
+  }
+}
+
+@scope ([data-atlas-theme="ios"]) to ([data-atlas-theme]) {
+  .showcase-card
+    :is(
+      [data-slot="input"],
+      [data-slot="textarea"],
+      [data-slot="select-trigger"],
+      [data-slot="input-group"]
+    ):not([aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-color: #b8b8c0;
+    background-color: #e5e5ea;
+  }
+
+  .showcase-card
+    :is(
+      [data-slot="input"],
+      [data-slot="textarea"],
+      [data-slot="select-trigger"],
+      [data-slot="input-group"]
+    ):focus-within:not([aria-invalid="true"], :has([aria-invalid="true"])) {
+    background-color: #e4ebf5;
   }
 }
